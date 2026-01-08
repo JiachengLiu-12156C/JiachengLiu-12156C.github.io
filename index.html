@@ -47,6 +47,16 @@
 					align-self: flex-end !important;
 					margin-left: auto !important;
 					margin-right: 0 !important;
+					/* 保持固定宽高比，防止变形 */
+					aspect-ratio: 1 / 1 !important;
+					height: auto !important;
+				}
+				
+				#header .image.avatar img {
+					width: 100% !important;
+					height: 100% !important;
+					object-fit: cover !important;
+					aspect-ratio: 1 / 1 !important;
 				}
 				
 				/* Keep header content right-aligned as original design */
@@ -78,6 +88,16 @@
 					margin: 0 auto 0.6em auto !important;
 					width: 4.5em !important;
 					align-self: center !important;
+					/* 保持固定宽高比，防止变形 */
+					aspect-ratio: 1 / 1 !important;
+					height: auto !important;
+				}
+				
+				#header .image.avatar img {
+					width: 100% !important;
+					height: 100% !important;
+					object-fit: cover !important;
+					aspect-ratio: 1 / 1 !important;
 				}
 				
 				#header > .inner > h1 {
@@ -142,6 +162,16 @@
 				#header .image.avatar {
 					width: 4em !important;
 					margin: 0 auto 0.5em auto !important;
+					/* 保持固定宽高比，防止变形 */
+					aspect-ratio: 1 / 1 !important;
+					height: auto !important;
+				}
+				
+				#header .image.avatar img {
+					width: 100% !important;
+					height: 100% !important;
+					object-fit: cover !important;
+					aspect-ratio: 1 / 1 !important;
 				}
 				
 				#header > .inner > h1 {
@@ -187,6 +217,19 @@
 					flex: 1 1 auto;
 					overflow: hidden;
 				}
+			}
+			
+			/* 头像固定宽高比 - 确保在所有屏幕尺寸下保持圆形 */
+			#header .image.avatar {
+				aspect-ratio: 1 / 1 !important;
+				height: auto !important;
+			}
+			
+			#header .image.avatar img {
+				width: 100% !important;
+				height: 100% !important;
+				object-fit: cover !important;
+				aspect-ratio: 1 / 1 !important;
 			}
 			
 			/* Navigation Styles - 关键样式，确保导航栏立即显示 */
@@ -259,6 +302,16 @@
 					width: 6em !important;
 					margin: 0 0 0.5em 0 !important;
 					margin-left: auto !important;
+					/* 保持固定宽高比，防止变形 */
+					aspect-ratio: 1 / 1 !important;
+					height: auto !important;
+				}
+				
+				#header .image.avatar img {
+					width: 100% !important;
+					height: 100% !important;
+					object-fit: cover !important;
+					aspect-ratio: 1 / 1 !important;
 				}
 				#header h1 {
 					font-size: 1.15em !important;
@@ -291,6 +344,16 @@
 					width: 5.5em !important;
 					margin: 0 0 0.4em 0 !important;
 					margin-left: auto !important;
+					/* 保持固定宽高比，防止变形 */
+					aspect-ratio: 1 / 1 !important;
+					height: auto !important;
+				}
+				
+				#header .image.avatar img {
+					width: 100% !important;
+					height: 100% !important;
+					object-fit: cover !important;
+					aspect-ratio: 1 / 1 !important;
 				}
 				
 				#header h1 {
