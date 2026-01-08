@@ -14,9 +14,23 @@
 		<link rel="preload" as="style" href="assets/css/main.css" />
 		<link rel="preload" as="style" href="assets/css/fontawesome-all.min.css" />
 		<link rel="preload" as="image" href="images/preload/avatars/me111.png" fetchpriority="high" />
+		<link rel="preload" as="image" href="images/preload/background/bg.jpg" fetchpriority="high" />
 		<!-- 关键CSS优先加载 - 确保导航栏样式立即可用 -->
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<style>
+			/* Critical CSS - Ensure navigation is immediately visible */
+			#nav {
+				visibility: visible !important;
+				opacity: 1 !important;
+			}
+			.nav-menu {
+				visibility: visible !important;
+				opacity: 1 !important;
+			}
+			.nav-menu li {
+				visibility: visible !important;
+				opacity: 1 !important;
+			}
 			/* Header optimization for better space usage - Desktop only */
 			@media screen and (min-width: 981px) {
 				#header {
@@ -403,27 +417,27 @@
 				opacity: 1;
 			}
 			
-			/* Add subtle animation on load */
+			/* Add subtle animation on load - Immediate visibility */
 			.nav-menu li {
-				opacity: 0;
-				animation: fadeInUp 0.5s ease forwards;
+				opacity: 1 !important; /* 立即显示，不等待动画 */
+				animation: fadeInUp 0.2s ease forwards; /* 缩短动画时间 */
 			}
 			
-			.nav-menu li:nth-child(1) { animation-delay: 0.1s; }
-			.nav-menu li:nth-child(2) { animation-delay: 0.15s; }
-			.nav-menu li:nth-child(3) { animation-delay: 0.2s; }
-			.nav-menu li:nth-child(4) { animation-delay: 0.25s; }
-			.nav-menu li:nth-child(5) { animation-delay: 0.3s; }
-			.nav-menu li:nth-child(6) { animation-delay: 0.35s; }
-			.nav-menu li:nth-child(7) { animation-delay: 0.4s; }
-			.nav-menu li:nth-child(8) { animation-delay: 0.45s; }
-			.nav-menu li:nth-child(9) { animation-delay: 0.5s; }
-			.nav-menu li:nth-child(10) { animation-delay: 0.55s; }
+			.nav-menu li:nth-child(1) { animation-delay: 0s; } /* 移除延迟 */
+			.nav-menu li:nth-child(2) { animation-delay: 0.02s; }
+			.nav-menu li:nth-child(3) { animation-delay: 0.04s; }
+			.nav-menu li:nth-child(4) { animation-delay: 0.06s; }
+			.nav-menu li:nth-child(5) { animation-delay: 0.08s; }
+			.nav-menu li:nth-child(6) { animation-delay: 0.1s; }
+			.nav-menu li:nth-child(7) { animation-delay: 0.12s; }
+			.nav-menu li:nth-child(8) { animation-delay: 0.14s; }
+			.nav-menu li:nth-child(9) { animation-delay: 0.16s; }
+			.nav-menu li:nth-child(10) { animation-delay: 0.18s; }
 			
 			@keyframes fadeInUp {
 				from {
-					opacity: 0;
-					transform: translateY(10px);
+					opacity: 1; /* 从可见状态开始 */
+					transform: translateY(5px); /* 减少移动距离 */
 				}
 				to {
 					opacity: 1;
@@ -1640,13 +1654,13 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 			</div>
 		</div>
 
-		<!-- Scripts -->
-			<script src="assets/js/jquery.min.js"></script>
-			<script src="assets/js/jquery.poptrox.min.js"></script>
-			<script src="assets/js/browser.min.js"></script>
-			<script src="assets/js/breakpoints.min.js"></script>
-			<script src="assets/js/util.js"></script>
-			<script src="assets/js/main.js"></script>
+		<!-- Scripts - Defer loading to not block rendering -->
+			<script src="assets/js/jquery.min.js" defer></script>
+			<script src="assets/js/jquery.poptrox.min.js" defer></script>
+			<script src="assets/js/browser.min.js" defer></script>
+			<script src="assets/js/breakpoints.min.js" defer></script>
+			<script src="assets/js/util.js" defer></script>
+			<script src="assets/js/main.js" defer></script>
 			<script>
 				// Smooth scroll and active navigation highlighting
 				(function() {
@@ -2026,6 +2040,22 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 						// Default to Chinese
 						switchLanguage('cn');
 					}
+				})();
+			</script>
+			<!-- Immediate script to ensure navigation is visible -->
+			<script>
+				// Force navigation to be visible immediately
+				(function() {
+					const nav = document.getElementById('nav');
+					if (nav) {
+						nav.style.visibility = 'visible';
+						nav.style.opacity = '1';
+					}
+					const navItems = document.querySelectorAll('.nav-menu li');
+					navItems.forEach(function(item) {
+						item.style.visibility = 'visible';
+						item.style.opacity = '1';
+					});
 				})();
 			</script>
 
