@@ -1,0 +1,391 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Team - Jiacheng Liu</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="icon" type="image/png" href="images/logos/teamlogo2.png" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+        <style>
+			#header .image:before {
+				opacity: 0;
+			}
+			.back-button {
+				position: fixed;
+				top: 20px;
+				left: 20px;
+				z-index: 1000;
+				color: white;
+				font-size: 24px;
+				text-decoration: none;
+				transition: color 0.3s ease;
+				border-bottom: none;
+			}
+			.back-button:hover {
+				color: #49bf9d;
+				border-bottom: none;
+			}
+			
+			/* Language Toggle Buttons - Fixed at Top Right */
+			.lang-buttons-fixed {
+				position: fixed;
+				top: 1.5em;
+				right: 2em;
+				z-index: 10000;
+				display: flex;
+				gap: 0.5em;
+			}
+			
+			.lang-btn {
+				background: transparent;
+				border: none;
+				color: rgba(0, 0, 0, 0.7);
+				cursor: pointer;
+				font-size: 0.85em;
+				padding: 0.4em 0.8em;
+				transition: all 0.3s ease;
+				font-family: inherit;
+			}
+			
+			.lang-btn:hover {
+				color: #000000;
+			}
+			
+			.lang-btn.active {
+				color: #49bf9d;
+				font-weight: 600;
+			}
+			
+			/* Responsive adjustments for language buttons */
+			@media (max-width: 980px) {
+				.lang-buttons-fixed {
+					top: 1em;
+					right: 1em;
+				}
+			}
+			
+			/* Header optimization for better space usage - Desktop only */
+			@media screen and (min-width: 981px) {
+				#header {
+					overflow: hidden !important;
+					display: flex !important;
+					flex-direction: column !important;
+					justify-content: flex-start !important;
+				}
+				
+				#header > .inner {
+					min-height: 0;
+					flex: 1 1 auto;
+					display: flex;
+					flex-direction: column;
+					overflow: hidden;
+				}
+				
+				/* Keep avatar right-aligned as original design */
+				#header .image {
+					align-self: flex-end !important;
+					margin-left: auto !important;
+					margin-right: 0 !important;
+					margin-bottom: 0.8em !important;
+					width: 6.5em !important;
+				}
+				
+				#header .image img {
+					width: 6.5em !important;
+					height: 6.5em !important;
+				}
+				
+				/* Keep header content right-aligned as original design */
+				#header > .inner > h1 {
+					text-align: right !important;
+					margin-top: 0 !important;
+				}
+			}
+			
+			/* Mobile/Tablet responsive styles - Compact vertical layout */
+			@media screen and (max-width: 980px) {
+				#header {
+					display: block !important;
+					position: relative !important;
+					width: 100% !important;
+					height: auto !important;
+					text-align: center !important;
+					overflow: visible !important;
+					padding: 2em 1.5em 1.5em 1.5em !important;
+				}
+				
+				#header > .inner {
+					display: block !important;
+					flex: none !important;
+					overflow: visible !important;
+				}
+				
+				#header .image {
+					margin: 0 auto 0.8em auto !important;
+					width: 4.5em !important;
+					align-self: center !important;
+				}
+				
+				#header .image img {
+					width: 4.5em !important;
+					height: 4.5em !important;
+				}
+				
+				#header > .inner > h1 {
+					font-size: 1.2em !important;
+					line-height: 1.3em !important;
+					margin-top: 0 !important;
+					text-align: center !important;
+				}
+			}
+			
+			/* Smaller mobile devices */
+			@media screen and (max-width: 480px) {
+				#header {
+					padding: 1.5em 1em 1em 1em !important;
+				}
+				
+				#header .image {
+					width: 4em !important;
+					margin: 0 auto 0.7em auto !important;
+				}
+				
+				#header .image img {
+					width: 4em !important;
+					height: 4em !important;
+				}
+				
+				#header > .inner > h1 {
+					font-size: 1.1em !important;
+					margin-top: 0 !important;
+				}
+			}
+			
+			/* Medium screen optimization (3:4 ratio, tablets portrait) */
+			@media screen and (min-width: 981px) and (max-width: 1280px) {
+				#header {
+					padding: 2.5em 2.5em 1.5em 2.5em !important;
+				}
+				
+				#header .image {
+					width: 5.5em !important;
+					margin: 0 0 0.7em 0 !important;
+					margin-left: auto !important;
+				}
+				
+				#header .image img {
+					width: 5.5em !important;
+					height: 5.5em !important;
+				}
+				
+				#header h1 {
+					font-size: 1em !important;
+					line-height: 1.25em !important;
+					margin-top: 0 !important;
+				}
+			}
+		</style>
+	</head>
+	<body class="is-preload">
+		<a href="index.html" class="back-button">
+			<i class="fas fa-arrow-left"></i>
+		</a>
+
+		<!-- Language Toggle Buttons - Top Right -->
+		<div class="lang-buttons-fixed">
+			<button id="langBtnCn" class="lang-btn active">中文</button>
+			<button id="langBtnEn" class="lang-btn">English</button>
+		</div>
+
+		<!-- Header -->
+			<header id="header">
+				<div class="inner">
+					<a href="index.html" class="image"><img style="width: 120px; height: 120px; object-fit: cover;" src="images/logos/teamlogo2.png" alt="" /></a>
+					<h1><strong data-lang-en="Team Introduction" data-lang-cn="团队介绍">Team Introduction</strong></h1>
+				</div>
+			</header>
+
+		<!-- Main -->
+			<div id="main">
+				<section id="one">
+					<header class="major">
+						<h1 class="word_h1" data-lang-en="Yunxu Mixed Reality Team" data-lang-cn="云墟混合现实团队">Yunxu Mixed Reality Team</h1>
+					</header>
+					<p class="word_p" data-lang-en="Dedicated to exploring the frontiers of Augmented Reality (AR) and Mixed Reality (MR). Our team currently focuses on the R&amp;D of innovative AR/MR applications, integrating Generative AI to redefine immersive experiences." data-lang-cn="致力于增强现实（AR）与混合现实（MR）前沿领域的探索。当前团队聚焦创新型AR/MR应用研发，结合生成式人工智能重塑沉浸式体验。">Dedicated to exploring the frontiers of Augmented Reality (AR) and Mixed Reality (MR). Our team currently focuses on the R&amp;D of innovative AR/MR applications, integrating Generative AI to redefine immersive experiences.</p>
+				</section>
+
+				<section id="members">
+                    <h1 class="word_h1" data-lang-en="Current Members" data-lang-cn="成员">Current Members</h1>
+					
+					<h2 class="AwardType" style="margin-top: 2em;"><strong data-lang-en="Team Leader" data-lang-cn="团队负责人">Team Leader</strong></h2>
+					<br>
+					<div class="row">
+						<article class="col-12">
+							<div style="margin-bottom: 40px;">
+								<img style="width: 150px; height: 150px; object-fit: cover; float: left; margin-right: 25px;" src="images/avatars/me111.png" alt="" />
+								<div style="overflow: hidden;">
+									<h3 class="word_p" style="font-weight: 600; margin-bottom: 5px;"><span data-lang-en="Jiacheng Liu" data-lang-cn="刘佳城">Jiacheng Liu</span></h3>
+									<p class="small_word" style="margin-bottom: 5px;" data-lang-en="Team Leader | AR/MR Developer" data-lang-cn="团队负责人 | AR/MR开发">Team Leader | AR/MR Developer</p>
+									<p class="small_word" data-lang-en="Focus on AR/MR development and human-computer interaction. Leading the development of TCM AR project. Master student at Peking University, National Institute of Health Data Science." data-lang-cn="专注于AR/MR开发和人机交互。领导中医AR项目开发。北京大学健康医疗大数据国家研究院硕士研究生。">Focus on AR/MR development and human-computer interaction. Leading the development of TCM AR project. Master student at Peking University, National Institute of Health Data Science.</p>
+								</div>
+							</div>
+						</article>
+					</div>
+
+					<h2 class="AwardType" style="margin-top: 2em;"><strong data-lang-en="Team Members" data-lang-cn="团队成员">Team Members</strong></h2>
+					<br>
+                    <div class="row">
+						<article class="col-6 col-12-xsmall">
+							<div style="margin-bottom: 30px;">
+								<img style="width: 100px; height: 100px; border-radius: 50%; object-fit: contain; object-position: center top; float: left; margin-right: 20px;" src="images/Team/JunhaoXie.png" alt="" />
+								<div style="overflow: hidden;">
+									<h3 class="word_p" style="font-weight: 600; margin-bottom: 5px;"><span data-lang-en="Junhao Xie" data-lang-cn="解珺皓">Junhao Xie</span></h3>
+									<p class="small_word" style="margin-bottom: 5px;" data-lang-en="3D Gaussian Splatting and VR Integration" data-lang-cn="3D高斯点云与VR结合">3D Gaussian Splatting and VR Integration</p>
+									<p class="small_word" data-lang-en="Focuses on integrating 3D Gaussian Splatting (3DGS) technology with Virtual Reality (VR) to create immersive and realistic 3D visual experiences." data-lang-cn="专注于将3D高斯点云（3DGS）技术与虚拟现实（VR）相结合，创造沉浸式和逼真的三维视觉体验。">Focuses on integrating 3D Gaussian Splatting (3DGS) technology with Virtual Reality (VR) to create immersive and realistic 3D visual experiences.</p>
+								</div>
+							</div>
+						</article>
+						<article class="col-6 col-12-xsmall">
+							<div style="margin-bottom: 30px;">
+								<img style="width: 100px; height: 100px; border-radius: 50%; object-fit: contain; object-position: center top; float: left; margin-right: 20px;" src="images/Team/HongYu.png" alt="" />
+								<div style="overflow: hidden;">
+									<h3 class="word_p" style="font-weight: 600; margin-bottom: 5px;"><span data-lang-en="Hong Yu" data-lang-cn="于鸿">Hong Yu</span></h3>
+									<p class="small_word" style="margin-bottom: 5px;" data-lang-en="3D Label Placement in MR" data-lang-cn="混合现实中的三维标签放置">3D Label Placement in MR</p>
+									<p class="small_word" data-lang-en="Specializes in 3D label placement technology, designing and implementing spatial annotation systems for Mixed Reality environments." data-lang-cn="专注于三维标签放置技术，设计和实现混合现实环境中的空间标注系统。">Specializes in 3D label placement technology, designing and implementing spatial annotation systems for Mixed Reality environments.</p>
+								</div>
+							</div>
+						</article>
+						<article class="col-6 col-12-xsmall">
+							<div style="margin-bottom: 30px;">
+								<img style="width: 100px; height: 100px; border-radius: 50%; object-fit: contain; object-position: center top; float: left; margin-right: 20px;" src="images/Team/QianWang.png" alt="" />
+								<div style="overflow: hidden;">
+									<h3 class="word_p" style="font-weight: 600; margin-bottom: 5px;"><span data-lang-en="Qian Wang" data-lang-cn="王谦">Qian Wang</span></h3>
+									<p class="small_word" style="margin-bottom: 5px;" data-lang-en="LLM-Assisted MR Teaching Applications" data-lang-cn="LLM辅助的MR教学应用">LLM-Assisted MR Teaching Applications</p>
+									<p class="small_word" data-lang-en="Develops Mixed Reality (MR) teaching applications enhanced by Large Language Models (LLM) to provide intelligent and interactive educational experiences." data-lang-cn="开发基于大语言模型（LLM）增强的混合现实（MR）教学应用，提供智能化和交互式的教育体验。">Develops Mixed Reality (MR) teaching applications enhanced by Large Language Models (LLM) to provide intelligent and interactive educational experiences.</p>
+								</div>
+							</div>
+						</article>
+                        <article class="col-6 col-12-xsmall">
+							<div style="margin-bottom: 30px;">
+								<img style="width: 100px; height: 100px; border-radius: 50%; object-fit: contain; object-position: center top; float: left; margin-right: 20px;" src="images/Team/ChengkaiZou.png" alt="" />
+								<div style="overflow: hidden;">
+									<h3 class="word_p" style="font-weight: 600; margin-bottom: 5px;"><span data-lang-en="Chengkai Zou" data-lang-cn="邹程凯">Chengkai Zou</span></h3>
+									<p class="small_word" style="margin-bottom: 5px;" data-lang-en="Blender Modeling, Art Design and Animation" data-lang-cn="Blender软件建模、美工及动画">Blender Modeling, Art Design and Animation</p>
+									<p class="small_word" data-lang-en="Expert in 3D modeling, art design, and animation using Blender software, creating high-quality visual assets for Mixed Reality applications." data-lang-cn="擅长使用Blender软件进行三维建模、美工设计和动画制作，为混合现实应用创建高质量的视觉资源。">Expert in 3D modeling, art design, and animation using Blender software, creating high-quality visual assets for Mixed Reality applications.</p>
+								</div>
+							</div>
+						</article>
+                        <article class="col-6 col-12-xsmall">
+							<div style="margin-bottom: 30px;">
+								<img style="width: 100px; height: 100px; border-radius: 50%; object-fit: contain; object-position: center top; float: left; margin-right: 20px;" src="images/Team/XinyuDeng.png" alt="" />
+								<div style="overflow: hidden;">
+									<h3 class="word_p" style="font-weight: 600; margin-bottom: 5px;"><span data-lang-en="Xinyu Deng" data-lang-cn="邓新宇">Xinyu Deng</span></h3>
+									<p class="small_word" style="margin-bottom: 5px;" data-lang-en="Acupoint Recognition in Mixed Reality" data-lang-cn="混合现实中的穴位识别">Acupoint Recognition in Mixed Reality</p>
+									<p class="small_word" data-lang-en="Focuses on acupoint recognition technology in Mixed Reality environments, developing computer vision algorithms for accurate acupoint detection and localization." data-lang-cn="专注于混合现实环境中的穴位识别技术，开发用于精确穴位检测和定位的计算机视觉算法。">Focuses on acupoint recognition technology in Mixed Reality environments, developing computer vision algorithms for accurate acupoint detection and localization.</p>
+								</div>
+							</div>
+						</article>
+					</div>
+				</section>
+
+				<section id="projects">
+					<h1 class="word_h1" data-lang-en="Main Projects" data-lang-cn="主要项目">Main Projects</h1>
+					<div>
+						<div style="margin-bottom: 20px;">
+							<img style="height:75px;float:left;margin-right:10px;" src="images/thumbs/Acupoint_Hololens.png">
+							<p class="word_p" data-lang-en="Mixed Reality TCM Teaching System (Based on Hololens 2)" data-lang-cn="混合现实中医教学系统（基于Hololens 2）">Mixed Reality TCM Teaching System (Based on Hololens 2)</p>
+							<p class="small_word" data-lang-en="Achieves automatic detection of hand acupoints and simulated acupuncture insertion practice." data-lang-cn="实现了人体手部穴位自动识别和针灸刺入模拟练习。">Achieves automatic detection of hand acupoints and simulated acupuncture insertion practice.</p>
+						</div>
+					</div>
+					<div>
+						<div style="margin-bottom: 20px;">
+							<img style="height:75px;float:left;margin-right:10px;" src="images/thumbs/Acupoint_PICO1.png">
+							<p class="word_p" data-lang-en="Mixed Reality TCM Teaching System (Based on PICO 4 Pro)" data-lang-cn="混合现实中医教学系统（基于PICO 4 Pro）">Mixed Reality TCM Teaching System (Based on PICO 4 Pro)</p>
+							<p class="small_word" data-lang-en="Achieves acupoint detection (hands, limbs, and torso) and simulated acupoint therapy practice (acupressure, acupuncture, and moxibustion)." data-lang-cn="实现了人体穴位识别（手部、四肢和躯干）和穴位治疗模拟练习（点按、针灸和艾灸）。">Achieves acupoint detection (hands, limbs, and torso) and simulated acupoint therapy practice (acupressure, acupuncture, and moxibustion).</p>
+						</div>
+					</div>
+				</section>
+
+				<section id="achievements">
+					<h1 class="word_h1" data-lang-en="Achievements" data-lang-cn="主要成就">Achievements</h1>
+					<div>
+						<div style="margin-bottom: 20px;">
+							<p class="word_p" data-lang-en="🏆 1st Prize of The 6th China Competition on Virtual Reality (CCVR)" data-lang-cn="🏆 第六届中国虚拟现实大赛（CCVR）一等奖">🏆 1st Prize of The 6th China Competition on Virtual Reality (CCVR)</p>
+							<p class="word_p" data-lang-en="🏆 1st Prize of The 16th Chinese Collegiate Computing Competition - Virtual Reality & Augmented Reality" data-lang-cn="🏆 第十六届中国大学生计算机设计大赛-虚拟现实VR与增强现实AR组一等奖">🏆 1st Prize of The 16th Chinese Collegiate Computing Competition - Virtual Reality & Augmented Reality</p>
+							<p class="word_p" data-lang-en="🏆 1st Prize of The 18th &quot;Challenge Cup&quot; National College Student Competition" data-lang-cn="🏆 第十八届&ldquo;挑战杯&rdquo;全国大学生课外学术科技作品竞赛一等奖">🏆 1st Prize of The 18th &quot;Challenge Cup&quot; National College Student Competition</p>
+						</div>
+					</div>
+				</section>
+
+			</div>
+
+		<!-- Footer -->
+			<footer id="footer">
+				<div class="inner">
+					<ul class="icons">
+						<li><a href="#" class="icon brands fa-github"><span class="label">Github</span></a></li>
+						<li><a href="#" class="icon solid fa-envelope"><span class="label">Email</span></a></li>
+					</ul>
+					<ul class="copyright">
+						<li>&copy; AR Body Acupoint Team</li><li>Design: <a href="#">12156C</a></li>
+					</ul>
+				</div>
+			</footer>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.poptrox.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+			
+			<!-- Language Toggle functionality -->
+			<script>
+				(function() {
+					let currentLang = localStorage.getItem('lang') || 'cn'; // Default to Chinese, load from localStorage
+					const langBtnCn = document.getElementById('langBtnCn');
+					const langBtnEn = document.getElementById('langBtnEn');
+
+					function switchLanguage(lang) {
+						currentLang = lang;
+
+						document.querySelectorAll('[data-lang-en][data-lang-cn]').forEach(element => {
+							const content = lang === 'cn' 
+								? element.getAttribute('data-lang-cn') 
+								: element.getAttribute('data-lang-en');
+							
+							// Check if content contains HTML tags (like <a>)
+							if (content && content.includes('<')) {
+								element.innerHTML = content;
+							} else {
+								element.textContent = content;
+							}
+						});
+
+						// Update active button state
+						if (langBtnCn) langBtnCn.classList.remove('active');
+						if (langBtnEn) langBtnEn.classList.remove('active');
+						if (lang === 'cn' && langBtnCn) langBtnCn.classList.add('active');
+						if (lang === 'en' && langBtnEn) langBtnEn.classList.add('active');
+
+						localStorage.setItem('lang', lang); // Save preference
+					}
+
+					if (langBtnCn) {
+						langBtnCn.addEventListener('click', function() {
+							switchLanguage('cn');
+						});
+					}
+					if (langBtnEn) {
+						langBtnEn.addEventListener('click', function() {
+							switchLanguage('en');
+						});
+					}
+
+					switchLanguage(currentLang); // Initial call to set language on load
+				})();
+			</script>
+
+	</body>
+</html> 

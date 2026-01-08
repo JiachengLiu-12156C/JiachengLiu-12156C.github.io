@@ -1,0 +1,471 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Acu-Precision Team - Jiacheng Liu</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="icon" type="image/png" href="images/logos/Acu-Precision.png" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+        <style>
+			#header .image:before {
+				opacity: 0;
+			}
+			.back-button {
+				position: fixed;
+				top: 20px;
+				left: 20px;
+				z-index: 1000;
+				color: white;
+				font-size: 24px;
+				text-decoration: none;
+				transition: color 0.3s ease;
+				border-bottom: none;
+			}
+			.back-button:hover {
+				color: #49bf9d;
+				border-bottom: none;
+			}
+			
+			/* Language Toggle Buttons - Fixed at Top Right */
+			.lang-buttons-fixed {
+				position: fixed;
+				top: 1.5em;
+				right: 2em;
+				z-index: 10000;
+				display: flex;
+				gap: 0.5em;
+			}
+			
+			.lang-btn {
+				background: transparent;
+				border: none;
+				color: rgba(0, 0, 0, 0.7);
+				cursor: pointer;
+				font-size: 0.85em;
+				padding: 0.4em 0.8em;
+				transition: all 0.3s ease;
+				font-family: inherit;
+			}
+			
+			.lang-btn:hover {
+				color: #000000;
+			}
+			
+			.lang-btn.active {
+				color: #49bf9d;
+				font-weight: 600;
+			}
+			
+			/* Responsive adjustments for language buttons */
+			@media (max-width: 980px) {
+				.lang-buttons-fixed {
+					top: 1em;
+					right: 1em;
+				}
+			}
+			
+			/* Header optimization for better space usage - Desktop only */
+			@media screen and (min-width: 981px) {
+				#header {
+					overflow: hidden !important;
+					display: flex !important;
+					flex-direction: column !important;
+					justify-content: flex-start !important;
+				}
+				
+				#header > .inner {
+					min-height: 0;
+					flex: 1 1 auto;
+					display: flex;
+					flex-direction: column;
+					overflow: hidden;
+				}
+				
+				/* Keep avatar right-aligned as original design */
+				#header .image {
+					align-self: flex-end !important;
+					margin-left: auto !important;
+					margin-right: 0 !important;
+					margin-bottom: 0 !important;
+					width: auto !important;
+					max-width: 26em !important;
+				}
+				
+				#header .image img {
+					width: 26em !important;
+					height: auto !important;
+					max-width: 100% !important;
+				}
+				
+				/* Keep header content right-aligned as original design */
+				#header > .inner > h1 {
+					text-align: right !important;
+					margin-top: 0 !important;
+				}
+			}
+			
+			/* Mobile/Tablet responsive styles - Compact vertical layout */
+			@media screen and (max-width: 980px) {
+				#header {
+					display: block !important;
+					position: relative !important;
+					width: 100% !important;
+					height: auto !important;
+					text-align: center !important;
+					overflow: visible !important;
+					padding: 2em 1.5em 1.5em 1.5em !important;
+				}
+				
+				#header > .inner {
+					display: block !important;
+					flex: none !important;
+					overflow: visible !important;
+				}
+				
+				#header .image {
+					margin: 0 auto 0.8em auto !important;
+					width: auto !important;
+					max-width: 18em !important;
+					align-self: center !important;
+				}
+				
+				#header .image img {
+					width: 18em !important;
+					height: auto !important;
+					max-width: 100% !important;
+				}
+				
+				#header > .inner > h1 {
+					font-size: 1.2em !important;
+					line-height: 1.3em !important;
+					margin-top: 0 !important;
+					text-align: center !important;
+				}
+			}
+			
+			/* Smaller mobile devices */
+			@media screen and (max-width: 480px) {
+				#header {
+					padding: 1.5em 1em 1em 1em !important;
+				}
+				
+				#header .image {
+					width: auto !important;
+					max-width: 16em !important;
+					margin: 0 auto 0.7em auto !important;
+				}
+				
+				#header .image img {
+					width: 16em !important;
+					height: auto !important;
+					max-width: 100% !important;
+				}
+				
+				#header > .inner > h1 {
+					font-size: 1.1em !important;
+					margin-top: 0 !important;
+				}
+			}
+			
+			/* Medium screen optimization (3:4 ratio, tablets portrait) */
+			@media screen and (min-width: 981px) and (max-width: 1280px) {
+				#header {
+					padding: 2.5em 2.5em 1.5em 2.5em !important;
+				}
+				
+				#header .image {
+					width: auto !important;
+					max-width: 22em !important;
+					margin: 0 0 0.7em 0 !important;
+					margin-left: auto !important;
+				}
+				
+				#header .image img {
+					width: 22em !important;
+					height: auto !important;
+					max-width: 100% !important;
+				}
+				
+				#header h1 {
+					font-size: 1em !important;
+					line-height: 1.25em !important;
+					margin-top: 0 !important;
+				}
+			}
+			
+			/* Responsive layout for team members - mobile */
+			@media screen and (max-width: 736px) {
+				/* Stack image and text vertically on small screens */
+				div[style*="display: flex"][style*="align-items: flex-start"] {
+					flex-direction: column !important;
+					align-items: center !important;
+				}
+				
+				div[style*="display: flex"][style*="align-items: flex-start"] img {
+					margin-bottom: 15px !important;
+				}
+			}
+		</style>
+	</head>
+	<body class="is-preload">
+		<a href="index.html" class="back-button">
+			<i class="fas fa-arrow-left"></i>
+		</a>
+
+		<!-- Language Toggle Buttons - Top Right -->
+		<div class="lang-buttons-fixed">
+			<button id="langBtnCn" class="lang-btn active">中文</button>
+			<button id="langBtnEn" class="lang-btn">English</button>
+		</div>
+
+		<!-- Header -->
+			<header id="header">
+				<div class="inner">
+					<a href="index.html" class="image"><img style="width: 480px; height: auto; object-fit: contain;" src="images/logos/Acu-Precision.png" alt="" /></a>
+				</div>
+			</header>
+
+		<!-- Main -->
+			<div id="main">
+				<section id="one">
+					<header class="major">
+						<h1 class="word_h1" data-lang-en="&quot;Acu-Precision&quot; Startup Team" data-lang-cn="一针见&ldquo;穴&rdquo; 创业团队">&quot;Acu-Precision&quot; Startup Team</h1>
+					</header>
+					<p class="word_p" data-lang-en="We are committed to leveraging cutting-edge Mixed Reality (MR) technology to break through the bottlenecks in Traditional Chinese Medicine (TCM) inheritance, creating a new paradigm of digitalized and quantified medical education, enabling millennia-old medicine to shine again with the empowerment of modern technology." data-lang-cn="我们致力于利用前沿混合现实（MR）技术突破中医传承的瓶颈，打造数字化、定量化的医教新范式，让千年医学在现代科技的赋能下重焕光彩。">We are committed to leveraging cutting-edge Mixed Reality (MR) technology to break through the bottlenecks in Traditional Chinese Medicine (TCM) inheritance, creating a new paradigm of digitalized and quantified medical education, enabling millennia-old medicine to shine again with the empowerment of modern technology.</p>
+				</section>
+
+				<section id="members">
+                    <h1 class="word_h1" data-lang-en="Team Members" data-lang-cn="团队成员">Team Members</h1>
+					
+					<div class="row" style="margin-top: 2em;">
+						<div class="col-6 col-12-xsmall">
+							<h2 class="AwardType"><strong data-lang-en="Founder" data-lang-cn="创始人">Founder</strong></h2>
+							<br>
+							<article>
+								<div style="margin-bottom: 40px; display: flex; align-items: flex-start; gap: 25px;">
+									<img style="width: 160px; height: 160px; object-fit: cover; border-radius: 4px; flex-shrink: 0; background-color: #f0f0f0;" src="images/avatars/me111.png" alt="" />
+									<div style="flex: 1; min-width: 0;">
+										<h3 class="word_p" style="font-weight: 600; margin-bottom: 4px;"><span data-lang-en="Jiacheng Liu" data-lang-cn="刘佳城">Jiacheng Liu</span></h3>
+										<p class="small_word" style="margin-bottom: 4px;" data-lang-en="Founder | AR/MR Developer" data-lang-cn="创始人 | AR/MR开发">Founder | AR/MR Developer</p>
+										<p class="small_word" style="margin-bottom: 6px; font-style: italic; color: #666; font-size: 0.95em;" data-lang-en="Master student at Peking University" data-lang-cn="北京大学硕士研究生">Master student at Peking University</p>
+										<p class="small_word" style="line-height: 1.4em; margin: 0;" data-lang-en="Focus on AR/MR and HCI. Leading the development of TCM MR project." data-lang-cn="专注于AR/MR和人机交互。领导中医MR项目开发。">Focus on AR/MR and HCI. Leading the development of TCM MR project.</p>
+									</div>
+								</div>
+							</article>
+						</div>
+						<div class="col-6 col-12-xsmall">
+							<h2 class="AwardType"><strong data-lang-en="Co-Founder" data-lang-cn="联合创始人">Co-Founder</strong></h2>
+							<br>
+							<article>
+								<div style="margin-bottom: 40px; display: flex; align-items: flex-start; gap: 25px;">
+									<img style="width: 160px; height: 160px; object-fit: cover; border-radius: 4px; flex-shrink: 0; background-color: #f0f0f0;" src="images/Team/BingyaoHuang.png" alt="" />
+									<div style="flex: 1; min-width: 0;">
+										<h3 class="word_p" style="font-weight: 600; margin-bottom: 4px;"><span data-lang-en="Bingyao Huang" data-lang-cn="黄兵姚">Bingyao Huang</span></h3>
+										<p class="small_word" style="margin-bottom: 4px;" data-lang-en="Co-Founder & Chief Expert" data-lang-cn="联合创始人/首席专家">Co-Founder & Chief Expert</p>
+										<p class="small_word" style="margin-bottom: 6px; font-style: italic; color: #666; font-size: 0.95em;" data-lang-en="Professor at Southwest University" data-lang-cn="西南大学教授">Professor at Southwest University</p>
+										<p class="small_word" style="line-height: 1.4em; margin: 0;" data-lang-en="Focuses on computer vision and augmented reality. Providing expert guidance on technology and academic research." data-lang-cn="专注于计算机视觉与增强现实。为技术和学术研究提供专家指导。">Focuses on computer vision and augmented reality. Providing expert guidance on technology and academic research.</p>
+									</div>
+								</div>
+							</article>
+						</div>
+					</div>
+
+					<h2 class="AwardType" style="margin-top: 2em;"><strong data-lang-en="Technical Team" data-lang-cn="技术团队">Technical Team</strong></h2>
+					<br>
+                    <div class="row">
+						<article class="col-6 col-12-xsmall">
+							<div style="margin-bottom: 30px; display: flex; align-items: flex-start; gap: 20px;">
+								<img style="width: 120px; height: 120px; object-fit: contain; padding: 4px; flex-shrink: 0;" src="images/Team/QianWang.png" alt="" />
+								<div style="flex: 1; min-width: 0;">
+									<h3 class="word_p" style="font-weight: 600; margin-bottom: 5px;"><span data-lang-en="Qian Wang" data-lang-cn="王谦">Qian Wang</span></h3>
+									<p class="small_word" style="margin-bottom: 5px;" data-lang-en="Technical Team Member | Development" data-lang-cn="技术团队成员 | 开发">Technical Team Member | Development</p>
+									<p class="small_word" style="line-height: 1.5em;" data-lang-en="Expert in Unity full-stack development, covering 3D modeling, UI systems, and core scripting architecture." data-lang-cn="精通 Unity 全栈开发，涵盖 3D 建模、UI 系统及核心脚本架构。">Expert in Unity full-stack development, covering 3D modeling, UI systems, and core scripting architecture.</p>
+								</div>
+							</div>
+						</article>
+						<article class="col-6 col-12-xsmall">
+							<div style="margin-bottom: 30px; display: flex; align-items: flex-start; gap: 20px;">
+								<img style="width: 120px; height: 120px; object-fit: contain; padding: 4px; flex-shrink: 0;" src="images/Team/YunlouGu.png" alt="" />
+								<div style="flex: 1; min-width: 0;">
+									<h3 class="word_p" style="font-weight: 600; margin-bottom: 5px;"><span data-lang-en="Yunlou Gu" data-lang-cn="谷云楼">Yunlou Gu</span></h3>
+									<p class="small_word" style="margin-bottom: 5px;" data-lang-en="Technical Team Member | Algorithm" data-lang-cn="技术团队成员 | 算法">Technical Team Member | Algorithm</p>
+									<p class="small_word" style="line-height: 1.5em;" data-lang-en="Responsible for algorithm design and optimization." data-lang-cn="负责算法设计与优化。">Responsible for algorithm design and optimization.</p>
+								</div>
+							</div>
+						</article>
+					</div>
+
+					<h2 class="AwardType" style="margin-top: 2em;"><strong data-lang-en="Product Manager" data-lang-cn="产品经理">Product Manager</strong></h2>
+					<br>
+					<div class="row">
+						<article class="col-6 col-12-xsmall">
+							<div style="margin-bottom: 40px; display: flex; align-items: flex-start; gap: 20px;">
+								<img style="width: 120px; height: 120px; object-fit: contain; padding: 4px; flex-shrink: 0;" src="images/Team/JunhaoXie.png" alt="" />
+								<div style="flex: 1; min-width: 0;">
+									<h3 class="word_p" style="font-weight: 600; margin-bottom: 5px;"><span data-lang-en="Junhao Xie" data-lang-cn="解珺皓">Junhao Xie</span></h3>
+									<p class="small_word" style="margin-bottom: 5px;" data-lang-en="Product Manager" data-lang-cn="产品经理">Product Manager</p>
+									<p class="small_word" style="line-height: 1.5em;" data-lang-en="Focuses on MR application exploration. Possesses user insight and understanding of spatial interaction paradigms." data-lang-cn="专注于MR应用探索，具备用户洞察力与空间交互范式理解。">Focuses on MR application exploration. Possesses user insight and understanding of spatial interaction paradigms.</p>
+								</div>
+							</div>
+						</article>
+					</div>
+
+					<h2 class="AwardType" style="margin-top: 2em;"><strong data-lang-en="Medical Advisors" data-lang-cn="医学顾问">Medical Advisors</strong></h2>
+					<br>
+                    <div class="row">
+						<article class="col-6 col-12-xsmall">
+							<div style="margin-bottom: 30px; display: flex; align-items: flex-start; gap: 20px;">
+								<img style="width: 120px; height: 120px; object-fit: contain; padding: 4px; flex-shrink: 0;" src="images/Team/FangfeiYe.png" alt="" />
+								<div style="flex: 1; min-width: 0;">
+									<h3 class="word_p" style="font-weight: 600; margin-bottom: 5px;"><span data-lang-en="Fangfei Ye" data-lang-cn="叶芳菲">Fangfei Ye</span></h3>
+									<p class="small_word" style="margin-bottom: 5px;" data-lang-en="Medical Advisor | Traditional Chinese Medicine" data-lang-cn="医学顾问 | 中医学">Medical Advisor | Traditional Chinese Medicine</p>
+									<p class="small_word" style="margin-bottom: 6px; font-style: italic; color: #666; font-size: 0.95em;" data-lang-en="Beijing University of Chinese Medicine" data-lang-cn="北京中医药大学">Beijing University of Chinese Medicine</p>
+									<p class="small_word" style="line-height: 1.5em;" data-lang-en="Expert in multiple acupuncture school theories and practices. Proficient in auricular acupuncture, abdominal acupuncture, and five-element acupuncture procedures." data-lang-cn="精通多种针灸流派理论与实操，掌握耳穴、腹针及五行针灸全流程。">Expert in multiple acupuncture school theories and practices. Proficient in auricular acupuncture, abdominal acupuncture, and five-element acupuncture procedures.</p>
+								</div>
+							</div>
+						</article>
+						<article class="col-6 col-12-xsmall">
+							<div style="margin-bottom: 30px; display: flex; align-items: flex-start; gap: 20px;">
+								<img style="width: 120px; height: 120px; object-fit: contain; padding: 4px; flex-shrink: 0;" src="images/Team/ZitaoLiang.png" alt="" />
+								<div style="flex: 1; min-width: 0;">
+									<h3 class="word_p" style="font-weight: 600; margin-bottom: 5px;"><span data-lang-en="Zitao Liang" data-lang-cn="梁子涛">Zitao Liang</span></h3>
+									<p class="small_word" style="margin-bottom: 5px;" data-lang-en="Medical Advisor | Medical Imaging Technology" data-lang-cn="医学顾问 | 医学影像技术">Medical Advisor | Medical Imaging Technology</p>
+									<p class="small_word" style="margin-bottom: 6px; font-style: italic; color: #666; font-size: 0.95em;" data-lang-en="Peking University Health Science Center" data-lang-cn="北京大学医学部">Peking University Health Science Center</p>
+									<p class="small_word" style="line-height: 1.5em;" data-lang-en="Expert in full-chain medical imaging algorithms. Committed to empowering digital TCM diagnosis and treatment with standardized Western medicine paradigms." data-lang-cn="精通医学影像全链路算法。致力以西医标准化范式，赋能中医数字化诊疗。">Expert in full-chain medical imaging algorithms. Committed to empowering digital TCM diagnosis and treatment with standardized Western medicine paradigms.</p>
+								</div>
+							</div>
+						</article>
+					</div>
+
+					<h2 class="AwardType" style="margin-top: 2em;"><strong data-lang-en="Finance & Legal" data-lang-cn="财务与法务">Finance & Legal</strong></h2>
+					<br>
+                    <div class="row">
+						<article class="col-6 col-12-xsmall">
+							<div style="margin-bottom: 30px; display: flex; align-items: flex-start; gap: 20px;">
+								<img style="width: 120px; height: 120px; object-fit: contain; padding: 4px; flex-shrink: 0;" src="images/Team/JiajieHuang.png" alt="" />
+								<div style="flex: 1; min-width: 0;">
+									<h3 class="word_p" style="font-weight: 600; margin-bottom: 5px;"><span data-lang-en="Jiajie Huang" data-lang-cn="黄佳洁">Jiajie Huang</span></h3>
+									<p class="small_word" style="margin-bottom: 5px;" data-lang-en="Finance" data-lang-cn="财务">Finance</p>
+									<p class="small_word" style="margin-bottom: 6px; font-style: italic; color: #666; font-size: 0.95em;" data-lang-en="Central University of Finance and Economics" data-lang-cn="中央财经大学">Central University of Finance and Economics</p>
+									<p class="small_word" style="line-height: 1.5em;" data-lang-en="Expert in quantitative economic modeling and industry research. Responsible for developing business models, competitive analysis, and business plans." data-lang-cn="擅长量化经济建模与行业研究，负责制定公司营业模式、竞品分析及商业计划。">Expert in quantitative economic modeling and industry research. Responsible for developing business models, competitive analysis, and business plans.</p>
+								</div>
+							</div>
+						</article>
+						<article class="col-6 col-12-xsmall">
+							<div style="margin-bottom: 30px; display: flex; align-items: flex-start; gap: 20px;">
+								<img style="width: 120px; height: 120px; object-fit: contain; padding: 4px; flex-shrink: 0;" src="images/Team/XiyueWang.png" alt="" />
+								<div style="flex: 1; min-width: 0;">
+									<h3 class="word_p" style="font-weight: 600; margin-bottom: 5px;"><span data-lang-en="Xiyue Wang" data-lang-cn="王西月">Xiyue Wang</span></h3>
+									<p class="small_word" style="margin-bottom: 5px;" data-lang-en="Legal Affairs" data-lang-cn="法务">Legal Affairs</p>
+									<p class="small_word" style="line-height: 1.5em;" data-lang-en="Expert in investment and financing legal affairs and intellectual property protection. Skilled in risk prevention and handling complex commercial legal issues." data-lang-cn="精通投融资法务与知识产权保护，擅长防范经营风险，能够处理复杂商业法律问题。">Expert in investment and financing legal affairs and intellectual property protection. Skilled in risk prevention and handling complex commercial legal issues.</p>
+								</div>
+							</div>
+						</article>
+					</div>
+				</section>
+
+				<section id="projects">
+					<h1 class="word_h1" data-lang-en="Main Product" data-lang-cn="主要产品">Main Product</h1>
+					<div>
+						<div style="margin-bottom: 40px; display: flex; align-items: flex-start; gap: 25px;">
+							<img style="width: 150px; height: 150px; object-fit: contain; padding: 5px; flex-shrink: 0; border: 1px solid #ddd; border-radius: 4px;" src="images/logos/HandAcupointSoftware.png" alt="" />
+							<div style="flex: 1; min-width: 0; max-width: 100%; overflow-wrap: break-word; word-wrap: break-word;">
+								<h3 class="word_p" style="font-weight: 600; margin-bottom: 2px; word-wrap: break-word;"><span data-lang-en="ACU-SCAN" data-lang-cn="ACU-SCAN">ACU-SCAN</span></h3>
+								<p class="small_word" style="margin-bottom: 4px; font-weight: 500; color: #333; font-size: 0.95em; word-wrap: break-word; overflow-wrap: break-word;" data-lang-en="Launch Date: 2026" data-lang-cn="上线时间：2026">上线时间：2026</p>
+								<p class="small_word" style="line-height: 1.3em; margin: 0 0 4px 0; word-wrap: break-word; overflow-wrap: break-word;" data-lang-en="This software enables users to see the acupoint and meridian distribution on their own hands. AI algorithms ensure that the acupoint positions match the user's hand. Users can click on acupoints to learn related knowledge and perform self-care." data-lang-cn="此软件可以使用户看到自己手部的穴位、经络分布，AI算法保证了穴位的位置和本人手部的匹配。用户可以点击穴位来学习相关知识，进行自我保健。">此软件可以使用户看到自己手部的穴位、经络分布，AI算法保证了穴位的位置和本人手部的匹配。用户可以点击穴位来学习相关知识，进行自我保健。</p>
+								<p class="small_word" style="margin: 0; font-style: italic; color: #666; font-size: 0.9em; word-wrap: break-word; overflow-wrap: break-word;" data-lang-en="Platform: PICO App Store" data-lang-cn="上线平台：PICO 应用商店">上线平台：PICO 应用商店</p>
+							</div>
+						</div>
+						<div style="margin-bottom: 40px; margin-top: 30px;">
+							<h2 class="word_p" style="font-size: 1.5em; font-weight: 600; margin-bottom: 8px; color: #333; word-wrap: break-word; font-style: italic; transform: skewX(-15deg); display: inline-block;">
+								<span data-lang-en="Next Product Coming Soon..." data-lang-cn="下一款软件即将到来...">下一款软件即将到来...</span>
+							</h2>
+							<p class="small_word" style="line-height: 1.5em; margin: 0; color: #666; font-size: 1em; word-wrap: break-word; overflow-wrap: break-word;" data-lang-en="About Mixed Reality TCM Acupoint Therapy Teaching" data-lang-cn="关于混合现实中医穴位治疗教学">关于混合现实中医穴位治疗教学</p>
+						</div>
+					</div>
+				</section>
+
+				<section id="achievements">
+					<h1 class="word_h1" data-lang-en="Achievements" data-lang-cn="主要成就">Achievements</h1>
+					<div>
+						<div style="margin-bottom: 20px;">
+							<p class="word_p" data-lang-en="🏆 1st Prize of The 6th China Competition on Virtual Reality (CCVR)" data-lang-cn="🏆 第六届中国虚拟现实大赛（CCVR）一等奖">🏆 1st Prize of The 6th China Competition on Virtual Reality (CCVR)</p>
+							<p class="word_p" data-lang-en="🏆 1st Prize of The 16th Chinese Collegiate Computing Competition - Virtual Reality & Augmented Reality" data-lang-cn="🏆 第十六届中国大学生计算机设计大赛-虚拟现实VR与增强现实AR组一等奖">🏆 1st Prize of The 16th Chinese Collegiate Computing Competition - Virtual Reality & Augmented Reality</p>
+							<p class="word_p" data-lang-en="🏆 1st Prize of The 18th &quot;Challenge Cup&quot; National College Student Competition" data-lang-cn="🏆 第十八届&ldquo;挑战杯&rdquo;全国大学生课外学术科技作品竞赛一等奖">🏆 1st Prize of The 18th &quot;Challenge Cup&quot; National College Student Competition</p>
+							<p class="word_p" data-lang-en="📄 Paper accepted at IEEE ISMAR-Adjunct 2025" data-lang-cn="📄 论文被IEEE ISMAR-Adjunct 2025接收">📄 Paper accepted at IEEE ISMAR-Adjunct 2025</p>
+						</div>
+					</div>
+				</section>
+
+			</div>
+
+		<!-- Footer -->
+			<footer id="footer">
+				<div class="inner">
+					<ul class="icons">
+						<li><a href="#" class="icon brands fa-github"><span class="label">Github</span></a></li>
+						<li><a href="#" class="icon solid fa-envelope"><span class="label">Email</span></a></li>
+					</ul>
+					<ul class="copyright">
+						<li>&copy; Acu-Precision Startup Team</li><li>Design: <a href="#">12156C</a></li>
+					</ul>
+				</div>
+			</footer>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.poptrox.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+			
+			<!-- Language Toggle functionality -->
+			<script>
+				(function() {
+					let currentLang = localStorage.getItem('lang') || 'cn'; // Default to Chinese, load from localStorage
+					const langBtnCn = document.getElementById('langBtnCn');
+					const langBtnEn = document.getElementById('langBtnEn');
+
+					function switchLanguage(lang) {
+						currentLang = lang;
+
+						document.querySelectorAll('[data-lang-en][data-lang-cn]').forEach(element => {
+							const content = lang === 'cn' 
+								? element.getAttribute('data-lang-cn') 
+								: element.getAttribute('data-lang-en');
+							
+							// Check if content contains HTML tags (like <a>)
+							if (content && content.includes('<')) {
+								element.innerHTML = content;
+							} else {
+								element.textContent = content;
+							}
+						});
+
+						// Update active button state
+						if (langBtnCn) langBtnCn.classList.remove('active');
+						if (langBtnEn) langBtnEn.classList.remove('active');
+						if (lang === 'cn' && langBtnCn) langBtnCn.classList.add('active');
+						if (lang === 'en' && langBtnEn) langBtnEn.classList.add('active');
+
+						localStorage.setItem('lang', lang); // Save preference
+					}
+
+					if (langBtnCn) {
+						langBtnCn.addEventListener('click', function() {
+							switchLanguage('cn');
+						});
+					}
+					if (langBtnEn) {
+						langBtnEn.addEventListener('click', function() {
+							switchLanguage('en');
+						});
+					}
+
+					switchLanguage(currentLang); // Initial call to set language on load
+				})();
+			</script>
+
+	</body>
+</html>

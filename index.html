@@ -1,0 +1,2028 @@
+<!DOCTYPE HTML>
+<!--
+	Strata by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Jiacheng Liu's Homepage</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="icon" type="image/png" href="images/logos/ico.png" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<style>
+			/* Header optimization for better space usage - Desktop only */
+			@media screen and (min-width: 981px) {
+				#header {
+					overflow: hidden !important;
+					display: flex !important;
+					flex-direction: column !important;
+					justify-content: flex-start !important;
+				}
+				
+				#header > .inner {
+					min-height: 0;
+					flex: 1 1 auto;
+					display: flex;
+					flex-direction: column;
+					overflow: hidden;
+				}
+				
+				/* Keep avatar right-aligned as original design */
+				#header .image.avatar {
+					align-self: flex-end !important;
+					margin-left: auto !important;
+					margin-right: 0 !important;
+				}
+				
+				/* Keep header content right-aligned as original design */
+				#header > .inner > h1,
+				#header > .inner > p {
+					text-align: right !important;
+				}
+			}
+			
+			/* Mobile/Tablet responsive styles - Compact vertical layout */
+			@media screen and (max-width: 980px) {
+				#header {
+					display: block !important;
+					position: relative !important;
+					width: 100% !important;
+					height: auto !important;
+					text-align: center !important;
+					overflow: visible !important;
+					padding: 2em 1.5em 1.5em 1.5em !important;
+				}
+				
+				#header > .inner {
+					display: block !important;
+					flex: none !important;
+					overflow: visible !important;
+				}
+				
+				#header .image.avatar {
+					margin: 0 auto 0.6em auto !important;
+					width: 4.5em !important;
+					align-self: center !important;
+				}
+				
+				#header > .inner > h1 {
+					font-size: 1.2em !important;
+					line-height: 1.3em !important;
+					margin-top: 0.3em !important;
+					text-align: center !important;
+				}
+				
+				#header > .inner > p {
+					font-size: 0.75em !important;
+					line-height: 1.2em !important;
+					margin-top: 0.2em !important;
+					text-align: center !important;
+					margin-bottom: 0.8em !important;
+				}
+				
+				/* Compact navigation menu */
+				#nav {
+					margin-top: 0.8em !important;
+				}
+				
+				.nav-menu {
+					display: grid !important;
+					grid-template-columns: repeat(5, 1fr) !important;
+					gap: 0.4em !important;
+					padding: 0 !important;
+				}
+				
+				.nav-menu li {
+					margin: 0 !important;
+				}
+				
+				.nav-menu a {
+					padding: 0.5em 0.6em !important;
+					font-size: 0.75em !important;
+					justify-content: center !important;
+					text-align: center !important;
+					flex-direction: column !important;
+					gap: 0.3em !important;
+				}
+				
+				.nav-text {
+					margin-right: 0 !important;
+					text-align: center !important;
+					font-size: 0.75em !important;
+				}
+				
+				.nav-icon {
+					margin-left: 0 !important;
+					font-size: 1em !important;
+					width: auto !important;
+				}
+			}
+			
+			/* Smaller mobile devices */
+			@media screen and (max-width: 480px) {
+				#header {
+					padding: 1.5em 1em 1em 1em !important;
+				}
+				
+				#header .image.avatar {
+					width: 4em !important;
+					margin: 0 auto 0.5em auto !important;
+				}
+				
+				#header > .inner > h1 {
+					font-size: 1.1em !important;
+					margin-top: 0.2em !important;
+				}
+				
+				#header > .inner > p {
+					font-size: 0.7em !important;
+					margin-top: 0.15em !important;
+					margin-bottom: 0.6em !important;
+				}
+				
+				.nav-menu {
+					grid-template-columns: repeat(5, 1fr) !important;
+					gap: 0.3em !important;
+				}
+				
+				.nav-menu a {
+					padding: 0.4em 0.5em !important;
+					font-size: 0.7em !important;
+				}
+				
+				.nav-text {
+					font-size: 0.7em !important;
+				}
+				
+				.nav-icon {
+					font-size: 0.9em !important;
+				}
+			}
+			
+			/* Ensure nav takes remaining space - Desktop only */
+			@media screen and (min-width: 981px) {
+				#nav {
+					flex: 1 1 auto;
+					overflow: hidden;
+					display: flex;
+					flex-direction: column;
+				}
+				
+				.nav-menu {
+					flex: 1 1 auto;
+					overflow: hidden;
+				}
+			}
+			
+			/* Navigation Styles */
+			#nav {
+				margin-top: 0.8em;
+				width: 100%;
+			}
+			
+			@media screen and (min-width: 981px) {
+				#nav {
+					flex-shrink: 0;
+				}
+			}
+			
+			.nav-menu {
+				list-style: none;
+				padding: 0;
+				margin: 0;
+			}
+			
+			.nav-menu li {
+				margin: 0.08em 0;
+				position: relative;
+			}
+			
+			.nav-menu a {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				color: rgba(255, 255, 255, 0.6);
+				text-decoration: none;
+				padding: 0.2em 0.5em;
+				border-radius: 6px;
+				border-bottom: none !important;
+				transition: all 0.3s ease;
+				position: relative;
+				font-size: 0.65em;
+				letter-spacing: 0.2px;
+				margin-bottom: 0.03em;
+			}
+			
+			.nav-text {
+				flex: 1;
+				margin-right: 0.8em;
+				color: inherit;
+				transition: color 0.3s ease;
+				text-align: right;
+			}
+			
+			.nav-icon {
+				margin-left: auto;
+				font-size: 0.8em;
+				width: 1.1em;
+				text-align: center;
+				opacity: 0.6;
+				transition: all 0.3s ease;
+				color: inherit;
+				flex-shrink: 0;
+			}
+			
+			/* Large screen optimization */
+			@media (min-width: 1800px) {
+				#header {
+					padding: 3em 3em 2em 3em !important;
+				}
+				#header .image.avatar {
+					width: 6em !important;
+					margin: 0 0 0.5em 0 !important;
+					margin-left: auto !important;
+				}
+				#header h1 {
+					font-size: 1.15em !important;
+					line-height: 1.3em !important;
+					margin-top: 0.3em !important;
+				}
+				#header > .inner > p {
+					margin-top: 0.1em !important;
+					font-size: 0.7em !important;
+				}
+				#nav {
+					margin-top: 0.6em !important;
+				}
+				.nav-menu li {
+					margin: 0.06em 0 !important;
+				}
+				.nav-menu a {
+					padding: 0.18em 0.45em !important;
+					font-size: 0.6em !important;
+				}
+			}
+			
+			/* Medium screen optimization (3:4 ratio, tablets portrait) */
+			@media screen and (min-width: 981px) and (max-width: 1280px) {
+				#header {
+					padding: 2.5em 2.5em 1.5em 2.5em !important;
+				}
+				
+				#header .image.avatar {
+					width: 5.5em !important;
+					margin: 0 0 0.4em 0 !important;
+					margin-left: auto !important;
+				}
+				
+				#header h1 {
+					font-size: 1em !important;
+					line-height: 1.25em !important;
+					margin-top: 0.25em !important;
+				}
+				
+				#header > .inner > p {
+					font-size: 0.65em !important;
+					line-height: 1.15em !important;
+					margin-top: 0.08em !important;
+					max-height: 2.3em !important;
+					overflow: hidden !important;
+					display: -webkit-box !important;
+					-webkit-line-clamp: 2 !important;
+					line-clamp: 2 !important;
+					-webkit-box-orient: vertical !important;
+				}
+			}
+			
+			/* Responsive design for navigation */
+			@media (max-width: 1200px) {
+				.nav-menu a {
+					font-size: 0.65em;
+					padding: 0.25em 0.5em;
+				}
+				.nav-icon {
+					font-size: 0.8em;
+				}
+				.nav-text {
+					margin-right: 0.6em;
+				}
+			}
+			
+			@media (max-width: 768px) {
+				#nav {
+					margin-top: 1em;
+				}
+				.nav-menu li {
+					margin: 0.1em 0;
+				}
+				.nav-menu a {
+					font-size: 0.6em;
+					padding: 0.2em 0.5em;
+				}
+				.nav-icon {
+					font-size: 0.75em;
+				}
+				.nav-text {
+					margin-right: 0.5em;
+				}
+			}
+			
+			@media (max-width: 480px) {
+				#nav {
+					margin-top: 0.8em;
+				}
+				.nav-menu li {
+					margin: 0.08em 0;
+				}
+				.nav-menu a {
+					font-size: 0.55em;
+					padding: 0.2em 0.4em;
+				}
+				.nav-icon {
+					font-size: 0.7em;
+				}
+				.nav-text {
+					margin-right: 0.4em;
+				}
+			}
+			
+			.nav-menu a:hover {
+				color: #ffffff;
+				background-color: rgba(255, 255, 255, 0.1);
+			}
+			
+			.nav-menu a:hover .nav-text {
+				color: #ffffff;
+			}
+			
+			.nav-menu a:hover .nav-icon {
+				opacity: 1;
+				color: #ffffff;
+			}
+			
+			.nav-menu a:not(:hover):not(.active) .nav-text {
+				color: rgba(255, 255, 255, 0.6);
+			}
+			
+			.nav-menu a:not(:hover):not(.active) .nav-icon {
+				color: rgba(255, 255, 255, 0.6);
+			}
+			
+			.nav-menu a:active,
+			.nav-menu a:focus {
+				color: #ffffff;
+				outline: none;
+			}
+			
+			.nav-menu a:active .nav-text,
+			.nav-menu a:focus .nav-text {
+				color: #ffffff;
+			}
+			
+			/* Smooth scrolling */
+			html {
+				scroll-behavior: smooth;
+			}
+			
+			/* Active navigation item highlight */
+			.nav-menu a.active {
+				color: #ffffff;
+				background-color: rgba(255, 255, 255, 0.15);
+				font-weight: 600;
+			}
+			
+			.nav-menu a.active .nav-icon {
+				color: #49bf9d;
+				opacity: 1;
+			}
+			
+			/* Add subtle animation on load */
+			.nav-menu li {
+				opacity: 0;
+				animation: fadeInUp 0.5s ease forwards;
+			}
+			
+			.nav-menu li:nth-child(1) { animation-delay: 0.1s; }
+			.nav-menu li:nth-child(2) { animation-delay: 0.15s; }
+			.nav-menu li:nth-child(3) { animation-delay: 0.2s; }
+			.nav-menu li:nth-child(4) { animation-delay: 0.25s; }
+			.nav-menu li:nth-child(5) { animation-delay: 0.3s; }
+			.nav-menu li:nth-child(6) { animation-delay: 0.35s; }
+			.nav-menu li:nth-child(7) { animation-delay: 0.4s; }
+			.nav-menu li:nth-child(8) { animation-delay: 0.45s; }
+			.nav-menu li:nth-child(9) { animation-delay: 0.5s; }
+			.nav-menu li:nth-child(10) { animation-delay: 0.55s; }
+			
+			@keyframes fadeInUp {
+				from {
+					opacity: 0;
+					transform: translateY(10px);
+				}
+				to {
+					opacity: 1;
+					transform: translateY(0);
+				}
+			}
+			
+			/* Memory section - ensure horizontal and vertical photos align properly */
+			#memory .row {
+				display: block !important;
+				column-count: 3;
+				column-gap: 2em;
+				margin-top: 0 !important;
+				margin-left: 0 !important;
+			}
+			
+			#memory .row > * {
+				padding: 0 !important;
+				width: 100% !important;
+				max-width: 100% !important;
+				box-sizing: border-box;
+				break-inside: avoid;
+				margin-bottom: 10em;
+				display: inline-block;
+			}
+			
+			#memory .row > article {
+				width: 100% !important;
+			}
+			
+			/* Override col-12-xsmall for memory section */
+			#memory .row > .col-12-xsmall {
+				width: 100% !important;
+			}
+			
+			@media screen and (max-width: 980px) {
+				#memory .row {
+					column-count: 2 !important;
+				}
+			}
+			
+			@media screen and (max-width: 736px) {
+				#memory .row {
+					column-count: 1 !important;
+				}
+			}
+			
+			#memory h2.word_h1 {
+				margin-bottom: 1.5em !important;
+			}
+			
+			#memory .work-item {
+				display: flex;
+				flex-direction: column;
+				margin: 0 0 2em 0 !important;
+			}
+			
+			#memory .work-item .image {
+				width: 100%;
+				height: auto;
+				margin: 0 0 0.8em 0;
+			}
+			
+			#memory .work-item .image img {
+				width: 100%;
+				height: auto;
+				object-fit: cover;
+			}
+			
+			#memory .work-item h3 {
+				margin: 0 0 0.4em 0;
+			}
+			
+			#memory .work-item p {
+				margin: 0;
+			}
+			
+			/* Publication title styling - ensure strong tags in links are black */
+			.word_p a strong {
+				color: black !important;
+				font-weight: 600;
+			}
+			
+			/* Conference abbreviation styling - ensure strong tags are black */
+			.word_p strong {
+				color: black !important;
+				font-weight: 600;
+			}
+			
+			/* CV Expandable Section Styles */
+			.cv-expandable-container {
+				margin-top: 2em;
+				width: 100%;
+			}
+			
+			.cv-expandable {
+				max-height: 0;
+				overflow: hidden;
+				transition: max-height 0.5s ease-in-out;
+				background-color: #f9f9f9;
+				border-radius: 4px;
+				margin-top: 1em;
+			}
+			
+			.cv-expandable.active {
+				max-height: 2000px;
+			}
+			
+			.cv-expandable-content {
+				padding: 20px;
+			}
+			
+			.cv-expandable-header {
+				background-color: #1f1815;
+				color: white;
+				padding: 15px 20px;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				border-radius: 4px 4px 0 0;
+			}
+			
+			.cv-expandable-header h3 {
+				margin: 0;
+				font-size: 1.2em;
+			}
+			
+			.cv-close-btn {
+				color: #aaa;
+				font-size: 24px;
+				font-weight: bold;
+				cursor: pointer;
+				line-height: 1;
+				background: none;
+				border: none;
+				padding: 0;
+			}
+			
+			.cv-close-btn:hover,
+			.cv-close-btn:focus {
+				color: #49bf9d;
+			}
+			
+			.cv-expandable-body {
+				/* A4纵向尺寸：210mm × 297mm，宽高比约为 0.707:1 */
+				/* 设置宽度基于A4比例，高度自适应 */
+				width: 100%;
+				max-width: 800px; /* A4宽度在96 DPI下约为794px */
+				height: calc(800px * 1.414); /* A4高度，基于宽度的1.414倍 */
+				max-height: 90vh; /* 限制最大高度 */
+				margin: 0 auto;
+				overflow: auto;
+				padding: 20px;
+				background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+			
+			.cv-expandable-body iframe {
+				width: 100%;
+				height: 100%;
+				border: none;
+				display: block;
+				box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+				border-radius: 4px;
+				background: white;
+			}
+			
+			.cv-expandable-body img {
+				max-width: 100%;
+				height: auto;
+				display: block;
+				box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+				border-radius: 4px;
+				background: white;
+			}
+			
+			/* 响应式设计 */
+			@media (max-width: 900px) {
+				.cv-expandable-body {
+					max-width: 95vw;
+					height: calc(95vw * 1.414);
+					max-height: 85vh;
+				}
+			}
+			
+			.cv-expandable-body .cv-html-content {
+				padding: 20px;
+			}
+			
+			/* Poster Button Styles */
+			.poster-btn {
+				display: inline-block;
+				padding: 0;
+				margin-left: 0;
+				background-color: transparent;
+				color: inherit;
+				border-radius: 3px;
+				text-decoration: none;
+				transition: all 0.3s ease;
+				font-weight: normal;
+				border-bottom: none !important;
+			}
+			
+			.poster-btn:hover {
+				background-color: transparent;
+				transform: translateY(-1px);
+				box-shadow: none;
+			}
+			
+			.poster-btn:active {
+				transform: translateY(0);
+			}
+			
+			/* Poster Modal Styles */
+			.poster-modal {
+				display: none;
+				position: fixed;
+				z-index: 99999 !important;
+				left: 0;
+				top: 0;
+				width: 100%;
+				height: 100%;
+				background-color: rgba(0, 0, 0, 0.85);
+				overflow: auto;
+			}
+			
+			.poster-modal-content {
+				background-color: #fefefe;
+				margin: auto;
+				padding: 0;
+				border: none;
+				/* A1纵向尺寸比例：594mm × 841mm，宽高比约为 0.705:1 */
+				/* 使用视口单位确保在不同屏幕上一致 */
+				/* 高度设为85vh，宽度基于A1比例计算 */
+				height: 85vh;
+				width: calc(85vh * 0.705); /* A1宽高比 */
+				max-width: 90vw; /* 确保不会超出屏幕宽度 */
+				max-height: 90vh; /* 确保不会超出屏幕高度 */
+				position: relative;
+				box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+				border-radius: 8px;
+				overflow: hidden;
+				/* 垂直居中 */
+				top: 50%;
+				transform: translateY(-50%);
+			}
+			
+			/* 当计算出的宽度超过屏幕宽度时，改用宽度作为基准 */
+			@media (max-width: 1200px) {
+				.poster-modal-content {
+					width: 90vw;
+					height: calc(90vw / 0.705); /* 基于宽度计算高度 */
+					max-height: 85vh; /* 限制最大高度 */
+				}
+			}
+			
+			/* 在小屏幕上进一步调整 */
+			@media (max-width: 768px) {
+				.poster-modal-content {
+					width: 95vw;
+					height: calc(95vw / 0.705);
+					max-height: 90vh;
+				}
+			}
+			
+			.poster-modal-header {
+				background-color: #1f1815;
+				color: white;
+				padding: 15px 20px;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+			}
+			
+			.poster-modal-header h3 {
+				margin: 0;
+				font-size: 1.3em;
+			}
+			
+			.poster-close {
+				color: #aaa;
+				font-size: 32px;
+				font-weight: bold;
+				cursor: pointer;
+				line-height: 1;
+				background: none;
+				border: none;
+				padding: 0;
+				width: 32px;
+				height: 32px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+			
+			.poster-close:hover,
+			.poster-close:focus {
+				color: #49bf9d;
+			}
+			
+			.poster-modal-body {
+				/* 使用calc确保body高度适配header */
+				height: calc(100% - 60px);
+				overflow: hidden;
+				padding: 0;
+				background-color: #f5f5f5;
+				position: relative;
+			}
+			
+			.poster-modal-body iframe {
+				width: 100%;
+				height: 100%;
+				border: none;
+				display: block;
+				background: white;
+				/* 确保iframe填满容器 */
+				position: absolute;
+				top: 0;
+				left: 0;
+			}
+			
+			.poster-modal-body img {
+				max-width: 100%;
+				max-height: 100%;
+				width: auto;
+				height: auto;
+				object-fit: contain;
+				display: block;
+			}
+			
+			/* Language Toggle Buttons - Fixed at Top Right */
+			.lang-buttons-fixed {
+				position: fixed;
+				top: 1.5em;
+				right: 2em;
+				z-index: 10000;
+				display: flex;
+				gap: 0.5em;
+			}
+			
+			.lang-btn {
+				background: transparent;
+				border: none;
+				color: rgba(0, 0, 0, 0.7);
+				cursor: pointer;
+				font-size: 0.85em;
+				padding: 0.4em 0.8em;
+				transition: all 0.3s ease;
+				font-family: inherit;
+			}
+			
+			.lang-btn:hover {
+				color: #000000;
+			}
+			
+			.lang-btn.active {
+				color: #49bf9d;
+				font-weight: 600;
+			}
+			
+			/* Responsive adjustments for language buttons */
+			@media (max-width: 980px) {
+				.lang-buttons-fixed {
+					top: 1em;
+					right: 1em;
+				}
+			}
+			
+			/* Memory Photo Modal Styles */
+			.memory-modal {
+				display: none;
+				position: fixed;
+				z-index: 99999 !important;
+				left: 0;
+				top: 0;
+				width: 100%;
+				height: 100%;
+				background-color: rgba(0, 0, 0, 0.85);
+				overflow: auto;
+			}
+			
+			.memory-modal-content {
+				background-color: #fefefe;
+				margin: auto;
+				padding: 0;
+				border: none;
+				max-width: 90vw;
+				max-height: 90vh;
+				position: relative;
+				box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+				border-radius: 8px;
+				overflow: hidden;
+				/* 垂直居中 */
+				top: 50%;
+				transform: translateY(-50%);
+			}
+			
+			.memory-modal-header {
+				background-color: #1f1815;
+				color: white;
+				padding: 15px 20px;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+			}
+			
+			.memory-modal-header h3 {
+				margin: 0;
+				font-size: 1.3em;
+			}
+			
+			.memory-close {
+				color: #aaa;
+				font-size: 32px;
+				font-weight: bold;
+				cursor: pointer;
+				line-height: 1;
+				background: none;
+				border: none;
+				padding: 0;
+				width: 32px;
+				height: 32px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+			
+			.memory-close:hover,
+			.memory-close:focus {
+				color: #49bf9d;
+			}
+			
+			.memory-modal-body {
+				padding: 20px;
+				overflow: auto;
+				background-color: #f5f5f5;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				max-height: calc(90vh - 60px);
+			}
+			
+			.memory-modal-body img {
+				max-width: 100%;
+				max-height: calc(90vh - 100px);
+				width: auto;
+				height: auto;
+				object-fit: contain;
+				display: block;
+				box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+				border-radius: 4px;
+			}
+			
+			/* 响应式设计 */
+			@media (max-width: 768px) {
+				.memory-modal-content {
+					max-width: 95vw;
+					max-height: 95vh;
+				}
+				
+				.memory-modal-body {
+					padding: 15px;
+					max-height: calc(95vh - 60px);
+				}
+				
+				.memory-modal-body img {
+					max-height: calc(95vh - 90px);
+				}
+			}
+		</style>
+	</head>
+	<body class="is-preload">
+
+		<!-- Header -->
+			<header id="header">
+				<div class="inner">
+					<a href="#" class="image avatar"><img src="images/avatars/me111.png" alt="" /></a>
+					<h1 style="margin-top: 0.4em;"><strong data-lang-en="I am Jiacheng Liu" data-lang-cn="我是刘佳城">I am Jiacheng Liu</strong></h1>
+					<p style="color: rgba(255, 255, 255, 0.5); margin-top: 0.15em; font-size: 0.75em;" data-lang-en="Master Student at Peking University" data-lang-cn="北京大学硕士在读">Master Student at Peking University</p>
+
+					<!--<h1><strong>I am Jiacheng Liu</strong>, a super simple<br />
+						responsive site template freebie<br />
+						crafted by <a href="http://html5up.net">HTML5 UP</a>.</h1>-->
+					
+					<!-- Navigation -->
+					<nav id="nav">
+						<ul class="nav-menu">
+							<li><a href="#one"><span class="nav-text" data-lang-en="About" data-lang-cn="关于">About</span><span class="nav-icon icon solid fa-users"></span></a></li>
+							<li><a href="#news"><span class="nav-text" data-lang-en="News" data-lang-cn="新闻">News</span><span class="nav-icon icon solid fa-book-open"></span></a></li>
+							<li><a href="#education"><span class="nav-text" data-lang-en="Education" data-lang-cn="教育">Education</span><span class="nav-icon icon solid fa-graduation-cap"></span></a></li>
+							<li><a href="#one1"><span class="nav-text" data-lang-en="Awards" data-lang-cn="奖项">Awards</span><span class="nav-icon icon solid fa-trophy"></span></a></li>
+							<li><a href="#published"><span class="nav-text" data-lang-en="Publications" data-lang-cn="论文">Publications</span><span class="nav-icon icon solid fa-book"></span></a></li>
+							<li><a href="#group"><span class="nav-text" data-lang-en="Group" data-lang-cn="组织">Group</span><span class="nav-icon icon solid fa-briefcase"></span></a></li>
+							<li><a href="#team"><span class="nav-text" data-lang-en="Team" data-lang-cn="团队">Team</span><span class="nav-icon icon solid fa-users"></span></a></li>
+							<li><a href="#project"><span class="nav-text" data-lang-en="Projects" data-lang-cn="项目">Projects</span><span class="nav-icon icon solid fa-project-diagram"></span></a></li>
+							<li><a href="#video"><span class="nav-text" data-lang-en="Video" data-lang-cn="视频">Video</span><span class="nav-icon icon solid fa-video"></span></a></li>
+							<li><a href="#memory"><span class="nav-text" data-lang-en="Memories" data-lang-cn="回忆">Memories</span><span class="nav-icon icon solid fa-camera"></span></a></li>
+						</ul>
+					</nav>
+				</div>
+			</header>
+
+		<!-- Language Toggle Buttons - Top Right -->
+		<div class="lang-buttons-fixed">
+			<button id="langBtnCn" class="lang-btn active">中文</button>
+			<button id="langBtnEn" class="lang-btn">English</button>
+		</div>
+
+		<!-- Main -->
+			<div id="main">
+
+				<!-- One -->
+					<section id="one">
+						<header class="major">
+							<h1 class="word_h1" data-lang-en="🎉Hello!" data-lang-cn="🎉你好！">🎉Hello!</h1>
+							<!-- <h1 class="word_h1">🎉Enchanté !</h1> -->
+						</header>
+						<p class="word_p" data-lang-en="I am a first-year Master's student at the National Institute of Health Data Science, Peking University, supervised by <a href='https://zhou-l.github.io/' target='_blank' style='color: inherit; text-decoration: none;'>Prof. Liang Zhou</a>. Previously, I obtained my B.Eng. degree in Network Engineering from the School of Computer and Information Science & School of Software Engineering, Southwest University in 2025, under the supervision of <a href='https://bingyaohuang.github.io/' target='_blank' style='color: inherit; text-decoration: none;'>Prof. Bingyao Huang</a>." data-lang-cn="我是北京大学健康医疗大数据国家研究院的一年级硕士研究生，师从<a href='https://zhou-l.github.io/' target='_blank' style='color: inherit; text-decoration: none;'>周亮教授</a>。此前，我于 2025 年在西南大学计算机与信息科学学院 软件学院获得网络工程学士学位，本科导师为<a href='https://bingyaohuang.github.io/' target='_blank' style='color: inherit; text-decoration: none;'>黄兵姚教授</a>。">I am a first-year Master's student at the National Institute of Health Data Science, Peking University, supervised by <a href='https://zhou-l.github.io/' target='_blank' style='color: inherit; text-decoration: none;'>Prof. Liang Zhou</a>. Previously, I obtained my B.Eng. degree in Network Engineering from the School of Computer and Information Science & School of Software Engineering, Southwest University in 2025, under the supervision of <a href='https://bingyaohuang.github.io/' target='_blank' style='color: inherit; text-decoration: none;'>Prof. Bingyao Huang</a>.</p>
+						<br>
+						<p class="word_p" data-lang-en="My research interests lie at the intersection of Virtual/Augmented/Mixed Reality (VR/AR/MR), Human-Computer Interaction (HCI), Visualization (VIS), and Generative AI." data-lang-cn="目前，我的主要研究兴趣包括：虚拟现实/增强现实/混合现实（VR/AR/MR）、人机交互（HCI）、数据可视化（VIS）以及生成式人工智能（Generative AI）。">My research interests lie at the intersection of Virtual/Augmented/Mixed Reality (VR/AR/MR), Human-Computer Interaction (HCI), Visualization (VIS), and Generative AI.</p>
+
+						<ul class="actions" style="margin-top: 2em;">
+							<li><a href="#" class="button cv-link" data-cv-type="image" data-cv-src="images/CV/CV (Chinese).jpg" data-cv-title="CV (Chinese)"><span data-lang-en="CV (Chinese)" data-lang-cn="简历（中文）">CV (Chinese)</span></a></li>
+							<li><a href="#" class="button cv-link" data-cv-type="image" data-cv-src="images/CV/CV (Chinese).jpg" data-cv-title="CV (English)"><span data-lang-en="CV (English)" data-lang-cn="简历（英文）">CV (English)</span></a></li>
+						</ul>
+						
+						<!-- CV Expandable Section -->
+						<div class="cv-expandable-container">
+							<div id="cvExpandable" class="cv-expandable">
+								<div class="cv-expandable-header">
+									<h3 id="cvExpandableTitle" data-lang-en="CV" data-lang-cn="简历">CV</h3>
+									<button class="cv-close-btn" id="cvCloseBtn">&times;</button>
+								</div>
+								<div class="cv-expandable-body" id="cvExpandableBody">
+									<!-- CV content will be loaded here -->
+								</div>
+							</div>
+						</div>
+					</section>
+
+					<section id="news">
+						<h1 class="word_h1" data-lang-en="News" data-lang-cn="新闻">News</h1>
+						<p class="word_p" data-lang-en="[2025.12.30] &quot;The Mixed Reality Acupoint Localization and Therapy Teaching System Based on Head-Mounted Display&quot; is approved in Peking University's 2026 College Student Innovation and Entrepreneurship Training Program" data-lang-cn="[2025.12.30] 《基于头戴显示器的混合现实中医穴位定位及治疗教学系统项目》在北京大学2026年大学生创新创业训练计划立项">[2025.12.30] &quot;The Mixed Reality Acupoint Localization and Therapy Teaching System Project Based on Head-Mounted Display&quot; is approved in Peking University's 2026 College Student Innovation and Entrepreneurship Training Program</p>
+						<!-- <p class="word_p">[2023.11.24] Yuanjing Cup National First Prize</h2> -->
+						<!-- <p class="word_p">[2023.11.18] CCVR National First Prize</h2> -->
+						<!-- <p class="word_p">[2023.7.6] TCM Horizon(based Hololens 2) End</h2> -->
+					</section>
+
+					<section id="education">
+						<h1 class="word_h1" data-lang-en="Education" data-lang-cn="教育背景">Education</h1>
+						<div>
+							<div style="margin-bottom: 20px; display: flex; align-items: center;">
+								<img style="height:4.5em;margin-right:0.8em;" src="./images/logos/pku.png" alt="Peking University">
+								<div style="line-height: 1.6;">
+									<p class="word_p" style="margin: 0;" data-lang-en="2025 - Present" data-lang-cn="2025 - 至今">2025 - Present</p>
+									<p class="word_p" style="margin: 0;" data-lang-en="Peking University" data-lang-cn="北京大学">Peking University</p>
+									<p class="word_p" style="margin: 0; font-size: 0.9em; color: #666;" data-lang-en="M.S. in Health Data Science, National Institute of Health Data Science" data-lang-cn="健康医疗大数据国家研究院 · 医学技术-健康数据科学硕士在读">M.S. in Health Data Science, National Institute of Health Data Science</p>
+									<p class="small_word" style="margin: 0;" data-lang-en="Beijing, China" data-lang-cn="中国，北京">Beijing, China</p>
+								</div>
+							</div>
+							<div style="margin-bottom: 20px; display: flex; align-items: center;">
+								<img style="height:4.5em;margin-right:0.8em;" src="./images/logos/swu11.png">
+								<div style="line-height: 1.6;">
+									<p class="word_p" style="margin: 0;">2021 - 2025</p>
+									<p class="word_p" style="margin: 0;" data-lang-en="Southwest University" data-lang-cn="西南大学">Southwest University</p>
+									<p class="word_p" style="margin: 0; font-size: 0.9em; color: #666;" data-lang-en="B.Eng. in Network Engineering, School of Computer and Information Science & School of Software Engineering" data-lang-cn="计算机与信息科学学院 软件学院 · 网络工程学士">B.Eng. in Network Engineering, School of Computer and Information Science & School of Software Engineering</p>
+									<p class="small_word" style="margin: 0;" data-lang-en="Chongqing, China" data-lang-cn="中国，重庆">Chongqing, China</p>
+								</div>
+							</div>
+							<div style="margin-bottom: 20px; display: flex; align-items: center;">
+								<img style="height:4.5em;margin-right:0.8em;" src="./images/logos/s2.png">
+								<div style="line-height: 1.6;">
+									<p class="word_p" style="margin: 0;">2018 - 2021</p>
+									<p class="word_p" style="margin: 0;" data-lang-en="Shiyan School Attched To Shijiazhuang No.2 Middle School" data-lang-cn="石家庄二中实验学校">Shiyan School Attched To Shijiazhuang No.2 Middle School</p>
+									<p class="small_word" style="margin: 0;" data-lang-en="Hebei, China" data-lang-cn="中国，河北">Hebei, China</p>
+								</div>
+							</div>
+						</div>
+					</section>
+
+					<section id="one1">
+						<h1 class="word_h1" data-lang-en="Awards🏆" data-lang-cn="奖项🏆">Awards🏆</h1>
+						<h2 class="AwardType"><strong data-lang-en="National awards" data-lang-cn="国家级奖项">National awards</strong></h2>
+						<p class="word_p">&nbsp;&nbsp;&nbsp;🥇<strong data-lang-en="First Prize" data-lang-cn="一等奖">First Prize</strong>: <span data-lang-en="The 16th Chinese Collegiate Computing Competition-Virtual Reality & Augmented Reality, China" data-lang-cn="第十六届中国大学生计算机设计大赛-虚拟现实VR与增强现实AR组，中国">The 16th Chinese Collegiate Computing Competition-Virtual Reality & Augmented Reality, China</span></p>
+						<p class="word_p">&nbsp;&nbsp;&nbsp;🥇<strong data-lang-en="First Prize" data-lang-cn="一等奖">First Prize</strong>: <span data-lang-en="The 18th &quot;Challenge Cup&quot; National College Student Extracurricular Academic and Technological Works Competition, China" data-lang-cn="第十八届“挑战杯”全国大学生课外学术科技作品竞赛，中国">The 18th &quot;Challenge Cup&quot; National College Student Extracurricular Academic and Technological Works Competition, China</span></p>
+						<p class="word_p">&nbsp;&nbsp;&nbsp;🥇<strong data-lang-en="First Prize" data-lang-cn="一等奖">First Prize</strong>: <a href="http://ccvr2023.aconf.org/index.html" class="word_p"><span data-lang-en="The 6th China Competition on Virtual Reality (CCVR)" data-lang-cn="第六届中国虚拟现实大赛（CCVR）">The 6th China Competition on Virtual Reality (CCVR)</span></a><span data-lang-en=", China" data-lang-cn="，中国">, China</span><br></p>
+						<p class="word_p">&nbsp;&nbsp;&nbsp;🥇<strong data-lang-en="First Prize" data-lang-cn="一等奖">First Prize</strong>: <a href="https://chuangxiangjia.yuanjingio.com/?s=list&px=2&p=2&lb=2&id=3886" class="word_p"><span data-lang-en="The 14th Lanqiao Cup-3D Interactive Creation Group" data-lang-cn="第十四届蓝桥杯-3D交互创作组">The 14th Lanqiao Cup-3D Interactive Creation Group</span></a><span data-lang-en=", China" data-lang-cn="，中国">, China</span></p>
+						<p class="word_p">&nbsp;&nbsp;&nbsp;🥉<strong data-lang-en="Third Prize" data-lang-cn="三等奖">Third Prize</strong>: <span data-lang-en="The 1th M-Zone AI+University Innovation and Intelligence Program, China" data-lang-cn="第一届&ldquo;动感地带&rdquo;AI+高校创智计划，中国">The 1th M-Zone AI+University Innovation and Intelligence Program, China</span></p>
+						
+						
+						<h2 class="AwardType"><strong data-lang-en="Provincial awards" data-lang-cn="省级奖项">Provincial awards</strong></h2>
+						<p class="word_p">&nbsp;&nbsp;&nbsp;🥇<strong data-lang-en="First Prize" data-lang-cn="一等奖">First Prize</strong>: <span data-lang-en="The 1th M-Zone AI+University Innovation and Intelligence Program, Southwest Division" data-lang-cn="第一届&ldquo;动感地带&rdquo;AI+高校创智计划，西南赛区">The 1th M-Zone AI+University Innovation and Intelligence Program, Southwest Division</span></p>
+						<p class="word_p">&nbsp;&nbsp;&nbsp;🥇<strong data-lang-en="First Prize" data-lang-cn="一等奖">First Prize</strong>: <span data-lang-en="The 31th China Undergraduate Mathematical Contest in Modeling, Chongqing" data-lang-cn="第三十一届&ldquo;高教社杯&rdquo;全国大学生数学建模竞赛，重庆">The 31th China Undergraduate Mathematical Contest in Modeling, Chongqing</span></p>
+						<p class="word_p">&nbsp;&nbsp;&nbsp;🥇<strong data-lang-en="First Prize" data-lang-cn="一等奖">First Prize</strong>: <span data-lang-en="The 16th Chinese Collegiate Computing Competition, Chongqing" data-lang-cn="第十六届中国大学生计算机设计大赛，重庆">The 16th Chinese Collegiate Computing Competition, Chongqing</span></p>
+						<p class="word_p">&nbsp;&nbsp;&nbsp;🥉<strong data-lang-en="Third Prize" data-lang-cn="三等奖">Third Prize</strong>: <span data-lang-en="The 18th &quot;Challenge Cup&quot; National College Student Extracurricular Academic and Technological Works Competition, Chongqing" data-lang-cn="第十八届“挑战杯”全国大学生课外学术科技作品竞赛，重庆">The 18th &quot;Challenge Cup&quot; National College Student Extracurricular Academic and Technological Works Competition, Chongqing</span></p>
+						<p class="word_p">&nbsp;&nbsp;&nbsp;🥉<strong data-lang-en="Third Prize" data-lang-cn="三等奖">Third Prize</strong>: <span data-lang-en="The 14th Lanqiao Cup-Java Software Development, Chongqing" data-lang-cn="第十四届蓝桥杯-Java软件开发，重庆">The 14th Lanqiao Cup-Java Software Development, Chongqing</span></p>
+						<p class="word_p">&nbsp;&nbsp;&nbsp;🥉<strong data-lang-en="Third Prize" data-lang-cn="三等奖">Third Prize</strong>: <span data-lang-en="The 17th Chinese Collegiate Computing Competition, Chongqing" data-lang-cn="第十七届中国大学生计算机设计大赛，重庆">The 17th Chinese Collegiate Computing Competition, Chongqing</span></p>
+						<p class="word_p">&nbsp;&nbsp;&nbsp;🥉<strong data-lang-en="Third Prize" data-lang-cn="三等奖">Third Prize</strong>: <span data-lang-en="The 7th China Collegiate Computing Contest, Chongqing" data-lang-cn="第七届中国大学生计算机设计大赛，重庆">The 7th China Collegiate Computing Contest, Chongqing</span></p>
+					</section>
+
+					<section id="published">
+						<h1 class="word_h1" data-lang-en="Publications" data-lang-cn="论文">Publications</h1>
+						<div >
+							<p class="word_p"><a href="docs/ISMAR_2025_Acupoint_Framework.pdf" class="word_p" target="_blank"><strong>A Mixed Reality Framework for Acupoint Therapy Teaching: Localization, Practice and Evaluation</strong></a>,
+								IEEE International Symposium on Mixed and Augmented Reality Adjunct <strong>(ISMAR-Adjunct)</strong>, 2025.&nbsp;<a href="docs/ISMAR_2025_Acupoint_Framework.pdf" class="poster-btn" target="_blank" data-lang-en="[Paper]" data-lang-cn="[论文]">[Paper]</a>&nbsp;<a href="docs/ISMAR_2025_Poster.pdf" class="poster-btn" target="_blank" data-lang-en="[Poster]" data-lang-cn="[海报]">[Poster]</a>
+							</p>
+							<p style="color: #787878;margin-bottom: 15px;"><strong style="font-weight: 600;">Jiacheng Liu</strong>, Bohan Chen, Weichao Song, Fangfei Ye, Haibin Ling, Bingyao Huang</p>
+						</div>
+
+
+					</section>
+
+					<section id="group">
+						<h1 class="word_h1" data-lang-en="Group" data-lang-cn="组织">Group</h1>
+						<div>
+							<div style="margin-bottom: 20px; display: flex; align-items: center;">
+								<img style="height:4.5em;margin-right:0.8em;" src="images/logos/pkuinnovationclub.jpg">
+								<div style="line-height: 1.6;">
+									<p class="word_p" style="margin: 0;">2025 - Now</p>
+									<p class="word_p" style="margin: 0;" data-lang-en="Peking University Innovation Club" data-lang-cn="北京大学创新学社">Peking University Innovation Club</p>
+									<p class="small_word" style="margin: 0;" data-lang-en="Role: Core member" data-lang-cn="职务：学生骨干">Role: Core member</p>
+								</div>
+							</div>
+							<div style="margin-bottom: 20px; display: flex; align-items: center;">
+								<img style="height:4.5em;margin-right:0.8em;" src="./images/logos/swuosa.png">
+								<div style="line-height: 1.6;">
+									<p class="word_p" style="margin: 0;">2023 - 2024</p>
+									<p class="word_p" style="margin: 0;" data-lang-en="Southwest University OSA" data-lang-cn="西南大学开源与网络安全协会">Southwest University OSA</p>
+									<p class="small_word" style="margin: 0;" data-lang-en="Role: President" data-lang-cn="职务：会长">Role: President</p>
+								</div>
+							</div>
+							<div style="margin-bottom: 20px; display: flex; align-items: center;">
+								<img style="height:4.5em;margin-right:0.8em;" src="./images/logos/swuxsh.png">
+								<div style="line-height: 1.6;">
+									<p class="word_p" style="margin: 0;">2022 - 2023</p>
+									<p class="word_p" style="margin: 0;" data-lang-en="Southwest University Student Union" data-lang-cn="西南大学学生会">Southwest University Student Union</p>
+									<p class="small_word" style="margin: 0;" data-lang-en="Role: Office Department Head" data-lang-cn="职务：办公室部门负责人">Role: Office Department Head</p>
+								</div>
+							</div>
+							<div style="margin-bottom: 20px; display: flex; align-items: center;">
+								<img style="height:4.5em;margin-right:0.8em;" src="./images/logos/s2xsh.png">
+								<div style="line-height: 1.6;">
+									<p class="word_p" style="margin: 0;">2019 - 2020</p>
+									<p class="word_p" style="margin: 0;" data-lang-en="The Shiyan School Attched To Shijiazhuang No.2 Middle School Student Union" data-lang-cn="石家庄二中实验学校学生会">The Shiyan School Attched To Shijiazhuang No.2 Middle School Student Union</p>
+									<p class="small_word" style="margin: 0;" data-lang-en="Role: Vice minister of the student club department" data-lang-cn="职务：社团部副部长">Role: Vice minister of the student club department</p>
+								</div>
+							</div>
+						</div>
+					</section>
+
+					<section id="team">
+						<h1 class="word_h1" data-lang-en="Team" data-lang-cn="团队">Team</h1>
+						<div>
+							<div style="margin-bottom: 3em;">
+								<div style="display: flex; align-items: center;">
+									<img style="width:4.5em;height:4.5em;margin-right:0.8em;object-fit:contain;" src="images/logos/teamlogo2.png">
+									<div style="line-height: 1.6; flex: 1;">
+										<div style="display: flex; align-items: center; justify-content: space-between;">
+											<div>
+												<h3 class="word_p" style="margin: 0;" data-lang-en="Yunxu Mixed Reality Team" data-lang-cn="云墟混合现实团队">Yunxu Mixed Reality Team</h3>
+												<p class="small_word" style="margin: 0;" data-lang-en="Founded in 2025" data-lang-cn="成立于2025年">Founded in 2025</p>
+											</div>
+											<ul class="actions" style="margin: 0; margin-left: 1em;">
+												<li><a href="team.html" class="button"><span data-lang-en="Meet Our Team" data-lang-cn="了解我们的团队">Meet Our Team</span></a></li>
+											</ul>
+										</div>
+									</div>
+								</div>
+								<p class="word_p" style="clear: both; margin-top: 0.8em;" data-lang-en="Dedicated to exploring the frontiers of Augmented Reality (AR) and Mixed Reality (MR). Our team currently focuses on the R&amp;D of innovative AR/MR applications, integrating Generative AI to redefine immersive experiences." data-lang-cn="致力于增强现实（AR）与混合现实（MR）前沿领域的探索。当前团队聚焦创新型AR/MR应用研发，结合生成式人工智能重塑沉浸式体验。">Dedicated to exploring the frontiers of Augmented Reality (AR) and Mixed Reality (MR). Our team currently focuses on the R&amp;D of innovative AR/MR applications, integrating Generative AI to redefine immersive experiences.</p>
+							</div>
+							<div style="margin-bottom: 20px;">
+								<div style="display: flex; align-items: center;">
+									<img style="width:4.5em;height:4.5em;margin-right:0.8em;object-fit:contain;" src="images/logos/Acu-Precision.png">
+									<div style="line-height: 1.6; flex: 1;">
+										<div style="display: flex; align-items: center; justify-content: space-between;">
+											<div>
+												<h3 class="word_p" style="margin: 0;" data-lang-en="&quot;Acu-Precision&quot; Startup Team" data-lang-cn="一针见&ldquo;穴&rdquo; 创业团队">&quot;Acu-Precision&quot; Startup Team</h3>
+												<p class="small_word" style="margin: 0;" data-lang-en="Founded in 2025" data-lang-cn="成立于2025年">Founded in 2025</p>
+											</div>
+											<ul class="actions" style="margin: 0; margin-left: 1em;">
+												<li><a href="acuprecision-team.html" class="button"><span data-lang-en="Learn More" data-lang-cn="了解更多">Learn More</span></a></li>
+											</ul>
+										</div>
+									</div>
+								</div>
+								<p class="word_p" style="clear: both; margin-top: 0.8em;" data-lang-en="We are committed to leveraging cutting-edge Mixed Reality (MR) technology to break through the bottlenecks in Traditional Chinese Medicine (TCM) inheritance, creating a new paradigm of digitalized and quantified medical education, enabling millennia-old medicine to shine again with the empowerment of modern technology." data-lang-cn="我们致力于利用前沿混合现实（MR）技术突破中医传承的瓶颈，打造数字化、定量化的医教新范式，让千年医学在现代科技的赋能下重焕光彩。">We are committed to leveraging cutting-edge Mixed Reality (MR) technology to break through the bottlenecks in Traditional Chinese Medicine (TCM) inheritance, creating a new paradigm of digitalized and quantified medical education, enabling millennia-old medicine to shine again with the empowerment of modern technology.</p>
+							</div>
+						</div>
+					</section>
+
+					<section id="project">
+						<h2 class="word_h1" data-lang-en="Project" data-lang-cn="项目">Project</h2>
+						<div class="row">
+							<article class="col-6 col-12-xsmall work-item">
+								<a href="images/thumbs/Acupoint_Hololens.png" class="image fit thumb"><img src="images/thumbs/Acupoint_Hololens.png" alt="" /></a>
+								<h3 style="color: black"><a href="https://12156c.github.io/Acupoint/"><span data-lang-en="Mixed Reality TCM Teaching System (Based on Hololens 2)" data-lang-cn="混合现实中医教学系统（基于Hololens 2）">Mixed Reality TCM Teaching System (Based on Hololens 2)</span></a></h3>
+								<p data-lang-en="Achieves automatic detection of hand acupoints and simulated acupuncture insertion practice." data-lang-cn="实现了人体手部穴位自动识别和针灸刺入模拟练习。">Achieves automatic detection of hand acupoints and simulated acupuncture insertion practice.</p>
+							</article>
+							<article class="col-6 col-12-xsmall work-item">
+								<a href="images/thumbs/Acupoint_PICO1.png" class="image fit thumb"><img src="images/thumbs/Acupoint_PICO1.png" alt="" /></a>
+								<h3 style="color: black"><span data-lang-en="Mixed Reality TCM Teaching System (Based on PICO 4 Pro)" data-lang-cn="混合现实中医教学系统（基于PICO 4 Pro）">Mixed Reality TCM Teaching System (Based on PICO 4 Pro)</span></h3>
+								<p data-lang-en="Achieves acupoint detection (hands, limbs, and torso) and simulated acupoint therapy practice (acupressure, acupuncture, and moxibustion)." data-lang-cn="实现了人体穴位识别（手部、四肢和躯干）和穴位治疗模拟练习（点按、针灸和艾灸）。">Achieves acupoint detection (hands, limbs, and torso) and simulated acupoint therapy practice (acupressure, acupuncture, and moxibustion).</p>
+							</article>
+						</div>
+					</section>
+
+
+
+					<section id="video">
+						<h2 class="word_h1" data-lang-en="Video" data-lang-cn="视频">Video</h2>
+						<div class="row">
+							<article class="col-6 col-12-xsmall work-item">
+								<a href="https://www.youtube.com/watch?v=2Die7EoFUes" class="image fit thumb"><img src="images/thumbs/video1.jpg" alt="" /></a>
+								<h3 style="color: black"><span data-lang-en="Mixed Reality TCM Teaching System Demo on Hololens 2" data-lang-cn="Hololens 2上混合现实中医教学系统的demo">Mixed Reality TCM Teaching System Demo on Hololens 2</span></h3>
+								<p data-lang-en="Demonstrates hand acupoint detection and teaching based on a standard acupoint model." data-lang-cn="演示了手部穴位检测和基于标准穴位模型的教学。">Demonstrates hand acupoint detection and teaching based on a standard acupoint model.</p>
+							</article>
+							<!-- <article class="col-6 col-12-xsmall work-item">
+								<a href="#" class="image fit thumb"><img src="images/thumbs/video2.jpg" alt="" /></a>
+								<h3 style="color: black"><span data-lang-en="Traditional Chinese Medical Based On AR (PICO 4 Pro)" data-lang-cn="基于AR的中医教学系统 (PICO 4 Pro)">Traditional Chinese Medical Based On AR <br> (PICO 4 Pro)</span></h3>
+								<p data-lang-en="Lorem ipsum dolor sit amet nisl sed nullam feugiat." data-lang-cn="基于增强现实技术的中医穴位教学系统。">Lorem ipsum dolor sit amet nisl sed nullam feugiat.</p>
+							</article> -->
+							<article class="col-6 col-12-xsmall work-item">
+								<a href="https://youtu.be/YsiYCewP1nc" class="image fit thumb"><img src="images/thumbs/CCVR.jpg" alt="" /></a>
+								<h3 style="color: black"><span data-lang-en="CCVR 2023 National First Prize: Project Showcase" data-lang-cn="CCVR 2023国家级一等奖项目展示">National First Prize : CCVR 2023 Project Showcase</span></h3>
+								<p data-lang-en="Technical approach and effectiveness demonstration of TCM acupoint knowledge teaching, applicable to PICO 4 Pro and Hololens 2 platforms." data-lang-cn="中医穴位知识教学的技术路线与效果展示，适用于PICO 4 Pro和Hololens 2平台。">Technical approach and effectiveness demonstration of TCM acupoint knowledge teaching, applicable to PICO 4 Pro and Hololens 2 platforms.</p>
+							</article>
+						</div>
+					</section>
+
+
+					<section id="memory">
+						<h2 class="word_h1" data-lang-en="Best Memories" data-lang-cn="美好回忆">Best Memories</h2>
+						<div class="row">
+
+							
+							<article class="col-4 col-12-xsmall work-item">
+								<a href="images/fulls/graduation_with_prof_huang.png" class="image fit thumb"><img src="images/thumbs/3.png" alt="" /></a>
+								<h3 class="word_p" data-lang-en="Graduation with Prof. Bingyao Huang" data-lang-cn="与黄兵姚教授的毕业合影">Graduation with Prof. Bingyao Huang</h3>
+								<p data-lang-en="A memorable graduation photo taken at Southwest University in 2025 with my undergraduate supervisor, who guided me throughout my four years of study." data-lang-cn="2025年于西南大学与本科导师的毕业合影，感谢四年来黄教授的悉心指导。">A memorable graduation photo taken at Southwest University in 2025 with my undergraduate supervisor, who guided me throughout my four years of study.</p>
+							</article>
+							
+							<article class="col-4 col-12-xsmall work-item">
+								<a href="images/fulls/ccvr2023_first_prize.png" class="image fit thumb"><img src="images/thumbs/1.png" alt="" /></a>
+								<h3 class="word_p" data-lang-en="CCVR 2023 National First Prize with Academician Zhao and Prof. Chen" data-lang-cn="CCVR 2023全国一等奖与赵院士、陈教授合影">CCVR 2023 National First Prize with Academician Zhao and Prof. Chen</h3>
+								<p data-lang-en="A memorable photo taken at the CCVR 2023 Awards Dinner after winning the National First Prize, celebrating with Academician Zhao and Professor Chen." data-lang-cn="在CCVR 2023颁奖晚宴上，获得全国一等奖后与赵院士、陈教授的珍贵合影。">A memorable photo taken at the CCVR 2023 Awards Dinner after winning the National First Prize, celebrating with Academician Zhao and Professor Chen.</p>
+							</article>
+
+
+							
+							<article class="col-4 col-12-xsmall work-item">
+								<a href="images/fulls/prof_huang_and_prof_ling.png" class="image fit thumb"><img src="images/thumbs/4.png" alt="" /></a>
+								<h3 class="word_p" data-lang-en="Photo with Prof. Bingyao Huang and Prof. Haibin Ling" data-lang-cn="与黄兵姚老师和师爷凌海斌老师的合影">Photo with Prof. Bingyao Huang and Prof. Haibin Ling</h3>
+								<p data-lang-en="A memorable photo with my undergraduate supervisor Prof. Bingyao Huang and his supervisor Prof. Haibin Ling." data-lang-cn="与本科导师黄兵姚老师及其导师（师爷）凌海斌老师的合影。">A memorable photo with my undergraduate supervisor Prof. Bingyao Huang and his supervisor Prof. Haibin Ling.</p>
+							</article>
+
+							<article class="col-4 col-12-xsmall work-item">
+								<a href="images/fulls/ismar2025_poster.jpg" class="image fit thumb"><img src="images/thumbs/ismar25.jpg" alt="ISMAR 2025 Poster" /></a>
+								<h3 class="word_p" data-lang-en="ISMAR 2025 Poster Session" data-lang-cn="ISMAR 2025 海报展示">ISMAR 2025 Poster Session</h3>
+								<p data-lang-en="Our ISMAR 2025 poster presentation on the mixed reality acupoint teaching framework." data-lang-cn="在 ISMAR 2025 上展示混合现实穴位教学框架海报。">Our ISMAR 2025 poster presentation on the mixed reality acupoint teaching framework.</p>
+							</article>
+
+							<article class="col-4 col-12-xsmall work-item">
+								<a href="images/fulls/presenting_tcm_to_vice_mayor.png" class="image fit thumb"><img src="images/thumbs/5.png" alt="" /></a>
+								<h3 class="word_p" data-lang-en="Presenting TCM Project to Vice Mayor Shang of Chongqing" data-lang-cn="向重庆市商副市长介绍中医项目">Presenting TCM Project to Vice Mayor Shang of Chongqing</h3>
+								<p data-lang-en="A memorable moment presenting our Traditional Chinese Medicine acupoint teaching system project to Vice Mayor Shang of Chongqing Municipality." data-lang-cn="向重庆市商副市长介绍我们的中医穴位教学系统项目。">A memorable moment presenting our Traditional Chinese Medicine acupoint teaching system project to Vice Mayor Shang of Chongqing Municipality.</p>
+							</article>
+
+
+
+						</div>
+						<ul class="actions">
+							<li><a href="#" class="button">Full Portfolio</a></li>
+						</ul>
+					</section>
+
+
+
+
+
+				<!-- Two -->
+					<!--<section id="two">
+						<h2>Recent Work</h2>
+						<div class="row">
+							<article class="col-6 col-12-xsmall work-item">
+								<a href="images/fulls/01.jpg" class="image fit thumb"><img src="images/thumbs/01.jpg" alt="" /></a>
+								<h3>Magna sed consequat tempus</h3>
+								<p>Lorem ipsum dolor sit amet nisl sed nullam feugiat.</p>
+							</article>
+							<article class="col-6 col-12-xsmall work-item">
+								<a href="images/fulls/02.jpg" class="image fit thumb"><img src="images/thumbs/02.jpg" alt="" /></a>
+								<h3>Ultricies lacinia interdum</h3>
+								<p>Lorem ipsum dolor sit amet nisl sed nullam feugiat.</p>
+							</article>
+							<article class="col-6 col-12-xsmall work-item">
+								<a href="images/fulls/03.jpg" class="image fit thumb"><img src="images/thumbs/03.jpg" alt="" /></a>
+								<h3>Tortor metus commodo</h3>
+								<p>Lorem ipsum dolor sit amet nisl sed nullam feugiat.</p>
+							</article>
+							<article class="col-6 col-12-xsmall work-item">
+								<a href="images/fulls/04.jpg" class="image fit thumb"><img src="images/thumbs/04.jpg" alt="" /></a>
+								<h3>Quam neque phasellus</h3>
+								<p>Lorem ipsum dolor sit amet nisl sed nullam feugiat.</p>
+							</article>
+							<article class="col-6 col-12-xsmall work-item">
+								<a href="images/fulls/05.jpg" class="image fit thumb"><img src="images/thumbs/05.jpg" alt="" /></a>
+								<h3>Nunc enim commodo aliquet</h3>
+								<p>Lorem ipsum dolor sit amet nisl sed nullam feugiat.</p>
+							</article>
+							<article class="col-6 col-12-xsmall work-item">
+								<a href="images/fulls/06.jpg" class="image fit thumb"><img src="images/thumbs/06.jpg" alt="" /></a>
+								<h3>Risus ornare lacinia</h3>
+								<p>Lorem ipsum dolor sit amet nisl sed nullam feugiat.</p>
+							</article>
+						</div>
+						<ul class="actions">
+							<li><a href="#" class="button">Full Portfolio</a></li>
+						</ul>
+					</section>
+-->
+				<!-- Three -->
+					<!--<section id="three">
+						<h2>Get In Touch</h2>
+						<p>Accumsan pellentesque commodo blandit enim arcu non at amet id arcu magna. Accumsan orci faucibus id eu lorem semper nunc nisi lorem vulputate lorem neque lorem ipsum dolor.</p>
+						<div class="row">
+							<div class="col-8 col-12-small">
+								<form method="post" action="#">
+									<div class="row gtr-uniform gtr-50">
+										<div class="col-6 col-12-xsmall"><input type="text" name="name" id="name" placeholder="Name" /></div>
+										<div class="col-6 col-12-xsmall"><input type="email" name="email" id="email" placeholder="Email" /></div>
+										<div class="col-12"><textarea name="message" id="message" placeholder="Message" rows="4"></textarea></div>
+									</div>
+								</form>
+								<ul class="actions">
+									<li><input type="submit" value="Send Message" /></li>
+								</ul>
+							</div>
+							<div class="col-4 col-12-small">
+								<ul class="labeled-icons">
+									<li>
+										<h3 class="icon solid fa-home"><span class="label">Address</span></h3>
+										1234 Somewhere Rd.<br />
+										Nashville, TN 00000<br />
+										United States
+									</li>
+									<li>
+										<h3 class="icon solid fa-mobile-alt"><span class="label">Phone</span></h3>
+										000-000-0000
+									</li>
+									<li>
+										<h3 class="icon solid fa-envelope"><span class="label">Email</span></h3>
+										<a href="#">hello@untitled.tld</a>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</section>-->
+				<!-- Four -->
+					<!--<section id="four">
+						<h2>Elements</h2>
+
+						<section>
+							<h4>Text</h4>
+							<p>This is <b>bold</b> and this is <strong>strong</strong>. This is <i>italic</i> and this is <em>emphasized</em>.
+							This is <sup>superscript</sup> text and this is <sub>subscript</sub> text.
+							This is <u>underlined</u> and this is code: <code>for (;;) { ... }</code>. Finally, <a href="#">this is a link</a>.</p>
+							<hr />
+							<header>
+								<h4>Heading with a Subtitle</h4>
+								<p>Lorem ipsum dolor sit amet nullam id egestas urna aliquam</p>
+							</header>
+							<p>Nunc lacinia ante nunc ac lobortis. Interdum adipiscing gravida odio porttitor sem non mi integer non faucibus ornare mi ut ante amet placerat aliquet. Volutpat eu sed ante lacinia sapien lorem accumsan varius montes viverra nibh in adipiscing blandit tempus accumsan.</p>
+							<header>
+								<h5>Heading with a Subtitle</h5>
+								<p>Lorem ipsum dolor sit amet nullam id egestas urna aliquam</p>
+							</header>
+							<p>Nunc lacinia ante nunc ac lobortis. Interdum adipiscing gravida odio porttitor sem non mi integer non faucibus ornare mi ut ante amet placerat aliquet. Volutpat eu sed ante lacinia sapien lorem accumsan varius montes viverra nibh in adipiscing blandit tempus accumsan.</p>
+							<hr />
+							<h2>Heading Level 2</h2>
+							<h3>Heading Level 3</h3>
+							<h4>Heading Level 4</h4>
+							<h5>Heading Level 5</h5>
+							<h6>Heading Level 6</h6>
+							<hr />
+							<h5>Blockquote</h5>
+							<blockquote>Fringilla nisl. Donec accumsan interdum nisi, quis tincidunt felis sagittis eget tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan faucibus. Vestibulum ante ipsum primis in faucibus lorem ipsum dolor sit amet nullam adipiscing eu felis.</blockquote>
+							<h5>Preformatted</h5>
+							<pre><code>i = 0;
+
+while (!deck.isInOrder()) {
+print 'Iteration ' + i;
+deck.shuffle();
+i++;
+}
+
+print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
+						</section>
+
+						<section>
+							<h4>Lists</h4>
+							<div class="row">
+								<div class="col-6 col-12-xsmall">
+									<h5>Unordered</h5>
+									<ul>
+										<li>Dolor pulvinar etiam magna etiam.</li>
+										<li>Sagittis adipiscing lorem eleifend.</li>
+										<li>Felis enim feugiat dolore viverra.</li>
+									</ul>
+									<h5>Alternate</h5>
+									<ul class="alt">
+										<li>Dolor pulvinar etiam magna etiam.</li>
+										<li>Sagittis adipiscing lorem eleifend.</li>
+										<li>Felis enim feugiat dolore viverra.</li>
+									</ul>
+								</div>
+								<div class="col-6 col-12-xsmall">
+									<h5>Ordered</h5>
+									<ol>
+										<li>Dolor pulvinar etiam magna etiam.</li>
+										<li>Etiam vel felis at lorem sed viverra.</li>
+										<li>Felis enim feugiat dolore viverra.</li>
+										<li>Dolor pulvinar etiam magna etiam.</li>
+										<li>Etiam vel felis at lorem sed viverra.</li>
+										<li>Felis enim feugiat dolore viverra.</li>
+									</ol>
+									<h5>Icons</h5>
+									<ul class="icons">
+										<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+										<li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
+										<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+										<li><a href="#" class="icon brands fa-github"><span class="label">Github</span></a></li>
+										<li><a href="#" class="icon brands fa-dribbble"><span class="label">Dribbble</span></a></li>
+										<li><a href="#" class="icon brands fa-tumblr"><span class="label">Tumblr</span></a></li>
+									</ul>
+								</div>
+							</div>
+							<h5>Actions</h5>
+							<ul class="actions">
+								<li><a href="#" class="button primary">Default</a></li>
+								<li><a href="#" class="button">Default</a></li>
+							</ul>
+							<ul class="actions small">
+								<li><a href="#" class="button primary small">Small</a></li>
+								<li><a href="#" class="button small">Small</a></li>
+							</ul>
+							<div class="row">
+								<div class="col-6 col-12-small">
+									<ul class="actions stacked">
+										<li><a href="#" class="button primary">Default</a></li>
+										<li><a href="#" class="button">Default</a></li>
+									</ul>
+								</div>
+								<div class="col-6 col-12-small">
+									<ul class="actions stacked">
+										<li><a href="#" class="button primary small">Small</a></li>
+										<li><a href="#" class="button small">Small</a></li>
+									</ul>
+								</div>
+								<div class="col-6 col-12-small">
+									<ul class="actions stacked">
+										<li><a href="#" class="button primary fit">Default</a></li>
+										<li><a href="#" class="button fit">Default</a></li>
+									</ul>
+								</div>
+								<div class="col-6 col-12-small">
+									<ul class="actions stacked">
+										<li><a href="#" class="button primary small fit">Small</a></li>
+										<li><a href="#" class="button small fit">Small</a></li>
+									</ul>
+								</div>
+							</div>
+						</section>
+
+						<section>
+							<h4>Table</h4>
+							<h5>Default</h5>
+							<div class="table-wrapper">
+								<table>
+									<thead>
+										<tr>
+											<th>Name</th>
+											<th>Description</th>
+											<th>Price</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>Item One</td>
+											<td>Ante turpis integer aliquet porttitor.</td>
+											<td>29.99</td>
+										</tr>
+										<tr>
+											<td>Item Two</td>
+											<td>Vis ac commodo adipiscing arcu aliquet.</td>
+											<td>19.99</td>
+										</tr>
+										<tr>
+											<td>Item Three</td>
+											<td> Morbi faucibus arcu accumsan lorem.</td>
+											<td>29.99</td>
+										</tr>
+										<tr>
+											<td>Item Four</td>
+											<td>Vitae integer tempus condimentum.</td>
+											<td>19.99</td>
+										</tr>
+										<tr>
+											<td>Item Five</td>
+											<td>Ante turpis integer aliquet porttitor.</td>
+											<td>29.99</td>
+										</tr>
+									</tbody>
+									<tfoot>
+										<tr>
+											<td colspan="2"></td>
+											<td>100.00</td>
+										</tr>
+									</tfoot>
+								</table>
+							</div>
+
+							<h5>Alternate</h5>
+							<div class="table-wrapper">
+								<table class="alt">
+									<thead>
+										<tr>
+											<th>Name</th>
+											<th>Description</th>
+											<th>Price</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>Item One</td>
+											<td>Ante turpis integer aliquet porttitor.</td>
+											<td>29.99</td>
+										</tr>
+										<tr>
+											<td>Item Two</td>
+											<td>Vis ac commodo adipiscing arcu aliquet.</td>
+											<td>19.99</td>
+										</tr>
+										<tr>
+											<td>Item Three</td>
+											<td> Morbi faucibus arcu accumsan lorem.</td>
+											<td>29.99</td>
+										</tr>
+										<tr>
+											<td>Item Four</td>
+											<td>Vitae integer tempus condimentum.</td>
+											<td>19.99</td>
+										</tr>
+										<tr>
+											<td>Item Five</td>
+											<td>Ante turpis integer aliquet porttitor.</td>
+											<td>29.99</td>
+										</tr>
+									</tbody>
+									<tfoot>
+										<tr>
+											<td colspan="2"></td>
+											<td>100.00</td>
+										</tr>
+									</tfoot>
+								</table>
+							</div>
+						</section>
+
+						<section>
+							<h4>Buttons</h4>
+							<ul class="actions">
+								<li><a href="#" class="button primary">Primary</a></li>
+								<li><a href="#" class="button">Default</a></li>
+							</ul>
+							<ul class="actions">
+								<li><a href="#" class="button large">Large</a></li>
+								<li><a href="#" class="button">Default</a></li>
+								<li><a href="#" class="button small">Small</a></li>
+							</ul>
+							<ul class="actions fit">
+								<li><a href="#" class="button primary fit">Fit</a></li>
+								<li><a href="#" class="button fit">Fit</a></li>
+							</ul>
+							<ul class="actions fit small">
+								<li><a href="#" class="button primary fit small">Fit + Small</a></li>
+								<li><a href="#" class="button fit small">Fit + Small</a></li>
+							</ul>
+							<ul class="actions">
+								<li><a href="#" class="button primary icon solid fa-download">Icon</a></li>
+								<li><a href="#" class="button icon solid fa-download">Icon</a></li>
+							</ul>
+							<ul class="actions">
+								<li><span class="button primary disabled">Primary</span></li>
+								<li><span class="button disabled">Default</span></li>
+							</ul>
+						</section>
+
+						<section>
+							<h4>Form</h4>
+							<form method="post" action="#">
+								<div class="row gtr-uniform gtr-50">
+									<div class="col-6 col-12-xsmall">
+										<input type="text" name="demo-name" id="demo-name" value="" placeholder="Name" />
+									</div>
+									<div class="col-6 col-12-xsmall">
+										<input type="email" name="demo-email" id="demo-email" value="" placeholder="Email" />
+									</div>
+									<div class="col-12">
+										<select name="demo-category" id="demo-category">
+											<option value="">- Category -</option>
+											<option value="1">Manufacturing</option>
+											<option value="1">Shipping</option>
+											<option value="1">Administration</option>
+											<option value="1">Human Resources</option>
+										</select>
+									</div>
+									<div class="col-4 col-12-small">
+										<input type="radio" id="demo-priority-low" name="demo-priority" checked>
+										<label for="demo-priority-low">Low Priority</label>
+									</div>
+									<div class="col-4 col-12-small">
+										<input type="radio" id="demo-priority-normal" name="demo-priority">
+										<label for="demo-priority-normal">Normal Priority</label>
+									</div>
+									<div class="col-4 col-12-small">
+										<input type="radio" id="demo-priority-high" name="demo-priority">
+										<label for="demo-priority-high">High Priority</label>
+									</div>
+									<div class="col-6 col-12-small">
+										<input type="checkbox" id="demo-copy" name="demo-copy">
+										<label for="demo-copy">Email me a copy of this message</label>
+									</div>
+									<div class="col-6 col-12-small">
+										<input type="checkbox" id="demo-human" name="demo-human" checked>
+										<label for="demo-human">I am a human and not a robot</label>
+									</div>
+									<div class="col-12">
+										<textarea name="demo-message" id="demo-message" placeholder="Enter your message" rows="6"></textarea>
+									</div>
+									<div class="col-12">
+										<ul class="actions">
+											<li><input type="submit" value="Send Message" class="primary" /></li>
+											<li><input type="reset" value="Reset" /></li>
+										</ul>
+									</div>
+								</div>
+							</form>
+						</section>
+
+						<section>
+							<h4>Image</h4>
+							<h5>Fit</h5>
+							<div class="box alt">
+								<div class="row gtr-50 gtr-uniform">
+									<div class="col-12"><span class="image fit"><img src="images/fulls/05.jpg" alt="" /></span></div>
+									<div class="col-4"><span class="image fit"><img src="images/thumbs/01.jpg" alt="" /></span></div>
+									<div class="col-4"><span class="image fit"><img src="images/thumbs/02.jpg" alt="" /></span></div>
+									<div class="col-4"><span class="image fit"><img src="images/thumbs/03.jpg" alt="" /></span></div>
+									<div class="col-4"><span class="image fit"><img src="images/thumbs/04.jpg" alt="" /></span></div>
+									<div class="col-4"><span class="image fit"><img src="images/thumbs/05.jpg" alt="" /></span></div>
+									<div class="col-4"><span class="image fit"><img src="images/thumbs/06.jpg" alt="" /></span></div>
+									<div class="col-4"><span class="image fit"><img src="images/thumbs/03.jpg" alt="" /></span></div>
+									<div class="col-4"><span class="image fit"><img src="images/thumbs/02.jpg" alt="" /></span></div>
+									<div class="col-4"><span class="image fit"><img src="images/thumbs/01.jpg" alt="" /></span></div>
+								</div>
+							</div>
+							<h5>Left &amp; Right</h5>
+							<p><span class="image left"><img src="images/avatars/avatar.jpg" alt="" /></span>Fringilla nisl. Donec accumsan interdum nisi, quis tincidunt felis sagittis eget. tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque praesent tincidunt felis sagittis eget. tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque praesent. Donec accumsan interdum nisi, quis tincidunt felis sagittis eget. tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque praesent tincidunt felis sagittis eget. tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque praesent.</p>
+							<p><span class="image right"><img src="images/avatars/avatar.jpg" alt="" /></span>Fringilla nisl. Donec accumsan interdum nisi, quis tincidunt felis sagittis eget. tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque praesent tincidunt felis sagittis eget. tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque praesent. Donec accumsan interdum nisi, quis tincidunt felis sagittis eget. tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque praesent tincidunt felis sagittis eget. tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque praesent.</p>
+						</section>
+
+					</section>-->
+			</div>
+
+		<!-- Footer -->
+			<footer id="footer">
+				<div class="inner">
+					<ul class="icons">
+						<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+						<li><a href="#" class="icon brands fa-github"><span class="label">Github</span></a></li>
+						<li><a href="#" class="icon brands fa-dribbble"><span class="label">Dribbble</span></a></li>
+						<li><a href="#" class="icon solid fa-envelope"><span class="label">Email</span></a></li>
+					</ul>
+					<ul class="copyright">
+						<li>&copy; Jiacheng Liu</li><li>Design: <a href="#">12156C</a></li>
+					</ul>
+				</div>
+			</footer>
+
+		<!-- Poster Modal -->
+		<div id="posterModal" class="poster-modal">
+			<div class="poster-modal-content">
+				<div class="poster-modal-header">
+					<h3 id="posterModalTitle">Poster</h3>
+					<span class="poster-close">&times;</span>
+				</div>
+				<div class="poster-modal-body" id="posterModalBody">
+					<!-- Poster content will be loaded here -->
+				</div>
+			</div>
+		</div>
+
+		<!-- Memory Photo Modal -->
+		<div id="memoryModal" class="memory-modal">
+			<div class="memory-modal-content">
+				<div class="memory-modal-header">
+					<h3 id="memoryModalTitle" data-lang-en="Memory Photo" data-lang-cn="回忆照片">Memory Photo</h3>
+					<span class="memory-close">&times;</span>
+				</div>
+				<div class="memory-modal-body" id="memoryModalBody">
+					<!-- Memory photo will be loaded here -->
+				</div>
+			</div>
+		</div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.poptrox.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+			<script>
+				// Smooth scroll and active navigation highlighting
+				(function() {
+					// Smooth scroll for anchor links
+					document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+						anchor.addEventListener('click', function (e) {
+							const href = this.getAttribute('href');
+							if (href === '#') return;
+							
+							e.preventDefault();
+							const target = document.querySelector(href);
+							if (target) {
+								target.scrollIntoView({
+									behavior: 'smooth',
+									block: 'start'
+								});
+								
+								// Update active state
+								document.querySelectorAll('.nav-menu a').forEach(link => {
+									link.classList.remove('active');
+								});
+								this.classList.add('active');
+							}
+						});
+					});
+					
+					// Highlight active section on scroll
+					const sections = document.querySelectorAll('section[id]');
+					const navLinks = document.querySelectorAll('.nav-menu a');
+					
+					function updateActiveNav() {
+						let current = '';
+						sections.forEach(section => {
+							const sectionTop = section.offsetTop;
+							const sectionHeight = section.clientHeight;
+							if (window.pageYOffset >= sectionTop - 200) {
+								current = section.getAttribute('id');
+							}
+						});
+						
+						navLinks.forEach(link => {
+							link.classList.remove('active');
+							if (link.getAttribute('href') === '#' + current) {
+								link.classList.add('active');
+							}
+						});
+					}
+					
+					window.addEventListener('scroll', updateActiveNav);
+					updateActiveNav(); // Initial call
+				})();
+				
+				// CV Expandable functionality
+				(function() {
+					const expandable = document.getElementById('cvExpandable');
+					const expandableTitle = document.getElementById('cvExpandableTitle');
+					const expandableBody = document.getElementById('cvExpandableBody');
+					const closeBtn = document.getElementById('cvCloseBtn');
+					const cvLinks = document.querySelectorAll('.cv-link');
+					
+					// Open expandable when CV link is clicked
+					cvLinks.forEach(link => {
+						link.addEventListener('click', function(e) {
+							e.preventDefault();
+							const cvType = this.getAttribute('data-cv-type');
+							const cvSrc = this.getAttribute('data-cv-src');
+							const cvTitle = this.getAttribute('data-cv-title');
+							
+							// If clicking the same CV, toggle it
+							if (expandable.classList.contains('active') && expandableTitle.textContent === cvTitle) {
+								expandable.classList.remove('active');
+								setTimeout(() => {
+									expandableBody.innerHTML = '';
+								}, 500);
+								return;
+							}
+							
+							expandableTitle.textContent = cvTitle;
+							expandableBody.innerHTML = '';
+							
+							if (cvType === 'image') {
+								// Load image
+								const img = document.createElement('img');
+								img.src = cvSrc;
+								img.alt = cvTitle;
+								img.style.width = '100%';
+								img.style.height = 'auto';
+								expandableBody.appendChild(img);
+							} else if (cvType === 'html') {
+								// Load HTML content using iframe
+								const iframe = document.createElement('iframe');
+								iframe.src = cvSrc;
+								iframe.style.width = '100%';
+								iframe.style.height = '100%';
+								iframe.style.border = 'none';
+								expandableBody.appendChild(iframe);
+							}
+							
+							// Expand the section
+							expandable.classList.add('active');
+							
+							// Scroll to the expandable section
+							setTimeout(() => {
+								expandable.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+							}, 100);
+						});
+					});
+					
+					// Close expandable when close button is clicked
+					closeBtn.addEventListener('click', function() {
+						expandable.classList.remove('active');
+						setTimeout(() => {
+							expandableBody.innerHTML = '';
+						}, 500);
+					});
+					
+					// Close expandable with Escape key
+					document.addEventListener('keydown', function(e) {
+						if (e.key === 'Escape' && expandable.classList.contains('active')) {
+							expandable.classList.remove('active');
+							setTimeout(() => {
+								expandableBody.innerHTML = '';
+							}, 500);
+						}
+					});
+				})();
+				
+				// Poster Modal functionality
+				(function() {
+					const modal = document.getElementById('posterModal');
+					const modalTitle = document.getElementById('posterModalTitle');
+					const modalBody = document.getElementById('posterModalBody');
+					const closeBtn = document.querySelector('.poster-close');
+					const posterBtns = document.querySelectorAll('.poster-btn');
+					
+					// Open modal when poster button is clicked
+					posterBtns.forEach(btn => {
+						btn.addEventListener('click', function(e) {
+							const posterSrc = this.getAttribute('data-poster-src');
+							const posterTitle = this.getAttribute('data-poster-title');
+							
+							// Only prevent default and open modal if it's a poster button (has data-poster-src)
+							// Paper buttons should navigate normally
+							if (!posterSrc) {
+								return; // Let the link navigate normally
+							}
+							
+							e.preventDefault();
+							e.stopPropagation();
+							
+							if (!modal) {
+								console.error('Poster modal not found');
+								return;
+							}
+							
+							modalTitle.textContent = posterTitle;
+							modalBody.innerHTML = '';
+							
+							if (posterSrc) {
+								// Load poster using iframe or img
+								if (posterSrc.endsWith('.pdf')) {
+									const iframe = document.createElement('iframe');
+									
+									// 先设置iframe样式
+									iframe.style.width = '100%';
+									iframe.style.height = '100%';
+									iframe.style.border = 'none';
+									iframe.style.display = 'block';
+									iframe.style.background = 'white';
+									iframe.setAttribute('type', 'application/pdf');
+									
+									// 先添加到DOM，然后等待模态框完全显示后再设置PDF源
+									modalBody.appendChild(iframe);
+									
+									// 等待模态框完全显示后再设置PDF源，确保尺寸准确
+									// 使用requestAnimationFrame确保在下一帧渲染时设置，此时容器尺寸已确定
+									requestAnimationFrame(() => {
+										requestAnimationFrame(() => {
+											// A1纵向尺寸：594mm × 841mm，宽高比约0.705
+											// 使用Fit参数确保PDF完全适应容器，既不会太小也不会超出
+											// Fit会同时考虑宽度和高度，选择较小的缩放比例以确保完整显示
+											// 移除toolbar和scrollbar以获得更好的显示效果
+											iframe.src = posterSrc + '#view=Fit&toolbar=0&navpanes=0&scrollbar=0';
+										});
+									});
+								} else {
+									const img = document.createElement('img');
+									img.src = posterSrc;
+									img.style.maxWidth = '100%';
+									img.style.maxHeight = '100%';
+									img.style.width = 'auto';
+									img.style.height = 'auto';
+									img.style.objectFit = 'contain';
+									img.style.display = 'block';
+									modalBody.appendChild(img);
+								}
+							} else {
+								// Placeholder if no source provided
+								modalBody.innerHTML = '<p style="padding: 20px; text-align: center; color: #999;">Poster will be displayed here. Please provide the poster file path in data-poster-src attribute.</p>';
+							}
+							
+							modal.style.display = 'block';
+							document.body.style.overflow = 'hidden'; // Prevent background scrolling
+						});
+					});
+					
+					// Close modal when close button is clicked
+					if (closeBtn) {
+						closeBtn.addEventListener('click', function(e) {
+							e.stopPropagation();
+							modal.style.display = 'none';
+							document.body.style.overflow = 'auto';
+							modalBody.innerHTML = ''; // Clear content
+						});
+					}
+					
+					// Close modal when clicking outside the modal content
+					window.addEventListener('click', function(e) {
+						if (e.target === modal) {
+							modal.style.display = 'none';
+							document.body.style.overflow = 'auto';
+							modalBody.innerHTML = ''; // Clear content
+						}
+					});
+					
+					// Close modal with Escape key
+					document.addEventListener('keydown', function(e) {
+						if (e.key === 'Escape' && modal && modal.style.display === 'block') {
+							modal.style.display = 'none';
+							document.body.style.overflow = 'auto';
+							modalBody.innerHTML = ''; // Clear content
+						}
+					});
+				})();
+				
+				// Memory Photo Modal functionality
+				(function() {
+					const memoryModal = document.getElementById('memoryModal');
+					const memoryModalTitle = document.getElementById('memoryModalTitle');
+					const memoryModalBody = document.getElementById('memoryModalBody');
+					const memoryCloseBtn = document.querySelector('.memory-close');
+					
+					// Get all memory photo links in the memory section
+					const memoryPhotoLinks = document.querySelectorAll('#memory .work-item a.image.fit.thumb');
+					
+					// Open modal when memory photo is clicked
+					memoryPhotoLinks.forEach(link => {
+						link.addEventListener('click', function(e) {
+							e.preventDefault();
+							e.stopPropagation();
+							
+							if (!memoryModal) {
+								console.error('Memory modal not found');
+								return;
+							}
+							
+							const imgSrc = this.getAttribute('href');
+							const article = this.closest('article');
+							const titleElement = article ? article.querySelector('h3') : null;
+							const title = titleElement ? titleElement.textContent.trim() : 'Memory Photo';
+							
+							memoryModalTitle.textContent = title;
+							memoryModalBody.innerHTML = '';
+							
+							// Create and load image
+							const img = document.createElement('img');
+							img.src = imgSrc;
+							img.alt = title;
+							img.style.maxWidth = '100%';
+							img.style.maxHeight = 'calc(90vh - 100px)';
+							img.style.width = 'auto';
+							img.style.height = 'auto';
+							img.style.objectFit = 'contain';
+							img.style.display = 'block';
+							img.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.2)';
+							img.style.borderRadius = '4px';
+							
+							// Handle image load error
+							img.onerror = function() {
+								memoryModalBody.innerHTML = '<p style="padding: 20px; text-align: center; color: #999;">无法加载图片</p>';
+							};
+							
+							memoryModalBody.appendChild(img);
+							
+							memoryModal.style.display = 'block';
+							document.body.style.overflow = 'hidden'; // Prevent background scrolling
+						});
+					});
+					
+					// Close modal when close button is clicked
+					if (memoryCloseBtn) {
+						memoryCloseBtn.addEventListener('click', function(e) {
+							e.stopPropagation();
+							memoryModal.style.display = 'none';
+							document.body.style.overflow = 'auto';
+							memoryModalBody.innerHTML = ''; // Clear content
+						});
+					}
+					
+					// Close modal when clicking outside the modal content
+					window.addEventListener('click', function(e) {
+						if (e.target === memoryModal) {
+							memoryModal.style.display = 'none';
+							document.body.style.overflow = 'auto';
+							memoryModalBody.innerHTML = ''; // Clear content
+						}
+					});
+					
+					// Close modal with Escape key
+					document.addEventListener('keydown', function(e) {
+						if (e.key === 'Escape' && memoryModal && memoryModal.style.display === 'block') {
+							memoryModal.style.display = 'none';
+							document.body.style.overflow = 'auto';
+							memoryModalBody.innerHTML = ''; // Clear content
+						}
+					});
+				})();
+				
+				// Language Toggle functionality
+				(function() {
+					let currentLang = 'cn'; // Default to Chinese
+					const langBtnCn = document.getElementById('langBtnCn');
+					const langBtnEn = document.getElementById('langBtnEn');
+					
+					// Function to switch language
+					function switchLanguage(lang) {
+						currentLang = lang;
+						
+						// Update all elements with data-lang-en and data-lang-cn attributes
+						document.querySelectorAll('[data-lang-en][data-lang-cn]').forEach(element => {
+							const content = lang === 'cn' 
+								? element.getAttribute('data-lang-cn') 
+								: element.getAttribute('data-lang-en');
+							
+							// Check if content contains HTML tags (like <a>)
+							if (content && content.includes('<')) {
+								element.innerHTML = content;
+							} else {
+								element.textContent = content;
+							}
+						});
+						
+						// Update button active states
+						if (langBtnCn && langBtnEn) {
+							if (lang === 'cn') {
+								langBtnCn.classList.add('active');
+								langBtnEn.classList.remove('active');
+							} else {
+								langBtnCn.classList.remove('active');
+								langBtnEn.classList.add('active');
+							}
+						}
+						
+						// Save preference to localStorage
+						localStorage.setItem('preferredLang', lang);
+					}
+					
+					// Chinese button click handler
+					if (langBtnCn) {
+						langBtnCn.addEventListener('click', function() {
+							switchLanguage('cn');
+						});
+					}
+					
+					// English button click handler
+					if (langBtnEn) {
+						langBtnEn.addEventListener('click', function() {
+							switchLanguage('en');
+						});
+					}
+					
+					// Load saved language preference
+					const savedLang = localStorage.getItem('preferredLang');
+					if (savedLang) {
+						switchLanguage(savedLang);
+					} else {
+						// Default to Chinese
+						switchLanguage('cn');
+					}
+				})();
+			</script>
+
+	</body>
+</html>
