@@ -10,6 +10,8 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="icon" type="image/png" href="images/logos/ico.png" />
+		<!-- 预加载关键图片 -->
+		<link rel="preload" as="image" href="images/avatars/me111.png" fetchpriority="high" />
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<style>
 			/* Header optimization for better space usage - Desktop only */
@@ -897,7 +899,7 @@
 		<!-- Header -->
 			<header id="header">
 				<div class="inner">
-					<a href="#" class="image avatar"><img src="images/avatars/me111.png" alt="" /></a>
+					<a href="#" class="image avatar"><img src="images/avatars/me111.png" alt="" width="120" height="120" fetchpriority="high" /></a>
 					<h1 style="margin-top: 0.4em;"><strong data-lang-en="I am Jiacheng Liu" data-lang-cn="我是刘佳城">I am Jiacheng Liu</strong></h1>
 					<p style="color: rgba(255, 255, 255, 0.5); margin-top: 0.15em; font-size: 0.75em;" data-lang-en="Master Student at Peking University" data-lang-cn="北京大学硕士在读">Master Student at Peking University</p>
 
@@ -973,7 +975,7 @@
 						<h1 class="word_h1" data-lang-en="Education" data-lang-cn="教育背景">Education</h1>
 						<div>
 							<div style="margin-bottom: 20px; display: flex; align-items: center;">
-								<img style="height:4.5em;margin-right:0.8em;" src="./images/logos/pku.png" alt="Peking University">
+								<img style="height:4.5em;margin-right:0.8em;" src="./images/logos/pku.png" alt="Peking University" loading="lazy" width="72" height="72">
 								<div style="line-height: 1.6;">
 									<p class="word_p" style="margin: 0;" data-lang-en="2025 - Present" data-lang-cn="2025 - 至今">2025 - Present</p>
 									<p class="word_p" style="margin: 0;" data-lang-en="Peking University" data-lang-cn="北京大学">Peking University</p>
@@ -982,7 +984,7 @@
 								</div>
 							</div>
 							<div style="margin-bottom: 20px; display: flex; align-items: center;">
-								<img style="height:4.5em;margin-right:0.8em;" src="./images/logos/swu11.png">
+								<img style="height:4.5em;margin-right:0.8em;" src="./images/logos/swu11.png" loading="lazy" width="72" height="72" alt="Southwest University">
 								<div style="line-height: 1.6;">
 									<p class="word_p" style="margin: 0;">2021 - 2025</p>
 									<p class="word_p" style="margin: 0;" data-lang-en="Southwest University" data-lang-cn="西南大学">Southwest University</p>
@@ -991,7 +993,7 @@
 								</div>
 							</div>
 							<div style="margin-bottom: 20px; display: flex; align-items: center;">
-								<img style="height:4.5em;margin-right:0.8em;" src="./images/logos/s2.png">
+								<img style="height:4.5em;margin-right:0.8em;" src="./images/logos/s2.png" loading="lazy" width="72" height="72" alt="Shiyan School">
 								<div style="line-height: 1.6;">
 									<p class="word_p" style="margin: 0;">2018 - 2021</p>
 									<p class="word_p" style="margin: 0;" data-lang-en="Shiyan School Attched To Shijiazhuang No.2 Middle School" data-lang-cn="石家庄二中实验学校">Shiyan School Attched To Shijiazhuang No.2 Middle School</p>
@@ -1037,7 +1039,7 @@
 						<h1 class="word_h1" data-lang-en="Group" data-lang-cn="组织">Group</h1>
 						<div>
 							<div style="margin-bottom: 20px; display: flex; align-items: center;">
-								<img style="height:4.5em;margin-right:0.8em;" src="images/logos/pkuinnovationclub.jpg">
+								<img style="height:4.5em;margin-right:0.8em;" src="images/logos/pkuinnovationclub.jpg" loading="lazy" width="72" height="72" alt="Peking University Innovation Club">
 								<div style="line-height: 1.6;">
 									<p class="word_p" style="margin: 0;">2025 - Now</p>
 									<p class="word_p" style="margin: 0;" data-lang-en="Peking University Innovation Club" data-lang-cn="北京大学创新学社">Peking University Innovation Club</p>
@@ -1045,7 +1047,7 @@
 								</div>
 							</div>
 							<div style="margin-bottom: 20px; display: flex; align-items: center;">
-								<img style="height:4.5em;margin-right:0.8em;" src="./images/logos/swuosa.png">
+								<img style="height:4.5em;margin-right:0.8em;" src="./images/logos/swuosa.png" loading="lazy" width="72" height="72" alt="Southwest University OSA">
 								<div style="line-height: 1.6;">
 									<p class="word_p" style="margin: 0;">2023 - 2024</p>
 									<p class="word_p" style="margin: 0;" data-lang-en="Southwest University OSA" data-lang-cn="西南大学开源与网络安全协会">Southwest University OSA</p>
@@ -1053,7 +1055,7 @@
 								</div>
 							</div>
 							<div style="margin-bottom: 20px; display: flex; align-items: center;">
-								<img style="height:4.5em;margin-right:0.8em;" src="./images/logos/swuxsh.png">
+								<img style="height:4.5em;margin-right:0.8em;" src="./images/logos/swuxsh.png" loading="lazy" width="72" height="72" alt="Southwest University Student Union">
 								<div style="line-height: 1.6;">
 									<p class="word_p" style="margin: 0;">2022 - 2023</p>
 									<p class="word_p" style="margin: 0;" data-lang-en="Southwest University Student Union" data-lang-cn="西南大学学生会">Southwest University Student Union</p>
@@ -1061,7 +1063,7 @@
 								</div>
 							</div>
 							<div style="margin-bottom: 20px; display: flex; align-items: center;">
-								<img style="height:4.5em;margin-right:0.8em;" src="./images/logos/s2xsh.png">
+								<img style="height:4.5em;margin-right:0.8em;" src="./images/logos/s2xsh.png" loading="lazy" width="72" height="72" alt="Shiyan School Student Union">
 								<div style="line-height: 1.6;">
 									<p class="word_p" style="margin: 0;">2019 - 2020</p>
 									<p class="word_p" style="margin: 0;" data-lang-en="The Shiyan School Attched To Shijiazhuang No.2 Middle School Student Union" data-lang-cn="石家庄二中实验学校学生会">The Shiyan School Attched To Shijiazhuang No.2 Middle School Student Union</p>
@@ -1076,7 +1078,7 @@
 						<div>
 							<div style="margin-bottom: 3em;">
 								<div style="display: flex; align-items: center;">
-									<img style="width:4.5em;height:4.5em;margin-right:0.8em;object-fit:contain;" src="images/logos/teamlogo2.png">
+									<img style="width:4.5em;height:4.5em;margin-right:0.8em;object-fit:contain;" src="images/logos/teamlogo2.png" loading="lazy" width="72" height="72" alt="Team Logo">
 									<div style="line-height: 1.6; flex: 1;">
 										<div style="display: flex; align-items: center; justify-content: space-between;">
 											<div>
@@ -1093,7 +1095,7 @@
 							</div>
 							<div style="margin-bottom: 20px;">
 								<div style="display: flex; align-items: center;">
-									<img style="width:4.5em;height:4.5em;margin-right:0.8em;object-fit:contain;" src="images/logos/Acu-Precision.png">
+									<img style="width:4.5em;height:4.5em;margin-right:0.8em;object-fit:contain;" src="images/logos/Acu-Precision.png" loading="lazy" width="72" height="72" alt="Acu-Precision Logo">
 									<div style="line-height: 1.6; flex: 1;">
 										<div style="display: flex; align-items: center; justify-content: space-between;">
 											<div>
@@ -1115,12 +1117,12 @@
 						<h2 class="word_h1" data-lang-en="Project" data-lang-cn="项目">Project</h2>
 						<div class="row">
 							<article class="col-6 col-12-xsmall work-item">
-								<a href="images/thumbs/Acupoint_Hololens.png" class="image fit thumb"><img src="images/thumbs/Acupoint_Hololens.png" alt="" /></a>
+								<a href="images/thumbs/Acupoint_Hololens.png" class="image fit thumb"><img src="images/thumbs/Acupoint_Hololens.png" alt="" loading="lazy" /></a>
 								<h3 style="color: black"><a href="https://12156c.github.io/Acupoint/"><span data-lang-en="Mixed Reality TCM Teaching System (Based on Hololens 2)" data-lang-cn="混合现实中医教学系统（基于Hololens 2）">Mixed Reality TCM Teaching System (Based on Hololens 2)</span></a></h3>
 								<p data-lang-en="Achieves automatic detection of hand acupoints and simulated acupuncture insertion practice." data-lang-cn="实现了人体手部穴位自动识别和针灸刺入模拟练习。">Achieves automatic detection of hand acupoints and simulated acupuncture insertion practice.</p>
 							</article>
 							<article class="col-6 col-12-xsmall work-item">
-								<a href="images/thumbs/Acupoint_PICO1.png" class="image fit thumb"><img src="images/thumbs/Acupoint_PICO1.png" alt="" /></a>
+								<a href="images/thumbs/Acupoint_PICO1.png" class="image fit thumb"><img src="images/thumbs/Acupoint_PICO1.png" alt="" loading="lazy" /></a>
 								<h3 style="color: black"><span data-lang-en="Mixed Reality TCM Teaching System (Based on PICO 4 Pro)" data-lang-cn="混合现实中医教学系统（基于PICO 4 Pro）">Mixed Reality TCM Teaching System (Based on PICO 4 Pro)</span></h3>
 								<p data-lang-en="Achieves acupoint detection (hands, limbs, and torso) and simulated acupoint therapy practice (acupressure, acupuncture, and moxibustion)." data-lang-cn="实现了人体穴位识别（手部、四肢和躯干）和穴位治疗模拟练习（点按、针灸和艾灸）。">Achieves acupoint detection (hands, limbs, and torso) and simulated acupoint therapy practice (acupressure, acupuncture, and moxibustion).</p>
 							</article>
@@ -1133,7 +1135,7 @@
 						<h2 class="word_h1" data-lang-en="Video" data-lang-cn="视频">Video</h2>
 						<div class="row">
 							<article class="col-6 col-12-xsmall work-item">
-								<a href="https://www.youtube.com/watch?v=2Die7EoFUes" class="image fit thumb"><img src="images/thumbs/video1.jpg" alt="" /></a>
+								<a href="https://www.youtube.com/watch?v=2Die7EoFUes" class="image fit thumb"><img src="images/thumbs/video1.jpg" alt="" loading="lazy" /></a>
 								<h3 style="color: black"><span data-lang-en="Mixed Reality TCM Teaching System Demo on Hololens 2" data-lang-cn="Hololens 2上混合现实中医教学系统的demo">Mixed Reality TCM Teaching System Demo on Hololens 2</span></h3>
 								<p data-lang-en="Demonstrates hand acupoint detection and teaching based on a standard acupoint model." data-lang-cn="演示了手部穴位检测和基于标准穴位模型的教学。">Demonstrates hand acupoint detection and teaching based on a standard acupoint model.</p>
 							</article>
@@ -1143,7 +1145,7 @@
 								<p data-lang-en="Lorem ipsum dolor sit amet nisl sed nullam feugiat." data-lang-cn="基于增强现实技术的中医穴位教学系统。">Lorem ipsum dolor sit amet nisl sed nullam feugiat.</p>
 							</article> -->
 							<article class="col-6 col-12-xsmall work-item">
-								<a href="https://youtu.be/YsiYCewP1nc" class="image fit thumb"><img src="images/thumbs/CCVR.jpg" alt="" /></a>
+								<a href="https://youtu.be/YsiYCewP1nc" class="image fit thumb"><img src="images/thumbs/CCVR.jpg" alt="" loading="lazy" /></a>
 								<h3 style="color: black"><span data-lang-en="CCVR 2023 National First Prize: Project Showcase" data-lang-cn="CCVR 2023国家级一等奖项目展示">National First Prize : CCVR 2023 Project Showcase</span></h3>
 								<p data-lang-en="Technical approach and effectiveness demonstration of TCM acupoint knowledge teaching, applicable to PICO 4 Pro and Hololens 2 platforms." data-lang-cn="中医穴位知识教学的技术路线与效果展示，适用于PICO 4 Pro和Hololens 2平台。">Technical approach and effectiveness demonstration of TCM acupoint knowledge teaching, applicable to PICO 4 Pro and Hololens 2 platforms.</p>
 							</article>
@@ -1157,13 +1159,13 @@
 
 							
 							<article class="col-4 col-12-xsmall work-item">
-								<a href="images/fulls/graduation_with_prof_huang.png" class="image fit thumb"><img src="images/thumbs/3.png" alt="" /></a>
+								<a href="images/fulls/graduation_with_prof_huang.png" class="image fit thumb"><img src="images/thumbs/3.png" alt="" loading="lazy" /></a>
 								<h3 class="word_p" data-lang-en="Graduation with Prof. Bingyao Huang" data-lang-cn="与黄兵姚教授的毕业合影">Graduation with Prof. Bingyao Huang</h3>
 								<p data-lang-en="A memorable graduation photo taken at Southwest University in 2025 with my undergraduate supervisor, who guided me throughout my four years of study." data-lang-cn="2025年于西南大学与本科导师的毕业合影，感谢四年来黄教授的悉心指导。">A memorable graduation photo taken at Southwest University in 2025 with my undergraduate supervisor, who guided me throughout my four years of study.</p>
 							</article>
 							
 							<article class="col-4 col-12-xsmall work-item">
-								<a href="images/fulls/ccvr2023_first_prize.png" class="image fit thumb"><img src="images/thumbs/1.png" alt="" /></a>
+								<a href="images/fulls/ccvr2023_first_prize.png" class="image fit thumb"><img src="images/thumbs/1.png" alt="" loading="lazy" /></a>
 								<h3 class="word_p" data-lang-en="CCVR 2023 National First Prize with Academician Zhao and Prof. Chen" data-lang-cn="CCVR 2023全国一等奖与赵院士、陈教授合影">CCVR 2023 National First Prize with Academician Zhao and Prof. Chen</h3>
 								<p data-lang-en="A memorable photo taken at the CCVR 2023 Awards Dinner after winning the National First Prize, celebrating with Academician Zhao and Professor Chen." data-lang-cn="在CCVR 2023颁奖晚宴上，获得全国一等奖后与赵院士、陈教授的珍贵合影。">A memorable photo taken at the CCVR 2023 Awards Dinner after winning the National First Prize, celebrating with Academician Zhao and Professor Chen.</p>
 							</article>
@@ -1171,19 +1173,19 @@
 
 							
 							<article class="col-4 col-12-xsmall work-item">
-								<a href="images/fulls/prof_huang_and_prof_ling.png" class="image fit thumb"><img src="images/thumbs/4.png" alt="" /></a>
+								<a href="images/fulls/prof_huang_and_prof_ling.png" class="image fit thumb"><img src="images/thumbs/4.png" alt="" loading="lazy" /></a>
 								<h3 class="word_p" data-lang-en="Photo with Prof. Bingyao Huang and Prof. Haibin Ling" data-lang-cn="与黄兵姚老师和师爷凌海斌老师的合影">Photo with Prof. Bingyao Huang and Prof. Haibin Ling</h3>
 								<p data-lang-en="A memorable photo with my undergraduate supervisor Prof. Bingyao Huang and his supervisor Prof. Haibin Ling." data-lang-cn="与本科导师黄兵姚老师及其导师（师爷）凌海斌老师的合影。">A memorable photo with my undergraduate supervisor Prof. Bingyao Huang and his supervisor Prof. Haibin Ling.</p>
 							</article>
 
 							<article class="col-4 col-12-xsmall work-item">
-								<a href="images/fulls/ismar2025_poster.jpg" class="image fit thumb"><img src="images/thumbs/ismar25.jpg" alt="ISMAR 2025 Poster" /></a>
+								<a href="images/fulls/ismar2025_poster.jpg" class="image fit thumb"><img src="images/thumbs/ismar25.jpg" alt="ISMAR 2025 Poster" loading="lazy" /></a>
 								<h3 class="word_p" data-lang-en="ISMAR 2025 Poster Session" data-lang-cn="ISMAR 2025 海报展示">ISMAR 2025 Poster Session</h3>
 								<p data-lang-en="Our ISMAR 2025 poster presentation on the mixed reality acupoint teaching framework." data-lang-cn="在 ISMAR 2025 上展示混合现实穴位教学框架海报。">Our ISMAR 2025 poster presentation on the mixed reality acupoint teaching framework.</p>
 							</article>
 
 							<article class="col-4 col-12-xsmall work-item">
-								<a href="images/fulls/presenting_tcm_to_vice_mayor.png" class="image fit thumb"><img src="images/thumbs/5.png" alt="" /></a>
+								<a href="images/fulls/presenting_tcm_to_vice_mayor.png" class="image fit thumb"><img src="images/thumbs/5.png" alt="" loading="lazy" /></a>
 								<h3 class="word_p" data-lang-en="Presenting TCM Project to Vice Mayor Shang of Chongqing" data-lang-cn="向重庆市商副市长介绍中医项目">Presenting TCM Project to Vice Mayor Shang of Chongqing</h3>
 								<p data-lang-en="A memorable moment presenting our Traditional Chinese Medicine acupoint teaching system project to Vice Mayor Shang of Chongqing Municipality." data-lang-cn="向重庆市商副市长介绍我们的中医穴位教学系统项目。">A memorable moment presenting our Traditional Chinese Medicine acupoint teaching system project to Vice Mayor Shang of Chongqing Municipality.</p>
 							</article>
