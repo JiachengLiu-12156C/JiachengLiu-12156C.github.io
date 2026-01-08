@@ -9,9 +9,10 @@
 		<title>Jiacheng Liu's Homepage</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="icon" type="image/png" href="images/preload/logos/ico.png" />
 		<link rel="icon" type="image/webp" href="images/preload/logos/ico.webp" />
+		<link rel="icon" type="image/png" href="images/preload/logos/ico.png" />
 		<!-- 预加载关键资源 - 提升导航栏加载优先级 -->
+		<link rel="preload" as="image" href="images/preload/logos/ico.webp" fetchpriority="high" />
 		<link rel="preload" as="style" href="assets/css/main.css" />
 		<link rel="preload" as="style" href="assets/css/fontawesome-all.min.css" />
 		<link rel="preload" as="image" href="images/preload/avatars/me111.webp" fetchpriority="high" />
@@ -963,8 +964,8 @@
 						<p class="word_p" data-lang-en="My research interests lie at the intersection of Virtual/Augmented/Mixed Reality (VR/AR/MR), Human-Computer Interaction (HCI), Visualization (VIS), and Generative AI." data-lang-cn="目前，我的主要研究兴趣包括：虚拟现实/增强现实/混合现实（VR/AR/MR）、人机交互（HCI）、数据可视化（VIS）以及生成式人工智能（Generative AI）。">My research interests lie at the intersection of Virtual/Augmented/Mixed Reality (VR/AR/MR), Human-Computer Interaction (HCI), Visualization (VIS), and Generative AI.</p>
 
 						<ul class="actions" style="margin-top: 2em;">
-							<li><a href="#" class="button cv-link" data-cv-type="image" data-cv-src="images/fullsize/CV/CV (Chinese).jpg" data-cv-title="CV (Chinese)"><span data-lang-en="CV (Chinese)" data-lang-cn="简历（中文）">CV (Chinese)</span></a></li>
-							<li><a href="#" class="button cv-link" data-cv-type="image" data-cv-src="images/fullsize/CV/CV (Chinese).jpg" data-cv-title="CV (English)"><span data-lang-en="CV (English)" data-lang-cn="简历（英文）">CV (English)</span></a></li>
+							<li><a href="#" class="button cv-link" data-cv-type="image" data-cv-src="images/fullsize/CV/CV (Chinese).jpg" data-cv-webp="images/fullsize/CV/CV (Chinese).webp" data-cv-title="CV (Chinese)"><span data-lang-en="CV (Chinese)" data-lang-cn="简历（中文）">CV (Chinese)</span></a></li>
+							<li><a href="#" class="button cv-link" data-cv-type="image" data-cv-src="images/fullsize/CV/CV (Chinese).jpg" data-cv-webp="images/fullsize/CV/CV (Chinese).webp" data-cv-title="CV (English)"><span data-lang-en="CV (English)" data-lang-cn="简历（英文）">CV (English)</span></a></li>
 						</ul>
 						
 						<!-- CV Expandable Section -->
@@ -1743,13 +1744,25 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 							expandableBody.innerHTML = '';
 							
 							if (cvType === 'image') {
-								// Load image
+								// Load image with WebP support
+								const picture = document.createElement('picture');
+								
+								// Create WebP source if available
+								const webpSrc = cvSrc.replace(/\.(jpg|jpeg|png)$/i, '.webp');
+								const source = document.createElement('source');
+								source.srcset = webpSrc;
+								source.type = 'image/webp';
+								picture.appendChild(source);
+								
+								// Create fallback img
 								const img = document.createElement('img');
 								img.src = cvSrc;
 								img.alt = cvTitle;
 								img.style.width = '100%';
 								img.style.height = 'auto';
-								expandableBody.appendChild(img);
+								picture.appendChild(img);
+								
+								expandableBody.appendChild(picture);
 							} else if (cvType === 'html') {
 								// Load HTML content using iframe
 								const iframe = document.createElement('iframe');
