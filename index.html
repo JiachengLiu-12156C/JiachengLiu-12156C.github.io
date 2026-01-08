@@ -946,8 +946,8 @@
 
 		<!-- Language Toggle Buttons - Top Right -->
 		<div class="lang-buttons-fixed">
-			<button id="langBtnCn" class="lang-btn active">中文</button>
-			<button id="langBtnEn" class="lang-btn">English</button>
+			<button id="langBtnCn" class="lang-btn">中文</button>
+			<button id="langBtnEn" class="lang-btn active">English</button>
 		</div>
 
 		<!-- Main -->
@@ -1995,7 +1995,7 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 				
 				// Language Toggle functionality
 				(function() {
-					let currentLang = 'cn'; // Default to Chinese
+					let currentLang = 'en'; // Default to English
 					const langBtnCn = document.getElementById('langBtnCn');
 					const langBtnEn = document.getElementById('langBtnEn');
 					
@@ -2051,8 +2051,8 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 					if (savedLang) {
 						switchLanguage(savedLang);
 					} else {
-						// Default to Chinese
-						switchLanguage('cn');
+						// Default to English
+						switchLanguage('en');
 					}
 				})();
 			</script>
