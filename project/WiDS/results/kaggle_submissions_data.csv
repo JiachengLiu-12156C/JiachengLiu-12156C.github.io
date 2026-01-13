@@ -1,0 +1,15 @@
+﻿filename,hours_ago,private_score,public_score,model,stage,submission_time
+submission_xgboost.csv,20,0.89711,0.89805,XGBoost,基础模型,2026-01-10 21:15:40.576165
+submission_lightgbm.csv,20,0.89696,0.8995,LightGBM,基础模型,2026-01-10 21:15:40.576165
+submission_standard_dl.csv,20,0.87873,0.87408,Deep Learning,Standard模型,2026-01-10 21:15:40.576165
+submission.csv,20,0.89696,0.8995,Unknown,早期版本,2026-01-10 21:15:40.576165
+submission.csv,20,0.89194,0.88907,Unknown,早期版本,2026-01-10 21:15:40.576165
+submission_xgboost.csv,19,0.89711,0.89805,XGBoost,基础模型,2026-01-10 22:15:40.576165
+submission_xgboost.csv,17,0.90035,0.90268,XGBoost,普通调优,2026-01-11 00:15:40.576165
+submission_lightgbm.csv,17,0.90146,0.90171,LightGBM,普通调优,2026-01-11 00:15:40.576165
+submission_xgboost.csv,15,0.90035,0.90268,XGBoost,普通调优,2026-01-11 02:15:40.576165
+submission_xgboost.csv,15,0.90234,0.90267,XGBoost,高级调优,2026-01-11 02:15:40.576165
+submission_lightgbm.csv,12,0.90146,0.90171,LightGBM,普通调优,2026-01-11 05:15:40.576165
+submission_lightgbm.csv,12,0.90417,0.9054,LightGBM,高级调优,2026-01-11 05:15:40.576165
+submission_lightgbm.csv,11,0.9047,0.90584,LightGBM,高级调优,2026-01-11 06:15:40.576165
+submission_lightgbm_ensemble.csv,11,0.9047,0.90584,LightGBM Ensemble,集成模型（最优）,2026-01-11 06:15:40.576165
