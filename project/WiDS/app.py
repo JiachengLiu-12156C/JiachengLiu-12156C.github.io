@@ -93,28 +93,37 @@ st.markdown("""
         border-bottom: 2px solid #ecf0f1;
     }
     .metric-card {
-        background-color: #f8f9fa;
+        background-color: #1f2a36;  /* 加深背景，适配白色文字 */
+        color: #ffffff;
         padding: 1rem;
         border-radius: 10px;
         border-left: 4px solid #1f77b4;
         margin: 0.5rem 0;
     }
     .info-box {
-        background-color: #e8f4f8;
+        background-color: #16324f;  /* 深蓝色背景，增强对比度 */
+        color: #ffffff;
         padding: 1rem;
+        padding-top: 0.75rem;
         border-radius: 8px;
         border-left: 4px solid #3498db;
-        margin: 1rem 0;
+        margin: 0;
+    }
+    .metric-container {
+        padding-top: 0.75rem;
+        padding-left: 1.5rem;
     }
     .success-box {
-        background-color: #d4edda;
+        background-color: #123524;  /* 深绿色背景，适合白字 */
+        color: #ffffff;
         padding: 1rem;
         border-radius: 8px;
         border-left: 4px solid #28a745;
         margin: 1rem 0;
     }
     .warning-box {
-        background-color: #fff3cd;
+        background-color: #4b3812;  /* 深黄色系背景，提升可读性 */
+        color: #ffffff;
         padding: 1rem;
         border-radius: 8px;
         border-left: 4px solid #ffc107;
@@ -127,7 +136,7 @@ st.markdown("""
 st.markdown('<div class="main-header">🏥 WiDS Datathon 2020 - ICU死亡风险预测分析系统</div>', unsafe_allow_html=True)
 
 # 项目信息
-col1, col2, col3 = st.columns([2, 1, 1])
+col1, col2, col3 = st.columns([2, 1, 1], gap="large")
 
 with col1:
     st.markdown("""
@@ -140,62 +149,16 @@ with col1:
     """, unsafe_allow_html=True)
 
 with col2:
+    st.markdown('<div class="metric-container">', unsafe_allow_html=True)
     st.metric("📊 样本数量", "91,713")
     st.metric("🔬 特征维度", "186")
+    st.markdown('</div>', unsafe_allow_html=True)
 
 with col3:
+    st.markdown('<div class="metric-container">', unsafe_allow_html=True)
     st.metric("🏥 医院数量", "200+")
     st.metric("🎯 目标变量", "hospital_death")
-
-# 数据概览
-st.markdown('<div class="section-header">📈 数据概览</div>', unsafe_allow_html=True)
-
-col1, col2 = st.columns(2)
-
-with col1:
-    # 尝试加载数据基本信息
-    try:
-        data_path = BASE_DIR / "data" / "training_v2.csv"
-        if data_path.exists():
-            # 只读取前几行来获取列信息，避免加载整个数据集
-            sample_df = load_csv_data(data_path, nrows=1000, low_memory=False)
-            st.markdown("""
-            <div class="success-box">
-                <h4>✅ 数据文件已就绪</h4>
-                <p><strong>数据形状：</strong>91,713 行 × 186 列</p>
-                <p><strong>特征类别：</strong></p>
-                <ul>
-                    <li>行政管理类标识符</li>
-                    <li>人口统计学指标（年龄、性别、BMI等）</li>
-                    <li>24小时动态生命体征</li>
-                    <li>实验室化验指标</li>
-                    <li>APACHE评分协变量</li>
-                </ul>
-            </div>
-            """, unsafe_allow_html=True)
-        else:
-            st.warning("⚠️ 数据文件未找到，请确保 data/training_v2.csv 存在")
-    except Exception as e:
-        st.error(f"加载数据时出错: {str(e)}")
-
-with col2:
-    # 目标变量分布
-    st.markdown("### 目标变量分布")
-    target_dist = pd.DataFrame({
-        '类别': ['存活 (0)', '死亡 (1)'],
-        '数量': [82000, 9713],  # 示例数据，实际应从数据中读取
-        '百分比': [89.4, 10.6]
-    })
-    
-    fig = px.pie(
-        target_dist, 
-        values='百分比', 
-        names='类别',
-        title='住院死亡分布',
-        color_discrete_map={'存活 (0)': '#2ecc71', '死亡 (1)': '#e74c3c'}
-    )
-    fig.update_traces(textposition='inside', textinfo='percent+label')
-    st.plotly_chart(fig, use_container_width=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # 主要分析模块
 st.markdown('<div class="section-header">🔬 主要分析模块</div>', unsafe_allow_html=True)
@@ -302,7 +265,6 @@ with tab1:
             
             # 1. 缺失值比例分布直方图
             with chart_col1:
-                st.markdown("**缺失值比例分布直方图**")
                 fig_hist = px.histogram(
                     missing_df,
                     x='缺失比例(%)',
@@ -321,7 +283,6 @@ with tab1:
             
             # 2. 缺失值比例最高的前20个特征（水平条形图）
             with chart_col2:
-                st.markdown("**缺失值比例最高的前20个特征**")
                 top_missing = missing_df.head(20)
                 fig_bar = px.bar(
                     top_missing,
@@ -342,7 +303,6 @@ with tab1:
             
             # 3. 缺失值阈值统计（条形图）
             with chart_col3:
-                st.markdown("**缺失值阈值统计**")
                 threshold_data = pd.DataFrame({
                     '类别': ['无缺失', '低缺失', '中等缺失', '高缺失'],
                     '特征数量': [no_missing, low_missing, medium_missing, high_missing]
@@ -362,7 +322,13 @@ with tab1:
                     }
                 )
                 fig_threshold.update_traces(texttemplate='%{y}', textposition='outside')
-                fig_threshold.update_layout(height=400, showlegend=False)
+                # 扩大y轴范围，确保顶部数字完整显示
+                max_y = max([no_missing, low_missing, medium_missing, high_missing])
+                fig_threshold.update_layout(
+                    height=400, 
+                    showlegend=False,
+                    yaxis=dict(range=[0, max_y * 1.15] if max_y > 0 else None)
+                )
                 st.plotly_chart(fig_threshold, use_container_width=True)
             
             # 4. 显示前20个缺失值比例最高的特征表格
@@ -453,7 +419,6 @@ with tab1:
                 
                 # 1. 特征类别分布饼图
                 with chart_col1:
-                    st.markdown("**特征类别分布饼图**")
                     fig_pie = px.pie(
                         values=category_counts.values,
                         names=category_counts.index,
@@ -470,7 +435,6 @@ with tab1:
                 
                 # 2. 特征类别分布水平条形图
                 with chart_col2:
-                    st.markdown("**特征类别分布水平条形图**")
                     fig_hbar = px.bar(
                         x=category_counts.values,
                         y=category_counts.index,
@@ -607,7 +571,13 @@ with tab2:
                         }
                     )
                     fig1.update_traces(texttemplate='%{y}', textposition='outside')
-                    fig1.update_layout(showlegend=False, height=400)
+                    # 扩大y轴范围，确保顶部数字完整显示
+                    max_y = max(counts)
+                    fig1.update_layout(
+                        showlegend=False, 
+                        height=400,
+                        yaxis=dict(range=[0, max_y * 1.15])
+                    )
                     st.plotly_chart(fig1, use_container_width=True)
                 
                 # 2. 被删除特征的类型分析
@@ -632,7 +602,13 @@ with tab2:
                         }
                     )
                     fig2.update_traces(texttemplate='%{y}', textposition='outside')
-                    fig2.update_layout(showlegend=False, height=400)
+                    # 扩大y轴范围，确保顶部数字完整显示
+                    max_y = max(deleted_counts) if deleted_counts else 0
+                    fig2.update_layout(
+                        showlegend=False, 
+                        height=400,
+                        yaxis=dict(range=[0, max_y * 1.15] if max_y > 0 else None)
+                    )
                     st.plotly_chart(fig2, use_container_width=True)
                 
                 # 3. 特征类型分布
@@ -652,7 +628,13 @@ with tab2:
                         }
                     )
                     fig3.update_traces(texttemplate='%{y}', textposition='outside')
-                    fig3.update_layout(showlegend=False, height=400)
+                    # 扩大y轴范围，确保顶部数字完整显示
+                    max_y = max(feature_counts) if feature_counts else 0
+                    fig3.update_layout(
+                        showlegend=False, 
+                        height=400,
+                        yaxis=dict(range=[0, max_y * 1.15] if max_y > 0 else None)
+                    )
                     st.plotly_chart(fig3, use_container_width=True)
                 
                 # 4. 缺失值处理策略
@@ -672,7 +654,13 @@ with tab2:
                         }
                     )
                     fig4.update_traces(texttemplate='%{y:,}', textposition='outside')
-                    fig4.update_layout(showlegend=False, height=400)
+                    # 扩大y轴范围，确保顶部数字完整显示
+                    max_y = max(missing_counts) if missing_counts else 0
+                    fig4.update_layout(
+                        showlegend=False, 
+                        height=400,
+                        yaxis=dict(range=[0, max_y * 1.15] if max_y > 0 else None)
+                    )
                     st.plotly_chart(fig4, use_container_width=True)
         else:
             st.warning("⚠️ 数据文件未找到，请确保 data/training_v2.csv 存在")
@@ -1234,21 +1222,103 @@ with tab4:
                 'AP-Score': 'AP分数'
             }
             
+            # 定义每个指标的自定义范围
+            metric_ranges = {
+                'Accuracy': [0.9, 0.95],
+                'Precision': [0.5, 0.6],
+                'Recall': [0.5, 0.55],
+                'F1-Score': [0.5, 0.55],
+                'AUC-ROC': [0.85, 0.95],
+                'AP-Score': [0.55, 0.6]
+            }
+            
+            # 归一化函数：将原始值映射到[0,1]范围
+            def normalize_value(value, metric):
+                min_val, max_val = metric_ranges[metric]
+                # 将值限制在范围内
+                clamped_value = max(min_val, min(max_val, value))
+                # 归一化到[0,1]
+                normalized = (clamped_value - min_val) / (max_val - min_val)
+                return normalized
+            
             # 选择前4个模型进行雷达图对比
+            # 定义模型颜色映射和填充模式（深红色放在底层，先添加）
+            model_configs = {
+                'XGBoost': {
+                    'color': '#8B0000',  # 深红色 - 底层
+                    'fill': 'toself',
+                    'fill_opacity': 0.2,  # 很低的填充透明度
+                    'line_width': 3
+                },
+                'LightGBM': {
+                    'color': '#3498db',  # 蓝色
+                    'fill': 'toself',
+                    'fill_opacity': 0.25,
+                    'line_width': 3
+                },
+                'LightGBM集成': {
+                    'color': '#2ecc71',  # 绿色
+                    'fill': 'toself',
+                    'fill_opacity': 0.25,
+                    'line_width': 3
+                },
+                '梯度提升树': {
+                    'color': '#f39c12',  # 橙色
+                    'fill': 'toself',
+                    'fill_opacity': 0.25,
+                    'line_width': 3
+                }
+            }
             top_models = ['XGBoost', 'LightGBM', 'LightGBM集成', '梯度提升树']
             fig_radar = go.Figure()
+            
+            # 将hex颜色转换为rgba以控制填充透明度
+            def hex_to_rgba(hex_color, alpha):
+                hex_color = hex_color.lstrip('#')
+                r = int(hex_color[0:2], 16)
+                g = int(hex_color[2:4], 16)
+                b = int(hex_color[4:6], 16)
+                return f'rgba({r}, {g}, {b}, {alpha})'
             
             for model_name in top_models:
                 model_data = metrics_df[metrics_df['模型'] == model_name]
                 if len(model_data) > 0:
-                    values = [model_data[metric].values[0] for metric in metrics_for_radar]
+                    # 对每个指标的值进行归一化，同时保存原始值
+                    normalized_values = []
+                    original_values = []
+                    theta_labels = []
+                    for metric in metrics_for_radar:
+                        original_value = model_data[metric].values[0]
+                        normalized_value = normalize_value(original_value, metric)
+                        normalized_values.append(normalized_value)
+                        original_values.append(original_value)
+                        theta_labels.append(metrics_cn[metric])
+                    
+                    # 为了形成闭合的雷达图，需要在末尾添加第一个点的值
+                    normalized_values.append(normalized_values[0])
+                    original_values.append(original_values[0])
+                    theta_labels.append(theta_labels[0])
+                    
+                    config = model_configs.get(model_name, {})
+                    color = config.get('color', '#000000')
+                    fill_opacity = config.get('fill_opacity', 0.3)
+                    line_width = config.get('line_width', 2)
+                    
                     fig_radar.add_trace(go.Scatterpolar(
-                        r=values,
-                        theta=[metrics_cn[m] for m in metrics_for_radar],
+                        r=normalized_values,  # 使用归一化后的值（已闭合）
+                        theta=theta_labels,  # 已闭合的标签
                         fill='toself',
-                        name=model_name
+                        name=model_name,
+                        line_color=color,
+                        fillcolor=hex_to_rgba(color, fill_opacity),  # 使用rgba控制填充透明度
+                        line=dict(width=line_width, color=color),  # 线条保持不透明，更清晰
+                        opacity=1.0,  # trace本身不透明，只让填充透明
+                        # 添加自定义数据用于悬停时显示原始值
+                        customdata=original_values,
+                        hovertemplate='<b>%{theta}</b><br>归一化值: %{r:.3f}<br>原始值: %{customdata:.4f}<extra></extra>'
                     ))
             
+            # 设置radialaxis范围为[0,1]，因为数据已经归一化
             fig_radar.update_layout(
                 polar=dict(
                     radialaxis=dict(
@@ -1256,10 +1326,20 @@ with tab4:
                         range=[0, 1]
                     )),
                 showlegend=True,
-                title="多维度性能雷达图对比",
+                title="多维度性能雷达图对比（已按指标范围归一化）",
                 height=400
             )
             st.plotly_chart(fig_radar, use_container_width=True)
+            
+            # 显示各指标的范围说明
+            st.markdown("""
+            <div style="font-size: 0.85em; color: #666; margin-top: -25px; margin-bottom: 10px;">
+            <b>指标范围说明：</b><br>
+            准确率: [0.9, 0.95] | 精确率: [0.5, 0.6] | 召回率: [0.5, 0.55] | 
+            F1分数: [0.5, 0.55] | AUC-ROC: [0.85, 0.95] | AP分数: [0.55, 0.6]<br>
+            <i>注：雷达图已按各指标范围归一化显示，悬停可查看原始值</i>
+            </div>
+            """, unsafe_allow_html=True)
         
         with col2:
             # 多指标条形图对比
@@ -1394,13 +1474,19 @@ with tab4:
             
             fig_improvement.add_hline(y=0, line_dash="dash", line_color="gray")
             
+            # 扩大y轴范围，确保顶部数字完整显示
+            max_y = comparison_df['提升幅度'].max()
+            min_y = comparison_df['提升幅度'].min()
+            y_range_padding = max(abs(max_y), abs(min_y)) * 0.35  # 35%的边距（再增加10%）
+            
             fig_improvement.update_layout(
                 title='Optuna优化带来的性能提升',
                 xaxis_title='指标',
                 yaxis_title='提升幅度',
                 height=400,
                 xaxis_tickangle=-45,
-                showlegend=False
+                showlegend=False,
+                yaxis=dict(range=[min_y - y_range_padding, max_y + y_range_padding])
             )
             st.plotly_chart(fig_improvement, use_container_width=True)
         
@@ -1936,7 +2022,6 @@ with tab5:
                                 """)
                             
                             shap_interactive_success = True
-                            st.success("✅ 已生成交互式SHAP图表")
                 except Exception as e:
                     st.warning(f"生成交互式SHAP图表时出错: {str(e)}")
                     st.info("💡 请确保已安装SHAP库（`pip install shap`）并加载模型后可生成交互式图表")
@@ -2951,7 +3036,8 @@ st.markdown('<div class="section-header">🛠️ 技术栈</div>', unsafe_allow_
 
 tech_cols = st.columns(4)
 tech_stack = [
-    ("Python 3.x", "🐍"),
+    # 当前运行环境 Python 版本为 3.13.5（经 py --version 检测）
+    ("Python 3.13.5", "🐍"),
     ("pandas & numpy", "📊"),
     ("scikit-learn", "🤖"),
     ("LightGBM/XGBoost", "🌲"),
