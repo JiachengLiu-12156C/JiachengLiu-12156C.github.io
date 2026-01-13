@@ -2593,7 +2593,7 @@ input, select, textarea {
 		justify-content: flex-start;
 		background-color: #1f1815;
 		background-attachment: scroll,								scroll;
-		background-image: url("images/overlay.png"), url("../../images/preload/background/bg.webp");
+		background-image: url("images/overlay.png"), url("../../images/backgrounds/bg.jpg");
 		background-position: top left,							top left;
 		background-repeat: repeat,								no-repeat;
 		background-size: auto,								150%;
