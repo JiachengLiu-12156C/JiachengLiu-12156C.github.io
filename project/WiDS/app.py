@@ -17,6 +17,18 @@ from PIL import Image
 # 以当前应用目录为根目录，避免依赖仓库根目录
 BASE_DIR = Path(__file__).resolve().parent
 
+# 添加当前目录到 Python 路径，确保可以导入同目录下的模块
+if str(BASE_DIR) not in sys.path:
+    sys.path.insert(0, str(BASE_DIR))
+
+# 尝试导入特征工程模块（如果可用）
+try:
+    from feature_engineering import apply_feature_engineering
+    FEATURE_ENGINEERING_AVAILABLE = True
+except ImportError:
+    FEATURE_ENGINEERING_AVAILABLE = False
+    apply_feature_engineering = None
+
 # 缓存函数：加载CSV数据
 @st.cache_data
 def load_csv_data(file_path, **kwargs):
@@ -111,12 +123,10 @@ def get_prediction_model_and_features():
 
     # 加载训练数据（用于特征工程和计算中位数）
     try:
-        # 导入特征工程函数（如果可用）
+        # 使用特征工程函数（如果可用）
         if use_feature_engineering:
-            try:
-                from feature_engineering import apply_feature_engineering
-            except ImportError:
-                st.warning("无法导入特征工程模块，将跳过特征工程步骤")
+            if not FEATURE_ENGINEERING_AVAILABLE or apply_feature_engineering is None:
+                st.warning("特征工程模块不可用，将跳过特征工程步骤")
                 use_feature_engineering = False
         
         train_df = load_csv_data(data_path, nrows=50000, low_memory=False, na_values=['NA', ''])
@@ -399,11 +409,13 @@ else:
                 # 2. 应用特征工程（如果训练时使用了）
                 use_feature_engineering = preprocessor.get('use_feature_engineering', False) if preprocessor and isinstance(preprocessor, dict) else False
                 if use_feature_engineering:
-                    try:
-                        from feature_engineering import apply_feature_engineering
-                        patient_df = apply_feature_engineering(patient_df.copy())
-                    except Exception as e:
-                        st.warning(f"应用特征工程时出错: {str(e)}")
+                    if FEATURE_ENGINEERING_AVAILABLE and apply_feature_engineering is not None:
+                        try:
+                            patient_df = apply_feature_engineering(patient_df.copy())
+                        except Exception as e:
+                            st.warning(f"应用特征工程时出错: {str(e)}")
+                    else:
+                        st.warning("特征工程模块不可用，将跳过特征工程步骤")
                 
                 # 3. 使用prepare_features函数准备特征（与训练时完全一致）
                 try:
