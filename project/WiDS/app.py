@@ -114,8 +114,6 @@ def get_prediction_model_and_features():
         # 导入特征工程函数（如果可用）
         if use_feature_engineering:
             try:
-                import sys
-                sys.path.insert(0, str(BASE_DIR.parent))
                 from feature_engineering import apply_feature_engineering
             except ImportError:
                 st.warning("无法导入特征工程模块，将跳过特征工程步骤")
@@ -394,9 +392,6 @@ else:
         if submitted:
             try:
                 # 使用与训练时完全一致的预处理流程（参考predict_lightgbm_ensemble.py）
-                import sys
-                sys.path.insert(0, str(BASE_DIR.parent))
-                
                 # 1. 加载训练数据的一个样本作为基础（用于特征工程）
                 data_path = BASE_DIR / "data" / "training_v2.csv"
                 patient_df = load_csv_data(data_path, nrows=1, low_memory=False, na_values=['NA', ''])
@@ -412,7 +407,7 @@ else:
                 
                 # 3. 使用prepare_features函数准备特征（与训练时完全一致）
                 try:
-                    from model_training import prepare_features
+                    from model_utils import prepare_features
                     
                     # 准备特征（保留缺失值，用于LightGBM，与训练时一致）
                     X_prepared, _, _, _ = prepare_features(
