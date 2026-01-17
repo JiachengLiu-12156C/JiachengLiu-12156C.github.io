@@ -736,327 +736,334 @@ st.markdown('<div class="section-header">🔬 主要分析模块</div>', unsafe_
 if 'active_tab' not in st.session_state:
     st.session_state['active_tab'] = "📥 数据读取"
 
-# 创建标签页
-tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
-    "📥 数据读取", 
-    "🔧 数据预处理", 
-    "📊 统计分析", 
-    "🤖 模型训练", 
-    "📈 模型评估", 
-    "🏆 Kaggle结果"
-])
+# ========== 临时调试：只加载第一个模块 ==========
+# 创建标签页（临时：只加载第一个模块用于调试）
+# tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+#     "📥 数据读取", 
+#     "🔧 数据预处理", 
+#     "📊 统计分析", 
+#     "🤖 模型训练", 
+#     "📈 模型评估", 
+#     "🏆 Kaggle结果"
+# ])
 
-with tab1:
-    st.markdown("### 数据读取模块")
-    col1, col2 = st.columns(2)
-    with col1:
-        st.markdown("""
-        **功能说明：**
-        - 使用 pandas 高效加载大规模数据集（91,713条记录，186个特征）
-        - 标准化缺失值处理（将 'NA' 和空字符串统一映射为 NaN）
-        - 加载官方数据字典，解析特征医学类别
-        - 特征分类：行政管理、人口统计、生命体征、实验室指标、APACHE评分
-        """)
-    with col2:
-        st.markdown("""
-        **关键特性：**
-        - 内存优化：设置 `low_memory=False` 确保完整加载
-        - 医学逻辑：基于数据字典进行特征分类
-        - 可视化：缺失值分析、目标变量分布等
-        """)
-    
-    # 数据字典预览
-    st.markdown("#### 数据字典预览")
-    try:
-        dict_path = BASE_DIR / "data" / "WiDS Datathon 2020 Dictionary.csv"
-        if dict_path.exists():
-            dict_df = load_csv_data(dict_path)
-            
-            # 显示数据字典基本信息
-            col1, col2 = st.columns(2)
-            with col1:
-                st.metric("总行数", f"{len(dict_df):,}")
-            with col2:
-                st.metric("总列数", f"{len(dict_df.columns)}")
-            
-            # 提供选项：显示前N行或全部
-            display_option = st.radio(
-                "显示选项：",
-                ["前10行（预览）", "前50行", "全部数据"],
-                horizontal=True,
-                index=0
-            )
-            
-            if display_option == "前10行（预览）":
-                st.dataframe(dict_df.head(10), use_container_width=True, height=400)
-            elif display_option == "前50行":
-                st.dataframe(dict_df.head(50), use_container_width=True, height=600)
-            else:
-                st.dataframe(dict_df, use_container_width=True, height=600)
-        else:
-            st.warning("⚠️ 数据字典文件未找到，请确保 data/WiDS Datathon 2020 Dictionary.csv 存在")
-    except Exception as e:
-        st.info(f"数据字典加载信息: {str(e)}")
-    
-    # 缺失值分析可视化
-    st.markdown("#### 缺失值分析")
+# 临时：只显示第一个模块
+st.markdown("### 📥 数据读取模块")
+
+# with tab1:
+#     st.markdown("### 数据读取模块")
+# 临时：直接显示第一个模块内容
+st.markdown("### 数据读取模块")
+col1, col2 = st.columns(2)
+with col1:
     st.markdown("""
-    以下图表展示了数据集中缺失值的分布情况，包括：
-    - 缺失值比例分布直方图
-    - 缺失值比例最高的特征
-    - 缺失值统计信息
+    **功能说明：**
+    - 使用 pandas 高效加载大规模数据集（91,713条记录，186个特征）
+    - 标准化缺失值处理（将 'NA' 和空字符串统一映射为 NaN）
+    - 加载官方数据字典，解析特征医学类别
+    - 特征分类：行政管理、人口统计、生命体征、实验室指标、APACHE评分
+    """)
+with col2:
+    st.markdown("""
+    **关键特性：**
+    - 内存优化：设置 `low_memory=False` 确保完整加载
+    - 医学逻辑：基于数据字典进行特征分类
+    - 可视化：缺失值分析、目标变量分布等
     """)
     
-    try:
-        data_path = BASE_DIR / "data" / "training_v2.csv"
-        if data_path.exists():
-            # 使用缓存函数计算缺失值统计（首次加载后会被缓存）
-            # 优化：进一步减少样本量，加快首次加载
-            with st.spinner("正在加载数据并计算缺失值（首次加载可能需要几秒钟，后续会使用缓存）..."):
-                missing_df, total_rows, total_cols = compute_missing_stats(data_path, max_rows=10000)
-                columns = missing_df['特征'].tolist()
+# 数据字典预览
+st.markdown("#### 数据字典预览")
+try:
+    dict_path = BASE_DIR / "data" / "WiDS Datathon 2020 Dictionary.csv"
+    if dict_path.exists():
+        dict_df = load_csv_data(dict_path)
+        
+        # 显示数据字典基本信息
+        col1, col2 = st.columns(2)
+        with col1:
+            st.metric("总行数", f"{len(dict_df):,}")
+        with col2:
+            st.metric("总列数", f"{len(dict_df.columns)}")
+        
+        # 提供选项：显示前N行或全部
+        display_option = st.radio(
+            "显示选项：",
+            ["前10行（预览）", "前50行", "全部数据"],
+            horizontal=True,
+            index=0
+        )
+        
+        if display_option == "前10行（预览）":
+            st.dataframe(dict_df.head(10), use_container_width=True, height=400)
+        elif display_option == "前50行":
+            st.dataframe(dict_df.head(50), use_container_width=True, height=600)
+        else:
+            st.dataframe(dict_df, use_container_width=True, height=600)
+    else:
+        st.warning("⚠️ 数据字典文件未找到，请确保 data/WiDS Datathon 2020 Dictionary.csv 存在")
+except Exception as e:
+    st.info(f"数据字典加载信息: {str(e)}")
+
+# 缺失值分析可视化
+st.markdown("#### 缺失值分析")
+st.markdown("""
+以下图表展示了数据集中缺失值的分布情况，包括：
+- 缺失值比例分布直方图
+- 缺失值比例最高的特征
+- 缺失值统计信息
+""")
+    
+try:
+    data_path = BASE_DIR / "data" / "training_v2.csv"
+    if data_path.exists():
+        # 使用缓存函数计算缺失值统计（首次加载后会被缓存）
+        # 优化：进一步减少样本量，加快首次加载
+        with st.spinner("正在加载数据并计算缺失值（首次加载可能需要几秒钟，后续会使用缓存）..."):
+            missing_df, total_rows, total_cols = compute_missing_stats(data_path, max_rows=10000)
+            columns = missing_df['特征'].tolist()
             
-            # 统计信息
-            total_cols = len(columns)
-            no_missing = total_cols - len(missing_df[missing_df['缺失比例(%)'] > 0])
-            low_missing = len(missing_df[(missing_df['缺失比例(%)'] > 0) & (missing_df['缺失比例(%)'] <= 50)])
-            medium_missing = len(missing_df[(missing_df['缺失比例(%)'] > 50) & (missing_df['缺失比例(%)'] <= 70)])
-            high_missing = len(missing_df[missing_df['缺失比例(%)'] > 70])
+        # 统计信息
+        total_cols = len(columns)
+        no_missing = total_cols - len(missing_df[missing_df['缺失比例(%)'] > 0])
+        low_missing = len(missing_df[(missing_df['缺失比例(%)'] > 0) & (missing_df['缺失比例(%)'] <= 50)])
+        medium_missing = len(missing_df[(missing_df['缺失比例(%)'] > 50) & (missing_df['缺失比例(%)'] <= 70)])
+        high_missing = len(missing_df[missing_df['缺失比例(%)'] > 70])
             
+        # 显示统计摘要
+        col1, col2, col3, col4 = st.columns(4)
+        with col1:
+            st.metric("无缺失特征", f"{no_missing}")
+        with col2:
+            st.metric("低缺失 (0-50%)", f"{low_missing}")
+        with col3:
+            st.metric("中等缺失 (50-70%)", f"{medium_missing}")
+        with col4:
+            st.metric("高缺失 (>70%)", f"{high_missing}")
+            
+        # 将三个图表和一个表格放在四列布局中
+        chart_col1, chart_col2, chart_col3, chart_col4 = st.columns(4)
+            
+        # 1. 缺失值比例分布直方图
+        with chart_col1:
+            fig_hist = px.histogram(
+                missing_df,
+                x='缺失比例(%)',
+                nbins=20,
+                title='缺失值比例分布',
+                labels={'缺失比例(%)': '缺失比例 (%)', 'count': '特征数量'},
+                color_discrete_sequence=['#3498db']
+            )
+            # 添加阈值线
+            fig_hist.add_vline(x=50, line_dash="dash", line_color="#e67e22", 
+                            annotation_text="50%", annotation_position="top")
+            fig_hist.add_vline(x=70, line_dash="dash", line_color="#e74c3c", 
+                            annotation_text="70%", annotation_position="top")
+            fig_hist.update_layout(bargap=0.1, showlegend=False, height=400)
+            st.plotly_chart(fig_hist, use_container_width=True)
+            
+        # 2. 缺失值比例最高的前20个特征（水平条形图）
+        with chart_col2:
+            top_missing = missing_df.head(20)
+            fig_bar = px.bar(
+                top_missing,
+                x='缺失比例(%)',
+                y='特征',
+                orientation='h',
+                title='前20个高缺失特征',
+                labels={'缺失比例(%)': '缺失比例 (%)', '特征': '特征名称'},
+                color='缺失比例(%)',
+                color_continuous_scale='Reds'
+            )
+            fig_bar.update_layout(
+                yaxis={'categoryorder': 'total ascending'},
+                height=400,
+                showlegend=False
+            )
+            st.plotly_chart(fig_bar, use_container_width=True)
+            
+        # 3. 缺失值阈值统计（条形图）
+        with chart_col3:
+            threshold_data = pd.DataFrame({
+                '类别': ['无缺失', '低缺失', '中等缺失', '高缺失'],
+                '特征数量': [no_missing, low_missing, medium_missing, high_missing]
+            })
+            fig_threshold = px.bar(
+                threshold_data,
+                x='类别',
+                y='特征数量',
+                title='缺失值阈值统计',
+                labels={'类别': '缺失值类别', '特征数量': '特征数量'},
+                color='类别',
+                color_discrete_map={
+                    '无缺失': '#2ecc71',
+                    '低缺失': '#f39c12',
+                    '中等缺失': '#e67e22',
+                    '高缺失': '#e74c3c'
+                }
+            )
+            fig_threshold.update_traces(texttemplate='%{y}', textposition='outside')
+            # 扩大y轴范围，确保顶部数字完整显示
+            max_y = max([no_missing, low_missing, medium_missing, high_missing])
+            fig_threshold.update_layout(
+                height=400, 
+                showlegend=False,
+                yaxis=dict(range=[0, max_y * 1.15] if max_y > 0 else None)
+            )
+            st.plotly_chart(fig_threshold, use_container_width=True)
+            
+        # 4. 显示前20个缺失值比例最高的特征表格
+        with chart_col4:
+            st.markdown("**详细数据（前20个）**")
+            st.dataframe(
+                missing_df.head(20)[['特征', '缺失比例(%)']], 
+                use_container_width=True, 
+                hide_index=True,
+                height=400
+            )
+            
+    else:
+        st.warning("⚠️ 数据文件未找到，请确保 data/training_v2.csv 存在")
+except Exception as e:
+    st.error(f"生成缺失值分析图表时出错: {str(e)}")
+    st.info("💡 提示：请确保数据文件存在且格式正确")
+    
+# 特征分类可视化
+st.markdown("#### 特征分类可视化")
+st.markdown("""
+以下图表展示了基于数据字典的特征分类结果，包括：
+- 各医学类别特征数量分布
+- 主要特征类别统计
+""")
+    
+try:
+    dict_path = BASE_DIR / "data" / "WiDS Datathon 2020 Dictionary.csv"
+    data_path = BASE_DIR / "data" / "training_v2.csv"
+        
+    if dict_path.exists() and data_path.exists():
+        dict_df = pd.read_csv(dict_path)
+        train_df = load_csv_data(data_path, nrows=0)  # 只读取列名
+            
+        if 'Category' in dict_df.columns and 'Variable Name' in dict_df.columns:
+            # 创建特征分类字典
+            feature_categories = {}
+            for _, row in dict_df.iterrows():
+                category = row['Category']
+                var_name = row['Variable Name']
+                if category not in feature_categories:
+                    feature_categories[category] = []
+                feature_categories[category].append(var_name)
+                
+            # 计算每个类别在实际数据中的特征数量
+            category_names_cn = {
+                'demographic': '人口统计学指标',
+                'vitals': '实时生命体征',
+                'labs': '常规实验室化验指标',
+                'APACHE covariate': 'APACHE评分协变量',
+                'labs blood gas': '血气分析指标'
+            }
+                
+            main_categories = ['demographic', 'vitals', 'labs', 'APACHE covariate', 'labs blood gas']
+            category_counts_dict = {}
+                
+            for cat in main_categories:
+                if cat in feature_categories:
+                    features = feature_categories[cat]
+                    existing_features = [f for f in features if f in train_df.columns]
+                    category_counts_dict[category_names_cn.get(cat, cat)] = len(existing_features)
+                
+            # 计算其他类别
+            other_count = 0
+            for cat in feature_categories.keys():
+                if cat not in main_categories:
+                    features = feature_categories[cat]
+                    existing_features = [f for f in features if f in train_df.columns]
+                    other_count += len(existing_features)
+                
+            if other_count > 0:
+                category_counts_dict['其他类别'] = other_count
+                
+            # 创建DataFrame
+            category_counts = pd.Series(category_counts_dict)
+            total_features = category_counts.sum()
+                
             # 显示统计摘要
-            col1, col2, col3, col4 = st.columns(4)
+            st.markdown("**特征分类统计摘要**")
+            col1, col2 = st.columns(2)
             with col1:
-                st.metric("无缺失特征", f"{no_missing}")
+                st.metric("总特征数", f"{total_features}")
             with col2:
-                st.metric("低缺失 (0-50%)", f"{low_missing}")
-            with col3:
-                st.metric("中等缺失 (50-70%)", f"{medium_missing}")
-            with col4:
-                st.metric("高缺失 (>70%)", f"{high_missing}")
-            
-            # 将三个图表和一个表格放在四列布局中
-            chart_col1, chart_col2, chart_col3, chart_col4 = st.columns(4)
-            
-            # 1. 缺失值比例分布直方图
+                st.metric("主要类别数", f"{len(category_counts)}")
+                
+            # 将图表和表格放在一行（三列布局）
+            chart_col1, chart_col2, chart_col3 = st.columns(3)
+                
+            # 1. 特征类别分布饼图
             with chart_col1:
-                fig_hist = px.histogram(
-                    missing_df,
-                    x='缺失比例(%)',
-                    nbins=20,
-                    title='缺失值比例分布',
-                    labels={'缺失比例(%)': '缺失比例 (%)', 'count': '特征数量'},
-                    color_discrete_sequence=['#3498db']
+                fig_pie = px.pie(
+                    values=category_counts.values,
+                    names=category_counts.index,
+                    title='特征类别分布',
+                    hole=0.4
                 )
-                # 添加阈值线
-                fig_hist.add_vline(x=50, line_dash="dash", line_color="#e67e22", 
-                                  annotation_text="50%", annotation_position="top")
-                fig_hist.add_vline(x=70, line_dash="dash", line_color="#e74c3c", 
-                                  annotation_text="70%", annotation_position="top")
-                fig_hist.update_layout(bargap=0.1, showlegend=False, height=400)
-                st.plotly_chart(fig_hist, use_container_width=True)
-            
-            # 2. 缺失值比例最高的前20个特征（水平条形图）
+                fig_pie.update_traces(
+                    textposition='inside',
+                    textinfo='percent+label',
+                    hovertemplate='<b>%{label}</b><br>特征数量: %{value}<br>占比: %{percent}<extra></extra>'
+                )
+                fig_pie.update_layout(height=400)
+                st.plotly_chart(fig_pie, use_container_width=True)
+                
+            # 2. 特征类别分布水平条形图
             with chart_col2:
-                top_missing = missing_df.head(20)
-                fig_bar = px.bar(
-                    top_missing,
-                    x='缺失比例(%)',
-                    y='特征',
+                fig_hbar = px.bar(
+                    x=category_counts.values,
+                    y=category_counts.index,
                     orientation='h',
-                    title='前20个高缺失特征',
-                    labels={'缺失比例(%)': '缺失比例 (%)', '特征': '特征名称'},
-                    color='缺失比例(%)',
-                    color_continuous_scale='Reds'
+                    title='特征类别分布',
+                    labels={'x': '特征数量', 'y': '类别'},
+                    color=category_counts.values,
+                    color_continuous_scale='Blues'
                 )
-                fig_bar.update_layout(
+                fig_hbar.update_traces(
+                    text=category_counts.values,
+                    texttemplate='%{text}',
+                    textposition='outside',
+                    customdata=(category_counts.values / total_features * 100)
+                )
+                fig_hbar.update_layout(
                     yaxis={'categoryorder': 'total ascending'},
-                    height=400,
-                    showlegend=False
-                )
-                st.plotly_chart(fig_bar, use_container_width=True)
-            
-            # 3. 缺失值阈值统计（条形图）
-            with chart_col3:
-                threshold_data = pd.DataFrame({
-                    '类别': ['无缺失', '低缺失', '中等缺失', '高缺失'],
-                    '特征数量': [no_missing, low_missing, medium_missing, high_missing]
-                })
-                fig_threshold = px.bar(
-                    threshold_data,
-                    x='类别',
-                    y='特征数量',
-                    title='缺失值阈值统计',
-                    labels={'类别': '缺失值类别', '特征数量': '特征数量'},
-                    color='类别',
-                    color_discrete_map={
-                        '无缺失': '#2ecc71',
-                        '低缺失': '#f39c12',
-                        '中等缺失': '#e67e22',
-                        '高缺失': '#e74c3c'
-                    }
-                )
-                fig_threshold.update_traces(texttemplate='%{y}', textposition='outside')
-                # 扩大y轴范围，确保顶部数字完整显示
-                max_y = max([no_missing, low_missing, medium_missing, high_missing])
-                fig_threshold.update_layout(
-                    height=400, 
                     showlegend=False,
-                    yaxis=dict(range=[0, max_y * 1.15] if max_y > 0 else None)
+                    height=400
                 )
-                st.plotly_chart(fig_threshold, use_container_width=True)
-            
-            # 4. 显示前20个缺失值比例最高的特征表格
-            with chart_col4:
-                st.markdown("**详细数据（前20个）**")
+                st.plotly_chart(fig_hbar, use_container_width=True)
+                
+            # 3. 显示详细统计表
+            with chart_col3:
+                st.markdown("**详细数据统计表**")
+                category_stats = pd.DataFrame({
+                    '类别': category_counts.index,
+                    '特征数量': category_counts.values,
+                    '占比(%)': (category_counts.values / total_features * 100).round(2)
+                }).sort_values('特征数量', ascending=False)
                 st.dataframe(
-                    missing_df.head(20)[['特征', '缺失比例(%)']], 
+                    category_stats, 
                     use_container_width=True, 
                     hide_index=True,
                     height=400
                 )
-            
         else:
+            st.warning("⚠️ 数据字典格式不正确，缺少必要的列（Category 或 Variable Name）")
+    else:
+        if not dict_path.exists():
+            st.warning("⚠️ 数据字典文件未找到，请确保 data/WiDS Datathon 2020 Dictionary.csv 存在")
+        if not data_path.exists():
             st.warning("⚠️ 数据文件未找到，请确保 data/training_v2.csv 存在")
-    except Exception as e:
-        st.error(f"生成缺失值分析图表时出错: {str(e)}")
-        st.info("💡 提示：请确保数据文件存在且格式正确")
-    
-    # 特征分类可视化
-    st.markdown("#### 特征分类可视化")
-    st.markdown("""
-    以下图表展示了基于数据字典的特征分类结果，包括：
-    - 各医学类别特征数量分布
-    - 主要特征类别统计
-    """)
-    
-    try:
-        dict_path = BASE_DIR / "data" / "WiDS Datathon 2020 Dictionary.csv"
-        data_path = BASE_DIR / "data" / "training_v2.csv"
-        
-        if dict_path.exists() and data_path.exists():
-            dict_df = pd.read_csv(dict_path)
-            train_df = load_csv_data(data_path, nrows=0)  # 只读取列名
-            
-            if 'Category' in dict_df.columns and 'Variable Name' in dict_df.columns:
-                # 创建特征分类字典
-                feature_categories = {}
-                for _, row in dict_df.iterrows():
-                    category = row['Category']
-                    var_name = row['Variable Name']
-                    if category not in feature_categories:
-                        feature_categories[category] = []
-                    feature_categories[category].append(var_name)
-                
-                # 计算每个类别在实际数据中的特征数量
-                category_names_cn = {
-                    'demographic': '人口统计学指标',
-                    'vitals': '实时生命体征',
-                    'labs': '常规实验室化验指标',
-                    'APACHE covariate': 'APACHE评分协变量',
-                    'labs blood gas': '血气分析指标'
-                }
-                
-                main_categories = ['demographic', 'vitals', 'labs', 'APACHE covariate', 'labs blood gas']
-                category_counts_dict = {}
-                
-                for cat in main_categories:
-                    if cat in feature_categories:
-                        features = feature_categories[cat]
-                        existing_features = [f for f in features if f in train_df.columns]
-                        category_counts_dict[category_names_cn.get(cat, cat)] = len(existing_features)
-                
-                # 计算其他类别
-                other_count = 0
-                for cat in feature_categories.keys():
-                    if cat not in main_categories:
-                        features = feature_categories[cat]
-                        existing_features = [f for f in features if f in train_df.columns]
-                        other_count += len(existing_features)
-                
-                if other_count > 0:
-                    category_counts_dict['其他类别'] = other_count
-                
-                # 创建DataFrame
-                category_counts = pd.Series(category_counts_dict)
-                total_features = category_counts.sum()
-                
-                # 显示统计摘要
-                st.markdown("**特征分类统计摘要**")
-                col1, col2 = st.columns(2)
-                with col1:
-                    st.metric("总特征数", f"{total_features}")
-                with col2:
-                    st.metric("主要类别数", f"{len(category_counts)}")
-                
-                # 将图表和表格放在一行（三列布局）
-                chart_col1, chart_col2, chart_col3 = st.columns(3)
-                
-                # 1. 特征类别分布饼图
-                with chart_col1:
-                    fig_pie = px.pie(
-                        values=category_counts.values,
-                        names=category_counts.index,
-                        title='特征类别分布',
-                        hole=0.4
-                    )
-                    fig_pie.update_traces(
-                        textposition='inside',
-                        textinfo='percent+label',
-                        hovertemplate='<b>%{label}</b><br>特征数量: %{value}<br>占比: %{percent}<extra></extra>'
-                    )
-                    fig_pie.update_layout(height=400)
-                    st.plotly_chart(fig_pie, use_container_width=True)
-                
-                # 2. 特征类别分布水平条形图
-                with chart_col2:
-                    fig_hbar = px.bar(
-                        x=category_counts.values,
-                        y=category_counts.index,
-                        orientation='h',
-                        title='特征类别分布',
-                        labels={'x': '特征数量', 'y': '类别'},
-                        color=category_counts.values,
-                        color_continuous_scale='Blues'
-                    )
-                    fig_hbar.update_traces(
-                        text=category_counts.values,
-                        texttemplate='%{text}',
-                        textposition='outside',
-                        customdata=(category_counts.values / total_features * 100)
-                    )
-                    fig_hbar.update_layout(
-                        yaxis={'categoryorder': 'total ascending'},
-                        showlegend=False,
-                        height=400
-                    )
-                    st.plotly_chart(fig_hbar, use_container_width=True)
-                
-                # 3. 显示详细统计表
-                with chart_col3:
-                    st.markdown("**详细数据统计表**")
-                    category_stats = pd.DataFrame({
-                        '类别': category_counts.index,
-                        '特征数量': category_counts.values,
-                        '占比(%)': (category_counts.values / total_features * 100).round(2)
-                    }).sort_values('特征数量', ascending=False)
-                    st.dataframe(
-                        category_stats, 
-                        use_container_width=True, 
-                        hide_index=True,
-                        height=400
-                    )
-            else:
-                st.warning("⚠️ 数据字典格式不正确，缺少必要的列（Category 或 Variable Name）")
-        else:
-            if not dict_path.exists():
-                st.warning("⚠️ 数据字典文件未找到，请确保 data/WiDS Datathon 2020 Dictionary.csv 存在")
-            if not data_path.exists():
-                st.warning("⚠️ 数据文件未找到，请确保 data/training_v2.csv 存在")
-    except Exception as e:
-        st.error(f"生成特征分类图表时出错: {str(e)}")
-        st.info("💡 提示：请确保数据字典和数据文件存在且格式正确")
+except Exception as e:
+    st.error(f"生成特征分类图表时出错: {str(e)}")
+    st.info("💡 提示：请确保数据字典和数据文件存在且格式正确")
 
-with tab2:
+# ========== 临时注释：只加载第一个模块用于调试 ==========
+# with tab2:
     st.markdown("### 数据预处理模块")
     st.markdown("**处理策略：**")
     col1, col2, col3 = st.columns(3)
@@ -3093,7 +3100,10 @@ with tab6:
         st.error(f"加载Kaggle提交数据时出错: {str(e)}")
         import traceback
         st.text(traceback.format_exc())
+"""
 
+# ========== 临时注释：核心实现代码板块 ==========
+"""
 # 核心实现代码板块（使用 try-except 确保即使出错也能继续渲染）
 try:
     st.markdown('<div class="section-header">💻 核心实现代码</div>', unsafe_allow_html=True)
