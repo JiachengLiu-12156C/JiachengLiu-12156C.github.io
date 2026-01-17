@@ -1757,10 +1757,50 @@ with tab4:
         metrics_path = BASE_DIR / "results" / "model_training" / "model_metrics.csv"
         if metrics_path.exists():
             metrics_df = load_csv_data(metrics_path, index_col=0)
-            # 添加集成模型数据
-            ensemble_path = BASE_DIR / "results" / "model_evaluation" / "lightgbm_ensemble_metrics.csv"
+            # 标准化列名（处理大小写不一致的情况）
+            column_mapping = {
+                'accuracy': 'Accuracy',
+                'precision': 'Precision',
+                'recall': 'Recall',
+                'f1-score': 'F1-Score',
+                'f1_score': 'F1-Score',
+                'auc-roc': 'AUC-ROC',
+                'auc_roc': 'AUC-ROC',
+                'ap-score': 'AP-Score',
+                'ap_score': 'AP-Score'
+            }
+            # 重命名列（如果存在小写版本）
+            for old_col, new_col in column_mapping.items():
+                if old_col in metrics_df.columns and new_col not in metrics_df.columns:
+                    metrics_df.rename(columns={old_col: new_col}, inplace=True)
+            # 标准化列名（处理大小写不一致的情况）
+            column_mapping = {
+                'accuracy': 'Accuracy',
+                'precision': 'Precision',
+                'recall': 'Recall',
+                'f1-score': 'F1-Score',
+                'f1_score': 'F1-Score',
+                'auc-roc': 'AUC-ROC',
+                'auc_roc': 'AUC-ROC',
+                'ap-score': 'AP-Score',
+                'ap_score': 'AP-Score'
+            }
+            # 重命名列（如果存在小写版本）
+            for old_col, new_col in column_mapping.items():
+                if old_col in metrics_df.columns and new_col not in metrics_df.columns:
+                    metrics_df.rename(columns={old_col: new_col}, inplace=True)
+        
+        # 确保所有必需的列都存在，如果不存在则使用默认值
+        required_columns = ['Accuracy', 'Precision', 'Recall', 'F1-Score', 'AUC-ROC', 'AP-Score']
+        for col in required_columns:
+            if col not in metrics_df.columns:
+                metrics_df[col] = 0.0  # 使用默认值0.0
             if ensemble_path.exists():
                 ensemble_df = load_csv_data(ensemble_path, index_col=0)
+                # 标准化集成模型的列名
+                for old_col, new_col in column_mapping.items():
+                    if old_col in ensemble_df.columns and new_col not in ensemble_df.columns:
+                        ensemble_df.rename(columns={old_col: new_col}, inplace=True)
                 ensemble_row = ensemble_df.iloc[0]
                 metrics_df.loc['LightGBM_Ensemble'] = ensemble_row
         else:
@@ -1773,6 +1813,11 @@ with tab4:
                 'AUC-ROC': [0.8768, 0.8876, 0.8999, 0.9018, 0.9014, 0.9070],
                 'AP-Score': [0.4811, 0.5170, 0.5688, 0.5716, 0.5701, 0.5951]
             }, index=['Logistic Regression', 'Random Forest', 'Gradient Boosting', 'XGBoost', 'LightGBM', 'LightGBM_Ensemble'])
+        # 确保所有必需的列都存在，如果不存在则使用默认值
+        required_columns = ['Accuracy', 'Precision', 'Recall', 'F1-Score', 'AUC-ROC', 'AP-Score']
+        for col in required_columns:
+            if col not in metrics_df.columns:
+                metrics_df[col] = 0.0  # 使用默认值0.0
         
         metrics_df.index.name = '模型'
         metrics_df = metrics_df.reset_index()
