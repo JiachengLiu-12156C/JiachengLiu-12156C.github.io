@@ -392,36 +392,36 @@ with prediction_expander:
             st.markdown("#### 请输入患者的关键信息（其余未列出的特征将使用训练集典型值填充）")
 
             with st.form("manual_clinical_prediction"):
-            input_cols = st.columns(3)
-            user_values = {}
+                input_cols = st.columns(3)
+                user_values = {}
 
-            for idx, (feat_name, (label, vmin, vmax)) in enumerate(available_candidates.items()):
-                col = input_cols[idx % 3]
-                with col:
-                    # 默认值取训练集中的中位数，但要确保落在[min, max]区间内，避免越界报错
-                    raw_default = float(feature_medians.get(feat_name, (vmin + vmax) / 2.0))
-                    default_val = min(max(raw_default, float(vmin)), float(vmax))
-                    # 对概率类特征单独设置步长
-                    step = 0.01 if "prob" in feat_name else 0.1
-                    user_values[feat_name] = st.number_input(
-                        label,
-                        min_value=float(vmin),
-                        max_value=float(vmax),
-                        value=float(default_val),
-                        step=step,
-                        key=f"input_{feat_name}"
-                    )
+                for idx, (feat_name, (label, vmin, vmax)) in enumerate(available_candidates.items()):
+                    col = input_cols[idx % 3]
+                    with col:
+                        # 默认值取训练集中的中位数，但要确保落在[min, max]区间内，避免越界报错
+                        raw_default = float(feature_medians.get(feat_name, (vmin + vmax) / 2.0))
+                        default_val = min(max(raw_default, float(vmin)), float(vmax))
+                        # 对概率类特征单独设置步长
+                        step = 0.01 if "prob" in feat_name else 0.1
+                        user_values[feat_name] = st.number_input(
+                            label,
+                            min_value=float(vmin),
+                            max_value=float(vmax),
+                            value=float(default_val),
+                            step=step,
+                            key=f"input_{feat_name}"
+                        )
 
-            st.markdown("---")
-            threshold = st.slider(
-                "高风险判定阈值（预测死亡概率 ≥ 该值视为高风险）",
-                min_value=0.1,
-                max_value=0.9,
-                value=0.5,
-                step=0.05
-            )
+                st.markdown("---")
+                threshold = st.slider(
+                    "高风险判定阈值（预测死亡概率 ≥ 该值视为高风险）",
+                    min_value=0.1,
+                    max_value=0.9,
+                    value=0.5,
+                    step=0.05
+                )
 
-            submitted = st.form_submit_button("计算死亡风险")
+                submitted = st.form_submit_button("计算死亡风险")
 
         if submitted:
             try:
