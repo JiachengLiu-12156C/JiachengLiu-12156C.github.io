@@ -345,53 +345,53 @@ with prediction_expander:
     if model is None or feature_list is None or feature_medians is None:
         st.warning("⚠️ 未能加载在线预测所需的模型或数据，请确认 `models/LightGBM_tuned_advanced.pkl` 和 `data/training_v2.csv` 已放置在 `streamlit_app` 目录下。")
     else:
-    # 关键医学特征（如存在则提供输入项）
-    # 键为数据集中列名，值为(中文名称, 合理最小值, 合理最大值)
-    # 前几项为基础特征，后面补充了一批更“高危”的核心生理 / 实验室指标
-    candidate_numeric_features = {
-        # 基础人口学/生命体征
-        'age': ("年龄 (岁)", 18.0, 100.0),
-        'bmi': ("BMI (kg/m²)", 10.0, 60.0),
-        'heart_rate_apache': ("入ICU心率 (次/分)", 30.0, 200.0),
-        'temp_apache': ("入ICU体温 (℃)", 30.0, 43.0),
-        'd1_sysbp_max': ("首日最高收缩压 (mmHg)", 60.0, 260.0),
-        'd1_sysbp_min': ("首日最低收缩压 (mmHg)", 40.0, 200.0),
-        'd1_heartrate_max': ("首日最高心率 (次/分)", 40.0, 220.0),
-        'd1_heartrate_min': ("首日最低心率 (次/分)", 20.0, 150.0),
+        # 关键医学特征（如存在则提供输入项）
+        # 键为数据集中列名，值为(中文名称, 合理最小值, 合理最大值)
+        # 前几项为基础特征，后面补充了一批更"高危"的核心生理 / 实验室指标
+        candidate_numeric_features = {
+            # 基础人口学/生命体征
+            'age': ("年龄 (岁)", 18.0, 100.0),
+            'bmi': ("BMI (kg/m²)", 10.0, 60.0),
+            'heart_rate_apache': ("入ICU心率 (次/分)", 30.0, 200.0),
+            'temp_apache': ("入ICU体温 (℃)", 30.0, 43.0),
+            'd1_sysbp_max': ("首日最高收缩压 (mmHg)", 60.0, 260.0),
+            'd1_sysbp_min': ("首日最低收缩压 (mmHg)", 40.0, 200.0),
+            'd1_heartrate_max': ("首日最高心率 (次/分)", 40.0, 220.0),
+            'd1_heartrate_min': ("首日最低心率 (次/分)", 20.0, 150.0),
 
-        # 血糖 & 代谢
-        'd1_glucose_max': ("首日最高血糖 (mmol/L)", 2.0, 40.0),
-        'd1_glucose_min': ("首日最低血糖 (mmol/L)", 2.0, 30.0),
-        'd1_lactate_max': ("首日最高乳酸 (mmol/L)", 0.5, 15.0),
-        'd1_lactate_min': ("首日最低乳酸 (mmol/L)", 0.5, 10.0),
+            # 血糖 & 代谢
+            'd1_glucose_max': ("首日最高血糖 (mmol/L)", 2.0, 40.0),
+            'd1_glucose_min': ("首日最低血糖 (mmol/L)", 2.0, 30.0),
+            'd1_lactate_max': ("首日最高乳酸 (mmol/L)", 0.5, 15.0),
+            'd1_lactate_min': ("首日最低乳酸 (mmol/L)", 0.5, 10.0),
 
-        # 循环与灌注
-        'd1_mbp_min': ("首日最低平均动脉压 (mmHg)", 40.0, 120.0),
-        'd1_spo2_min': ("首日最低血氧饱和度 (%)", 50.0, 100.0),
+            # 循环与灌注
+            'd1_mbp_min': ("首日最低平均动脉压 (mmHg)", 40.0, 120.0),
+            'd1_spo2_min': ("首日最低血氧饱和度 (%)", 50.0, 100.0),
 
-        # 呼吸功能
-        'd1_resprate_max': ("首日最高呼吸频率 (次/分)", 8.0, 60.0),
+            # 呼吸功能
+            'd1_resprate_max': ("首日最高呼吸频率 (次/分)", 8.0, 60.0),
 
-        # 肾功能 / 代谢废物
-        'd1_creatinine_max': ("首日最高肌酐 (mg/dL)", 0.2, 10.0),
-        'd1_urineoutput': ("首日尿量 (mL)", 0.0, 10000.0),
+            # 肾功能 / 代谢废物
+            'd1_creatinine_max': ("首日最高肌酐 (mg/dL)", 0.2, 10.0),
+            'd1_urineoutput': ("首日尿量 (mL)", 0.0, 10000.0),
 
-        # 综合风险评分
-        'apache_4a_icu_death_prob': ("APACHE ICU 预测死亡概率", 0.0, 1.0),
-    }
+            # 综合风险评分
+            'apache_4a_icu_death_prob': ("APACHE ICU 预测死亡概率", 0.0, 1.0),
+        }
 
-    # 仅保留在训练数据中实际存在的特征
-    available_candidates = {
-        name: meta for name, meta in candidate_numeric_features.items()
-        if name in feature_medians.index
-    }
+        # 仅保留在训练数据中实际存在的特征
+        available_candidates = {
+            name: meta for name, meta in candidate_numeric_features.items()
+            if name in feature_medians.index
+        }
 
-    if not available_candidates:
-        st.info("当前模型使用的特征中不包含预设的关键医学指标，暂无法提供交互式个体预测表单。")
-    else:
-        st.markdown("#### 请输入患者的关键信息（其余未列出的特征将使用训练集典型值填充）")
+        if not available_candidates:
+            st.info("当前模型使用的特征中不包含预设的关键医学指标，暂无法提供交互式个体预测表单。")
+        else:
+            st.markdown("#### 请输入患者的关键信息（其余未列出的特征将使用训练集典型值填充）")
 
-        with st.form("manual_clinical_prediction"):
+            with st.form("manual_clinical_prediction"):
             input_cols = st.columns(3)
             user_values = {}
 
