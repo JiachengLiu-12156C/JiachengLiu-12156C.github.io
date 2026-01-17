@@ -124,7 +124,7 @@ def get_prediction_model_and_features(sample_size=10000):
         if use_feature_engineering:
             try:
                 import sys
-                sys.path.insert(0, str(BASE_DIR.parent))
+                sys.path.insert(0, str(BASE_DIR))
                 from feature_engineering import apply_feature_engineering
             except ImportError:
                 st.warning("无法导入特征工程模块，将跳过特征工程步骤")
@@ -438,6 +438,8 @@ with prediction_expander:
                     use_feature_engineering = preprocessor.get('use_feature_engineering', False) if preprocessor and isinstance(preprocessor, dict) else False
                     if use_feature_engineering:
                         try:
+                            import sys
+                            sys.path.insert(0, str(BASE_DIR))
                             from feature_engineering import apply_feature_engineering
                             patient_df = apply_feature_engineering(patient_df.copy())
                         except Exception as e:
@@ -445,7 +447,7 @@ with prediction_expander:
                     
                     # 3. 使用prepare_features函数准备特征（与训练时完全一致）
                     try:
-                        from model_training import prepare_features
+                        from model_utils import prepare_features
                         
                         # 准备特征（保留缺失值，用于LightGBM，与训练时一致）
                         X_prepared, _, _, _ = prepare_features(
@@ -506,7 +508,7 @@ with prediction_expander:
                                 model_n_features = model.n_features_
                             elif hasattr(model, 'booster_'):
                                 model_n_features = model.booster_.num_feature()
-                        except:
+                        except Exception:
                             pass
                         
                         if model_n_features and X_input.shape[1] != model_n_features:
@@ -602,7 +604,7 @@ with prediction_expander:
                                 model_n_features = model.n_features_
                             elif hasattr(model, 'booster_'):
                                 model_n_features = model.booster_.num_feature()
-                        except:
+                        except Exception:
                             pass
                         
                         if model_n_features and X_input.shape[1] != model_n_features:
