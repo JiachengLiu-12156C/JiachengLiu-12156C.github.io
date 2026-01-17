@@ -43,10 +43,10 @@ def load_preprocessor(preprocessor_path):
 
 # 缓存函数：计算缺失值统计（优化：使用更小的采样减少计算时间）
 @st.cache_data
-def compute_missing_stats(data_path, chunk_size=10000, max_rows=20000):
+def compute_missing_stats(data_path, chunk_size=10000, max_rows=10000):
     """
     缓存缺失值统计计算
-    优化：限制最大读取行数为20000，大幅减少计算时间
+    优化：限制最大读取行数为10000，大幅减少计算时间和内存占用
     """
     columns = load_csv_data(data_path, nrows=0).columns.tolist()
     total_rows = 0
@@ -654,6 +654,10 @@ with prediction_expander:
 # 主要分析模块
 st.markdown('<div class="section-header">🔬 主要分析模块</div>', unsafe_allow_html=True)
 
+# 创建标签页（优化：使用session_state跟踪当前标签，实现真正的延迟加载）
+if 'active_tab' not in st.session_state:
+    st.session_state['active_tab'] = "📥 数据读取"
+
 # 创建标签页
 tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
     "📥 数据读取", 
@@ -729,8 +733,9 @@ with tab1:
         data_path = BASE_DIR / "data" / "training_v2.csv"
         if data_path.exists():
             # 使用缓存函数计算缺失值统计（首次加载后会被缓存）
+            # 优化：进一步减少样本量，加快首次加载
             with st.spinner("正在加载数据并计算缺失值（首次加载可能需要几秒钟，后续会使用缓存）..."):
-                missing_df, total_rows, total_cols = compute_missing_stats(data_path)
+                missing_df, total_rows, total_cols = compute_missing_stats(data_path, max_rows=10000)
                 columns = missing_df['特征'].tolist()
             
             # 统计信息
@@ -2121,7 +2126,8 @@ with tab5:
                                 st.warning(f"无法加载预处理器: {str(e)}")
 
                         # 简化方法：直接使用本地 data 目录中的 CSV，不依赖仓库根目录的 Python 脚本
-                        train_df = load_csv_data(data_path, nrows=20000, low_memory=False, na_values=['NA', ''])
+                        # 优化：减少样本量，加快加载速度
+                        train_df = load_csv_data(data_path, nrows=5000, low_memory=False, na_values=['NA', ''])
                         if 'hospital_death' in train_df.columns:
                             numeric_cols = train_df.select_dtypes(include=[np.number]).columns.tolist()
                             numeric_cols = [col for col in numeric_cols if col not in 
@@ -2344,7 +2350,8 @@ with tab5:
                                 selected_features = None
                         
                         # 读取数据
-                        train_df = load_csv_data(data_path, nrows=2000, low_memory=False, na_values=['NA', ''])
+                        # 优化：减少样本量，加快加载速度
+                        train_df = load_csv_data(data_path, nrows=1000, low_memory=False, na_values=['NA', ''])
                         if 'hospital_death' in train_df.columns:
                             numeric_cols = train_df.select_dtypes(include=[np.number]).columns.tolist()
                             numeric_cols = [col for col in numeric_cols if col not in 
