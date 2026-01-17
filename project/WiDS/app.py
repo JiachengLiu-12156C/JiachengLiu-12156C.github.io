@@ -3094,29 +3094,30 @@ with tab6:
         import traceback
         st.text(traceback.format_exc())
 
-# 核心实现代码板块
-st.markdown('<div class="section-header">💻 核心实现代码</div>', unsafe_allow_html=True)
+# 核心实现代码板块（使用 try-except 确保即使出错也能继续渲染）
+try:
+    st.markdown('<div class="section-header">💻 核心实现代码</div>', unsafe_allow_html=True)
 
-st.markdown("""
-<div class="info-box">
-    <p>本板块展示项目中的核心实现代码，包括数据加载、预处理、特征工程、模型训练等关键部分。</p>
-</div>
-""", unsafe_allow_html=True)
+    st.markdown("""
+    <div class="info-box">
+        <p>本板块展示项目中的核心实现代码，包括数据加载、预处理、特征工程、模型训练等关键部分。</p>
+    </div>
+    """, unsafe_allow_html=True)
 
-# 创建子标签页用于不同模块的代码展示
-code_tab1, code_tab2, code_tab3, code_tab4, code_tab5 = st.tabs([
+    # 创建子标签页用于不同模块的代码展示
+    code_tab1, code_tab2, code_tab3, code_tab4, code_tab5 = st.tabs([
     "📥 数据加载", 
     "🔧 数据预处理", 
     "⚙️ 特征工程", 
     "🤖 模型训练", 
     "🎯 模型集成"
-])
+    ])
 
-with code_tab1:
-    st.markdown("#### 数据加载核心代码")
-    st.markdown("**功能：** 加载训练数据和数据字典，进行初步检查和目标变量分析")
-    
-    data_loading_code = '''def load_data():
+    with code_tab1:
+        st.markdown("#### 数据加载核心代码")
+        st.markdown("**功能：** 加载训练数据和数据字典，进行初步检查和目标变量分析")
+        
+        data_loading_code = '''def load_data():
     """
     加载数据文件
     
@@ -3162,21 +3163,21 @@ def analyze_target_variable(train_df):
     print(f"  - 死亡 (1): {target_counts[1]:,} 例 ({target_percent[1]:.2f}%)")
     
     return target_counts, target_percent'''
+        
+        st.code(data_loading_code, language='python')
+        
+        st.markdown("**关键特性：**")
+        st.markdown("""
+        - 使用 `low_memory=False` 确保完整加载数据
+        - 标准化缺失值处理（将 'NA' 和空字符串映射为 NaN）
+        - 自动统计目标变量分布，识别类别不平衡问题
+        """)
     
-    st.code(data_loading_code, language='python')
-    
-    st.markdown("**关键特性：**")
-    st.markdown("""
-    - 使用 `low_memory=False` 确保完整加载数据
-    - 标准化缺失值处理（将 'NA' 和空字符串映射为 NaN）
-    - 自动统计目标变量分布，识别类别不平衡问题
-    """)
-    
-with code_tab2:
-    st.markdown("#### 数据预处理核心代码")
-    st.markdown("**功能：** 特征分类、缺失值处理、异常值检测")
-    
-    preprocessing_code = '''def classify_features(train_df, dict_df):
+    with code_tab2:
+        st.markdown("#### 数据预处理核心代码")
+        st.markdown("**功能：** 特征分类、缺失值处理、异常值检测")
+        
+        preprocessing_code = '''def classify_features(train_df, dict_df):
     """
     基于数据字典进行特征分类
     
@@ -3231,22 +3232,22 @@ def basic_preprocessing(train_df, missing_df):
     print(f"✓ 剩余特征数: {train_df_cleaned.shape[1]}")
     
     return train_df_cleaned, high_missing_cols'''
+        
+        st.code(preprocessing_code, language='python')
+        
+        st.markdown("**处理策略：**")
+        st.markdown("""
+        - **高缺失率特征（>70%）**: 直接剔除，避免引入噪声
+        - **数值型特征**: 使用中位数填充，对异常值更稳健
+        - **分类特征**: 使用众数填充
+        - **医学逻辑填充**: 基于临床知识进行智能填充
+        """)
     
-    st.code(preprocessing_code, language='python')
-    
-    st.markdown("**处理策略：**")
-    st.markdown("""
-    - **高缺失率特征（>70%）**: 直接剔除，避免引入噪声
-    - **数值型特征**: 使用中位数填充，对异常值更稳健
-    - **分类特征**: 使用众数填充
-    - **医学逻辑填充**: 基于临床知识进行智能填充
-    """)
-    
-with code_tab3:
-    st.markdown("#### 特征工程核心代码")
-    st.markdown("**功能：** 创建GCS评分、生命体征、实验室指标等新特征")
-    
-    feature_engineering_code = '''def create_gcs_features(df):
+    with code_tab3:
+        st.markdown("#### 特征工程核心代码")
+        st.markdown("**功能：** 创建GCS评分、生命体征、实验室指标等新特征")
+        
+        feature_engineering_code = '''def create_gcs_features(df):
     """
     创建GCS（格拉斯哥昏迷评分）相关特征
     
@@ -3296,21 +3297,21 @@ def create_vital_signs_features(df):
     
     return df'''
         
-    st.code(feature_engineering_code, language='python')
+        st.code(feature_engineering_code, language='python')
+        
+        st.markdown("**特征类型：**")
+        st.markdown("""
+        - **GCS评分特征**: 格拉斯哥昏迷评分总分和组件
+        - **生命体征特征**: 血压、心率、血氧、体温、呼吸频率的范围和均值
+        - **实验室指标特征**: 血常规、生化指标、血气分析等
+        - **交互特征**: 特征间的乘积、比值等
+        """)
     
-    st.markdown("**特征类型：**")
-    st.markdown("""
-    - **GCS评分特征**: 格拉斯哥昏迷评分总分和组件
-    - **生命体征特征**: 血压、心率、血氧、体温、呼吸频率的范围和均值
-    - **实验室指标特征**: 血常规、生化指标、血气分析等
-    - **交互特征**: 特征间的乘积、比值等
-    """)
-    
-with code_tab4:
-    st.markdown("#### 模型训练核心代码")
-    st.markdown("**功能：** 训练多种机器学习模型，包括传统ML和梯度提升模型")
-    
-    model_training_code = '''def train_models(X_train_filled, y_train, X_val_filled, y_val, 
+    with code_tab4:
+        st.markdown("#### 模型训练核心代码")
+        st.markdown("**功能：** 训练多种机器学习模型，包括传统ML和梯度提升模型")
+        
+        model_training_code = '''def train_models(X_train_filled, y_train, X_val_filled, y_val, 
                  use_class_weight=True):
     """
     训练多个预测模型
@@ -3399,22 +3400,22 @@ with code_tab4:
     
     return models, predictions, metrics'''
         
-    st.code(model_training_code, language='python')
+        st.code(model_training_code, language='python')
+        
+        st.markdown("**模型类型：**")
+        st.markdown("""
+        - **逻辑回归**: 基准模型，线性分类器
+        - **随机森林**: 集成树模型，处理非线性关系
+        - **XGBoost**: 梯度提升树，支持缺失值
+        - **LightGBM**: 快速梯度提升，支持GPU加速
+        - **深度学习**: 深度神经网络，Wide & Deep架构
+        """)
     
-    st.markdown("**模型类型：**")
-    st.markdown("""
-    - **逻辑回归**: 基准模型，线性分类器
-    - **随机森林**: 集成树模型，处理非线性关系
-    - **XGBoost**: 梯度提升树，支持缺失值
-    - **LightGBM**: 快速梯度提升，支持GPU加速
-    - **深度学习**: 深度神经网络，Wide & Deep架构
-    """)
-    
-with code_tab5:
-    st.markdown("#### 模型集成核心代码")
-    st.markdown("**功能：** 训练多个LightGBM模型并集成，提升预测性能")
-    
-    ensemble_code = '''def train_ensemble_models(X_train, y_train, X_val, y_val, 
+    with code_tab5:
+        st.markdown("#### 模型集成核心代码")
+        st.markdown("**功能：** 训练多个LightGBM模型并集成，提升预测性能")
+        
+        ensemble_code = '''def train_ensemble_models(X_train, y_train, X_val, y_val, 
                           base_params, n_models=5, use_gpu=False):
     """
     训练多个LightGBM模型（不同随机种子）
@@ -3494,19 +3495,19 @@ def ensemble_predict(models, X_test):
     
     return ensemble_pred'''
         
-    st.code(ensemble_code, language='python')
-    
-    st.markdown("**集成策略：**")
-    st.markdown("""
-    - **多模型训练**: 使用5个不同随机种子的LightGBM模型
-    - **早停机制**: 防止过拟合，自动选择最佳迭代次数
-    - **预测融合**: 对多个模型的预测概率进行加权平均
-    - **性能提升**: 集成模型相比单模型AUC-ROC提升约0.002-0.005
-    """)
-    
-    st.markdown("**超参数优化代码（Optuna）：**")
-    
-    optuna_code = '''import optuna
+        st.code(ensemble_code, language='python')
+        
+        st.markdown("**集成策略：**")
+        st.markdown("""
+        - **多模型训练**: 使用5个不同随机种子的LightGBM模型
+        - **早停机制**: 防止过拟合，自动选择最佳迭代次数
+        - **预测融合**: 对多个模型的预测概率进行加权平均
+        - **性能提升**: 集成模型相比单模型AUC-ROC提升约0.002-0.005
+        """)
+        
+        st.markdown("**超参数优化代码（Optuna）：**")
+        
+        optuna_code = '''import optuna
 
 def objective(trial):
     """Optuna优化目标函数"""
@@ -3539,81 +3540,81 @@ study.optimize(objective, n_trials=100)
 best_params = study.best_params
 print(f"最佳AUC-ROC: {study.best_value:.5f}")
 print(f"最佳参数: {best_params}")'''
-    
-    st.code(optuna_code, language='python')
-    
-    st.markdown("**优化效果：**")
-    st.markdown("""
-    - 使用Optuna贝叶斯优化自动搜索最佳超参数
-    - 相比手动调参，AUC-ROC提升约0.003-0.005
-    - 排名从约700名提升至280名左右，提升约420名
-    """)
+        
+        st.code(optuna_code, language='python')
+        
+        st.markdown("**优化效果：**")
+        st.markdown("""
+        - 使用Optuna贝叶斯优化自动搜索最佳超参数
+        - 相比手动调参，AUC-ROC提升约0.003-0.005
+        - 排名从约700名提升至280名左右，提升约420名
+        """)
 
-# 与最优模型差距分析
-st.markdown('<div class="section-header">📊 与最优模型差距分析</div>', unsafe_allow_html=True)
+    # 与最优模型差距分析
+    st.markdown('<div class="section-header">📊 与最优模型差距分析</div>', unsafe_allow_html=True)
 
-col1, col2 = st.columns(2)
+    col1, col2 = st.columns(2)
 
-with col1:
-    st.markdown("""
-    <div class="warning-box">
-        <h4>🔍 主要差距识别</h4>
-        <p><strong>当前性能</strong>: AUC-ROC = 0.9069（相比Baseline提升4.5%）</p>
-        <p><strong>与最优模型差距</strong>: 0.0081（约0.81%）</p>
-        <ol>
-            <li><strong>测试时增强（TTA）缺失</strong>
-                <ul>
-                    <li>论文方案：通过改变性别、种族、年龄生成增强样本</li>
-                    <li>性能提升：约0.004 AUC</li>
-                </ul>
-            </li>
-            <li><strong>模型集成规模不足</strong>
-                <ul>
-                    <li>当前：5个LightGBM模型</li>
-                    <li>论文方案：42个不同类型模型</li>
-                </ul>
-            </li>
-            <li><strong>缺少StackNet元学习架构</strong>
-                <ul>
-                    <li>当前：简单加权平均</li>
-                    <li>论文方案：三层堆叠架构</li>
-                </ul>
-            </li>
-        </ol>
-    </div>
-    """, unsafe_allow_html=True)
+    with col1:
+        st.markdown("""
+        <div class="warning-box">
+            <h4>🔍 主要差距识别</h4>
+            <p><strong>当前性能</strong>: AUC-ROC = 0.9069（相比Baseline提升4.5%）</p>
+            <p><strong>与最优模型差距</strong>: 0.0081（约0.81%）</p>
+            <ol>
+                <li><strong>测试时增强（TTA）缺失</strong>
+                    <ul>
+                        <li>论文方案：通过改变性别、种族、年龄生成增强样本</li>
+                        <li>性能提升：约0.004 AUC</li>
+                    </ul>
+                </li>
+                <li><strong>模型集成规模不足</strong>
+                    <ul>
+                        <li>当前：5个LightGBM模型</li>
+                        <li>论文方案：42个不同类型模型</li>
+                    </ul>
+                </li>
+                <li><strong>缺少StackNet元学习架构</strong>
+                    <ul>
+                        <li>当前：简单加权平均</li>
+                        <li>论文方案：三层堆叠架构</li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+        """, unsafe_allow_html=True)
 
-with col2:
-    # 性能对比
-    comparison_data = pd.DataFrame({
-        '方案': ['我们的模型', '最优模型', 'Baseline'],
-        'AUC-ROC': [0.9069, 0.915, 0.868],
-        '差距': [0.0081, 0, 0.047]
-    })
-    
-    fig = px.bar(
-        comparison_data,
-        x='方案',
-        y='AUC-ROC',
-        title='性能对比：我们的模型 vs 最优模型 vs Baseline',
-        color='AUC-ROC',
-        color_continuous_scale='RdYlGn'
-    )
-    fig.add_hline(y=0.915, line_dash="dash", line_color="red", 
-                  annotation_text="最优模型目标 (0.915)")
-    fig.add_hline(y=0.9069, line_dash="dash", line_color="blue", 
-                  annotation_text="我们的模型 (0.9069)")
-    fig.add_hline(y=0.868, line_dash="dash", line_color="gray", 
-                  annotation_text="Baseline (0.868)")
-    # 调整 y 轴范围，使差距更直观
-    fig.update_layout(yaxis=dict(range=[0.8, 1.0]))
-    st.plotly_chart(fig, use_container_width=True)
+    with col2:
+        # 性能对比
+        comparison_data = pd.DataFrame({
+            '方案': ['我们的模型', '最优模型', 'Baseline'],
+            'AUC-ROC': [0.9069, 0.915, 0.868],
+            '差距': [0.0081, 0, 0.047]
+        })
+        
+        fig = px.bar(
+            comparison_data,
+            x='方案',
+            y='AUC-ROC',
+            title='性能对比：我们的模型 vs 最优模型 vs Baseline',
+            color='AUC-ROC',
+            color_continuous_scale='RdYlGn'
+        )
+        fig.add_hline(y=0.915, line_dash="dash", line_color="red", 
+                      annotation_text="最优模型目标 (0.915)")
+        fig.add_hline(y=0.9069, line_dash="dash", line_color="blue", 
+                      annotation_text="我们的模型 (0.9069)")
+        fig.add_hline(y=0.868, line_dash="dash", line_color="gray", 
+                      annotation_text="Baseline (0.868)")
+        # 调整 y 轴范围，使差距更直观
+        fig.update_layout(yaxis=dict(range=[0.8, 1.0]))
+        st.plotly_chart(fig, use_container_width=True)
 
-# 技术栈和工具
-st.markdown('<div class="section-header">🛠️ 技术栈</div>', unsafe_allow_html=True)
+    # 技术栈和工具
+    st.markdown('<div class="section-header">🛠️ 技术栈</div>', unsafe_allow_html=True)
 
-tech_cols = st.columns(4)
-tech_stack = [
+    tech_cols = st.columns(4)
+    tech_stack = [
     # 当前运行环境 Python 版本为 3.13.5（经 py --version 检测）
     ("Python 3.13.5", "🐍"),
     ("pandas & numpy", "📊"),
@@ -3623,17 +3624,17 @@ tech_stack = [
     ("Optuna", "⚙️"),
     ("matplotlib/seaborn", "📈"),
     ("Streamlit", "🚀")
-]
+    ]
 
-for i, (tech, icon) in enumerate(tech_stack):
-    with tech_cols[i % 4]:
-        st.markdown(f"### {icon}")
-        st.markdown(f"**{tech}**")
+    for i, (tech, icon) in enumerate(tech_stack):
+        with tech_cols[i % 4]:
+            st.markdown(f"### {icon}")
+            st.markdown(f"**{tech}**")
 
-# 项目文件结构
-st.markdown('<div class="section-header">📁 项目结构</div>', unsafe_allow_html=True)
+    # 项目文件结构
+    st.markdown('<div class="section-header">📁 项目结构</div>', unsafe_allow_html=True)
 
-st.markdown("""
+    st.markdown("""
 ```
 streamlit_app/
 ├── app.py                   # Streamlit 主应用
@@ -3647,39 +3648,39 @@ streamlit_app/
 │   ├── model_training/      # 模型训练结果
 │   └── model_evaluation/    # 模型评估结果
 └── README.md                # 使用说明
-```
-""")
-
-# 代码文件
-st.markdown('<div class="section-header">📝 代码文件</div>', unsafe_allow_html=True)
-
-nav_cols = st.columns(3)
-
-with nav_cols[0]:
-    st.markdown("""
-    **数据分析脚本：**
-    - `data_loading.py` - 数据读取
-    - `data_preprocessing.py` - 数据预处理
-    - `statistical_analysis.py` - 统计分析
-    - `feature_engineering.py` - 特征工程
+    ```
     """)
 
-with nav_cols[1]:
-    st.markdown("""
-    **模型训练脚本：**
-    - `model_training.py` - 传统ML模型
-    - `deep_learning_training.py` - 深度学习模型
-    - `hyperparameter_tuning.py` - 超参数优化
-    - `ensemble_lightgbm.py` - 集成模型
-    """)
+    # 代码文件
+    st.markdown('<div class="section-header">📝 代码文件</div>', unsafe_allow_html=True)
 
-with nav_cols[2]:
-    st.markdown("""
-    **评估与预测：**
-    - `evaluate_lightgbm_ensemble.py` - 模型评估
-    - `predict_lightgbm_ensemble.py` - 预测生成
-    - `plot_kaggle_rankings.py` - 排名可视化
-    """)
+    nav_cols = st.columns(3)
+
+    with nav_cols[0]:
+        st.markdown("""
+        **数据分析脚本：**
+        - `data_loading.py` - 数据读取
+        - `data_preprocessing.py` - 数据预处理
+        - `statistical_analysis.py` - 统计分析
+        - `feature_engineering.py` - 特征工程
+        """)
+
+    with nav_cols[1]:
+        st.markdown("""
+        **模型训练脚本：**
+        - `model_training.py` - 传统ML模型
+        - `deep_learning_training.py` - 深度学习模型
+        - `hyperparameter_tuning.py` - 超参数优化
+        - `ensemble_lightgbm.py` - 集成模型
+        """)
+
+    with nav_cols[2]:
+        st.markdown("""
+        **评估与预测：**
+        - `evaluate_lightgbm_ensemble.py` - 模型评估
+        - `predict_lightgbm_ensemble.py` - 预测生成
+        - `plot_kaggle_rankings.py` - 排名可视化
+        """)
 
     # 页脚
     st.markdown("---")
