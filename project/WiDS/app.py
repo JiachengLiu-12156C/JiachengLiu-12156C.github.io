@@ -289,10 +289,8 @@ st.markdown("""
 # 主标题
 st.markdown('<div class="main-header">🏥 WiDS Datathon 2020 - ICU死亡风险预测分析系统</div>', unsafe_allow_html=True)
 
-# 添加全局错误处理，防止白屏
-try:
-    # 项目信息
-    col1, col2, col3 = st.columns([2, 1, 1], gap="large")
+# 项目信息
+col1, col2, col3 = st.columns([2, 1, 1], gap="large")
 
 with col1:
     st.markdown("""
@@ -3601,11 +3599,3 @@ st.markdown("""
     <p>数据来源：MIT GOSSIS Initiative | 最后更新：2026年1月</p>
 </div>
 """, unsafe_allow_html=True)
-
-# 全局错误处理结束
-except Exception as e:
-    st.error(f"⚠️ 应用加载时出现错误: {str(e)}")
-    st.info("💡 提示：如果问题持续存在，请检查数据文件是否存在，或尝试刷新页面。")
-    import traceback
-    with st.expander("🔍 查看详细错误信息（用于调试）"):
-        st.code(traceback.format_exc())
