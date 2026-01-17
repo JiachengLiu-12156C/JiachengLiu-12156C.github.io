@@ -2615,276 +2615,276 @@ with tab5:
     if not shap_interactive_success:
         st.info("💡 交互式SHAP图表需要加载模型和数据。请确保模型文件和数据文件已正确放置在对应目录下。")
 
-# with tab6:
-    # st.markdown("### Kaggle提交结果")
-    # col1, col2 = st.columns(2)
-    # with col1:
-        # st.markdown("""
-        # **竞赛表现：**
-        # - **最佳提交：** LightGBM Ensemble
-        # - **Private Score：** 0.90470
-        # - **Public Score：** 0.90584
-        # - **Private排名：** 第222名（前280名区间）
-        # - **Public排名：** 第269名
-        # """)
-    # with col2:
-        # st.markdown("""
-        # **性能提升轨迹：**
-        # - 基础LightGBM → Optuna优化：排名提升约420名
-        # - 成功跨越前25%优秀性能分界线
-        # """)
+with tab6:
+    st.markdown("### Kaggle提交结果")
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown("""
+        **竞赛表现：**
+        - **最佳提交：** LightGBM Ensemble
+        - **Private Score：** 0.90470
+        - **Public Score：** 0.90584
+        - **Private排名：** 第222名（前280名区间）
+        - **Public排名：** 第269名
+        """)
+    with col2:
+        st.markdown("""
+        **性能提升轨迹：**
+        - 基础LightGBM → Optuna优化：排名提升约420名
+        - 成功跨越前25%优秀性能分界线
+        """)
     
     # 提交结果可视化（使用完整Kaggle提交数据，参考kaggle_late_submissions_comprehensive_new）
-    # try:
-        # kaggle_csv_path = BASE_DIR / "results" / "kaggle_submissions_data.csv"
-        # if kaggle_csv_path.exists():
-            # kaggle_df = load_csv_data(kaggle_csv_path)
+    try:
+        kaggle_csv_path = BASE_DIR / "results" / "kaggle_submissions_data.csv"
+        if kaggle_csv_path.exists():
+            kaggle_df = load_csv_data(kaggle_csv_path)
             
             # 解析模型类型：优先使用CSV中的model列，如果为Unknown则从文件名和分数判断
-            # def parse_model_type(row):
+            def parse_model_type(row):
                 # 如果model列有值且不是Unknown，直接使用
-                # if pd.notna(row.get('model')) and row['model'] != 'Unknown':
-                    # return row['model']
+                if pd.notna(row.get('model')) and row['model'] != 'Unknown':
+                    return row['model']
                 
                 # 否则从文件名解析
-                # filename = str(row['filename']).lower()
-                # private_score = row.get('private_score', 0)
+                filename = str(row['filename']).lower()
+                private_score = row.get('private_score', 0)
                 
-                # if 'lightgbm_ensemble' in filename:
-                    # return 'LightGBM Ensemble'
-                # elif 'lightgbm' in filename:
-                    # return 'LightGBM'
-                # elif 'xgboost' in filename:
-                    # return 'XGBoost'
-                # elif 'standard_dl' in filename or 'dl' in filename:
-                    # return 'Deep Learning'
-                # elif 'submission.csv' in filename:
+                if 'lightgbm_ensemble' in filename:
+                    return 'LightGBM Ensemble'
+                elif 'lightgbm' in filename:
+                    return 'LightGBM'
+                elif 'xgboost' in filename:
+                    return 'XGBoost'
+                elif 'standard_dl' in filename or 'dl' in filename:
+                    return 'Deep Learning'
+                elif 'submission.csv' in filename:
                     # submission.csv文件：根据分数范围判断
                     # Linear Regression的分数在0.890-0.895范围内
-                    # if 0.890 <= private_score <= 0.895:
-                        # return 'Linear Regression'
-                    # else:
+                    if 0.890 <= private_score <= 0.895:
+                        return 'Linear Regression'
+                    else:
                         # 其他分数（如0.89696）和LightGBM基础模型一样，可能是重复，过滤掉
-                        # return None  # 返回None，稍后过滤
-                # else:
-                    # return 'Unknown'
+                        return None  # 返回None，稍后过滤
+                else:
+                    return 'Unknown'
             
-            # kaggle_df['model_type'] = kaggle_df.apply(parse_model_type, axis=1)
+            kaggle_df['model_type'] = kaggle_df.apply(parse_model_type, axis=1)
             
             # 过滤掉None和Unknown类型的数据（避免显示不确定或重复的模型）
-            # kaggle_df = kaggle_df[
-                # (kaggle_df['model_type'].notna()) & 
-                # (kaggle_df['model_type'] != 'Unknown')
-            # ].copy()
+            kaggle_df = kaggle_df[
+                (kaggle_df['model_type'].notna()) & 
+                (kaggle_df['model_type'] != 'Unknown')
+            ].copy()
             
             # 转换时间
-            # from datetime import datetime, timedelta
-            # if 'submission_time' in kaggle_df.columns:
-                # kaggle_df['submission_time'] = pd.to_datetime(kaggle_df['submission_time'])
-            # elif 'hours_ago' in kaggle_df.columns:
-                # base_time = datetime.now()
-                # kaggle_df['submission_time'] = kaggle_df['hours_ago'].apply(
-                    # lambda x: base_time - timedelta(hours=x)
-                # )
+            from datetime import datetime, timedelta
+            if 'submission_time' in kaggle_df.columns:
+                kaggle_df['submission_time'] = pd.to_datetime(kaggle_df['submission_time'])
+            elif 'hours_ago' in kaggle_df.columns:
+                base_time = datetime.now()
+                kaggle_df['submission_time'] = kaggle_df['hours_ago'].apply(
+                    lambda x: base_time - timedelta(hours=x)
+                )
             
             # 去重：每个模型的每种调优方法只保留一个
-            # kaggle_df_deduped = []
-            # for (model, stage), group in kaggle_df.groupby(['model_type', 'stage']):
-                # if len(group) > 1:
-                    # group_sorted = group.sort_values('private_score', ascending=False)
-                    # best_row = group_sorted.iloc[0]
-                    # kaggle_df_deduped.append(best_row)
-                # else:
-                    # kaggle_df_deduped.append(group.iloc[0])
+            kaggle_df_deduped = []
+            for (model, stage), group in kaggle_df.groupby(['model_type', 'stage']):
+                if len(group) > 1:
+                    group_sorted = group.sort_values('private_score', ascending=False)
+                    best_row = group_sorted.iloc[0]
+                    kaggle_df_deduped.append(best_row)
+                else:
+                    kaggle_df_deduped.append(group.iloc[0])
             
-            # kaggle_df = pd.DataFrame(kaggle_df_deduped).reset_index(drop=True)
-            # kaggle_df = kaggle_df.sort_values('submission_time').reset_index(drop=True)
+            kaggle_df = pd.DataFrame(kaggle_df_deduped).reset_index(drop=True)
+            kaggle_df = kaggle_df.sort_values('submission_time').reset_index(drop=True)
             
             # 分配优化阶段标签
-            # def get_stage_label(row):
-                # model = row['model_type']
-                # stage = row['stage']
+            def get_stage_label(row):
+                model = row['model_type']
+                stage = row['stage']
                 
-                # if model == 'LightGBM Ensemble':
-                    # return 'Ensemble'
-                # elif stage == '基础模型':
-                    # return model
-                # elif stage == '普通调优':
-                    # return 'Hyperparameter Tuning\n(RandomizedSearchCV)'
-                # elif stage == '高级调优':
-                    # return 'Hyperparameter Tuning\n(Optuna)'
-                # elif stage == '集成模型（最优）':
-                    # return 'Ensemble'
-                # else:
-                    # return stage
+                if model == 'LightGBM Ensemble':
+                    return 'Ensemble'
+                elif stage == '基础模型':
+                    return model
+                elif stage == '普通调优':
+                    return 'Hyperparameter Tuning\n(RandomizedSearchCV)'
+                elif stage == '高级调优':
+                    return 'Hyperparameter Tuning\n(Optuna)'
+                elif stage == '集成模型（最优）':
+                    return 'Ensemble'
+                else:
+                    return stage
             
-            # kaggle_df['stage_label'] = kaggle_df.apply(get_stage_label, axis=1)
+            kaggle_df['stage_label'] = kaggle_df.apply(get_stage_label, axis=1)
 
             # 小标题：Late Submission 结果分析（靠近图表，减小下边距）
-            # st.markdown(
-                # "<h4 style='margin-bottom:0.3rem;'>Late Submission 结果分析</h4>",
-                # unsafe_allow_html=True
-            # )
+            st.markdown(
+                "<h4 style='margin-bottom:0.3rem;'>Late Submission 结果分析</h4>",
+                unsafe_allow_html=True
+            )
 
             # 定义颜色方案
-            # model_colors = {
-                # 'LightGBM Ensemble': '#e74c3c',
-                # 'LightGBM': '#3498db',
-                # 'XGBoost': '#2ecc71',
-                # 'Deep Learning': '#f39c12',
-                # 'Linear Regression': '#95a5a6'
-            # }
+            model_colors = {
+                'LightGBM Ensemble': '#e74c3c',
+                'LightGBM': '#3498db',
+                'XGBoost': '#2ecc71',
+                'Deep Learning': '#f39c12',
+                'Linear Regression': '#95a5a6'
+            }
             
             # 创建三个子图的布局
-            # fig = make_subplots(
-                # rows=1, cols=3,
-                # horizontal_spacing=0.12
-            # )
+            fig = make_subplots(
+                rows=1, cols=3,
+                horizontal_spacing=0.12
+            )
             
             # 合并LightGBM和LightGBM Ensemble的数据用于时间序列
-            # lightgbm_data = kaggle_df[kaggle_df['model_type'].isin(['LightGBM', 'LightGBM Ensemble'])].sort_values('submission_time')
+            lightgbm_data = kaggle_df[kaggle_df['model_type'].isin(['LightGBM', 'LightGBM Ensemble'])].sort_values('submission_time')
             
             # 子图1: Private Score时间序列
-            # for model in kaggle_df['model_type'].unique():
-                # if model == 'LightGBM Ensemble':
-                    # continue  # 稍后合并到LightGBM
+            for model in kaggle_df['model_type'].unique():
+                if model == 'LightGBM Ensemble':
+                    continue  # 稍后合并到LightGBM
                 
-                # model_data = kaggle_df[kaggle_df['model_type'] == model].sort_values('submission_time')
+                model_data = kaggle_df[kaggle_df['model_type'] == model].sort_values('submission_time')
                 
-                # if model == 'LightGBM':
-                    # ensemble_data = kaggle_df[kaggle_df['model_type'] == 'LightGBM Ensemble'].sort_values('submission_time')
-                    # if len(ensemble_data) > 0:
-                        # model_data = pd.concat([model_data, ensemble_data]).sort_values('submission_time')
+                if model == 'LightGBM':
+                    ensemble_data = kaggle_df[kaggle_df['model_type'] == 'LightGBM Ensemble'].sort_values('submission_time')
+                    if len(ensemble_data) > 0:
+                        model_data = pd.concat([model_data, ensemble_data]).sort_values('submission_time')
                 
-                # fig.add_trace(
-                    # go.Scatter(
-                        # x=model_data['submission_time'],
-                        # y=model_data['private_score'],
-                        # mode='lines+markers',
-                        # name=model,
-                        # line=dict(color=model_colors.get(model, '#95a5a6'), width=2),
-                        # marker=dict(size=8),
-                        # hovertemplate=(
-                            # f"<b>{model}</b><br>"
+                fig.add_trace(
+                    go.Scatter(
+                        x=model_data['submission_time'],
+                        y=model_data['private_score'],
+                        mode='lines+markers',
+                        name=model,
+                        line=dict(color=model_colors.get(model, '#95a5a6'), width=2),
+                        marker=dict(size=8),
+                        hovertemplate=(
+                            f"<b>{model}</b><br>"
                             # "时间: %{x}<br>"
-                            # "Private Score: %{y:.5f}<br>"
+                            "Private Score: %{y:.5f}<br>"
                             # "阶段: %{customdata}<extra></extra>"
-                        # ),
-                        # customdata=model_data['stage_label']
-                    # ),
-                    # row=1, col=1
-                # )
+                        ),
+                        customdata=model_data['stage_label']
+                    ),
+                    row=1, col=1
+                )
             
             # 子图2: Public Score时间序列
-            # for model in kaggle_df['model_type'].unique():
-                # if model == 'LightGBM Ensemble':
-                    # continue
+            for model in kaggle_df['model_type'].unique():
+                if model == 'LightGBM Ensemble':
+                    continue
                 
-                # model_data = kaggle_df[kaggle_df['model_type'] == model].sort_values('submission_time')
+                model_data = kaggle_df[kaggle_df['model_type'] == model].sort_values('submission_time')
                 
-                # if model == 'LightGBM':
-                    # ensemble_data = kaggle_df[kaggle_df['model_type'] == 'LightGBM Ensemble'].sort_values('submission_time')
-                    # if len(ensemble_data) > 0:
-                        # model_data = pd.concat([model_data, ensemble_data]).sort_values('submission_time')
+                if model == 'LightGBM':
+                    ensemble_data = kaggle_df[kaggle_df['model_type'] == 'LightGBM Ensemble'].sort_values('submission_time')
+                    if len(ensemble_data) > 0:
+                        model_data = pd.concat([model_data, ensemble_data]).sort_values('submission_time')
                 
-                # fig.add_trace(
-                    # go.Scatter(
-                        # x=model_data['submission_time'],
-                        # y=model_data['public_score'],
-                        # mode='lines+markers',
-                        # name=model,
-                        # line=dict(color=model_colors.get(model, '#95a5a6'), width=2),
-                        # marker=dict(size=8, symbol='square'),
-                        # hovertemplate=(
-                            # f"<b>{model}</b><br>"
+                fig.add_trace(
+                    go.Scatter(
+                        x=model_data['submission_time'],
+                        y=model_data['public_score'],
+                        mode='lines+markers',
+                        name=model,
+                        line=dict(color=model_colors.get(model, '#95a5a6'), width=2),
+                        marker=dict(size=8, symbol='square'),
+                        hovertemplate=(
+                            f"<b>{model}</b><br>"
                             # "时间: %{x}<br>"
-                            # "Public Score: %{y:.5f}<br>"
+                            "Public Score: %{y:.5f}<br>"
                             # "阶段: %{customdata}<extra></extra>"
-                        # ),
-                        # customdata=model_data['stage_label'],
-                        # showlegend=False
-                    # ),
-                    # row=1, col=2
-                # )
+                        ),
+                        customdata=model_data['stage_label'],
+                        showlegend=False
+                    ),
+                    row=1, col=2
+                )
             
             # 子图3: Private vs Public Score散点图
-            # for model in kaggle_df['model_type'].unique():
-                # model_data = kaggle_df[kaggle_df['model_type'] == model]
+            for model in kaggle_df['model_type'].unique():
+                model_data = kaggle_df[kaggle_df['model_type'] == model]
                 
-                # fig.add_trace(
-                    # go.Scatter(
-                        # x=model_data['public_score'],
-                        # y=model_data['private_score'],
-                        # mode='markers',
-                        # name=model,
-                        # marker=dict(
-                            # color=model_colors.get(model, '#95a5a6'),
-                            # size=10,
-                            # line=dict(width=1, color='black')
-                        # ),
-                        # hovertemplate=(
-                            # f"<b>{model}</b><br>"
-                            # "Public Score: %{x:.5f}<br>"
-                            # "Private Score: %{y:.5f}<br>"
+                fig.add_trace(
+                    go.Scatter(
+                        x=model_data['public_score'],
+                        y=model_data['private_score'],
+                        mode='markers',
+                        name=model,
+                        marker=dict(
+                            color=model_colors.get(model, '#95a5a6'),
+                            size=10,
+                            line=dict(width=1, color='black')
+                        ),
+                        hovertemplate=(
+                            f"<b>{model}</b><br>"
+                            "Public Score: %{x:.5f}<br>"
+                            "Private Score: %{y:.5f}<br>"
                             # "阶段: %{customdata}<extra></extra>"
-                        # ),
-                        # customdata=model_data['stage_label'],
-                        # showlegend=False
-                    # ),
-                    # row=1, col=3
-                # )
+                        ),
+                        customdata=model_data['stage_label'],
+                        showlegend=False
+                    ),
+                    row=1, col=3
+                )
             
             # 添加对角线（理想线）
-            # min_score = min(kaggle_df['private_score'].min(), kaggle_df['public_score'].min()) - 0.002
-            # max_score = max(kaggle_df['private_score'].max(), kaggle_df['public_score'].max()) + 0.002
-            # fig.add_trace(
-                # go.Scatter(
-                    # x=[min_score, max_score],
-                    # y=[min_score, max_score],
-                    # mode='lines',
-                    # name='y=x',
-                    # line=dict(dash='dash', color='gray', width=1),
-                    # showlegend=False,
-                    # hovertemplate='理想线<extra></extra>'
-                # ),
-                # row=1, col=3
-            # )
+            min_score = min(kaggle_df['private_score'].min(), kaggle_df['public_score'].min()) - 0.002
+            max_score = max(kaggle_df['private_score'].max(), kaggle_df['public_score'].max()) + 0.002
+            fig.add_trace(
+                go.Scatter(
+                    x=[min_score, max_score],
+                    y=[min_score, max_score],
+                    mode='lines',
+                    name='y=x',
+                    line=dict(dash='dash', color='gray', width=1),
+                    showlegend=False,
+                    hovertemplate='理想线<extra></extra>'
+                ),
+                row=1, col=3
+            )
             
             # 更新布局
-            # fig.update_xaxes(title_text="提交时间", row=1, col=1)
-            # fig.update_yaxes(title_text="Private Score", row=1, col=1)
+            fig.update_xaxes(title_text="提交时间", row=1, col=1)
+            fig.update_yaxes(title_text="Private Score", row=1, col=1)
             
-            # fig.update_xaxes(title_text="提交时间", row=1, col=2)
-            # fig.update_yaxes(title_text="Public Score", row=1, col=2)
+            fig.update_xaxes(title_text="提交时间", row=1, col=2)
+            fig.update_yaxes(title_text="Public Score", row=1, col=2)
             
-            # fig.update_xaxes(title_text="Public Score", row=1, col=3)
-            # fig.update_yaxes(title_text="Private Score", row=1, col=3)
+            fig.update_xaxes(title_text="Public Score", row=1, col=3)
+            fig.update_yaxes(title_text="Private Score", row=1, col=3)
             
-            # fig.update_layout(
-                # height=500,
-                # hovermode='closest'
-            # )
+            fig.update_layout(
+                height=500,
+                hovermode='closest'
+            )
             
-            # st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, use_container_width=True)
             
             # Public Score排名数据（硬编码，来自plot_combined_submission_rankings.py）
-            # public_rankings = {
-                # 0.87408: 778,
-                # 0.88907: 742,
-                # 0.89805: 697,
-                # 0.89950: 692,
-                # 0.90171: 672,
-                # 0.90268: 659,
-                # 0.90267: 659,
-                # 0.90540: 275,
-                # 0.90584: 269,
-            # }
+            public_rankings = {
+                0.87408: 778,
+                0.88907: 742,
+                0.89805: 697,
+                0.89950: 692,
+                0.90171: 672,
+                0.90268: 659,
+                0.90267: 659,
+                0.90540: 275,
+                0.90584: 269,
+            }
             
             # Private排名数据（根据分数估算，实际应该从leaderboard文件读取）
             # 这里使用近似值，基于plot_combined_submission_rankings.py的逻辑
-            # private_rankings_approx = {
-                # 0.87873: 800,  # Deep Learning
-                # 0.89194: 750,  # Linear Regression
+            private_rankings_approx = {
+                0.87873: 800,  # Deep Learning
+                0.89194: 750,  # Linear Regression
                 # 0.89696: 650,  # LightGBM基础
                 # 0.89711: 640,  # XGBoost基础
                 # 0.90035: 500,  # XGBoost普通调优
@@ -2892,210 +2892,210 @@ with tab5:
                 # 0.90234: 400,  # XGBoost高级调优
                 # 0.90417: 280,  # LightGBM高级调优
                 # 0.90470: 222,  # LightGBM Ensemble / LightGBM高级调优
-            # }
+            }
             
-            # total_teams_private = 1120  # 近似值
-            # total_teams_public = 951
+            total_teams_private = 1120  # 近似值
+            total_teams_public = 951
             
             # 为每个提交添加排名信息
-            # kaggle_df_with_ranks = kaggle_df.copy()
-            # kaggle_df_with_ranks['private_rank'] = kaggle_df_with_ranks['private_score'].map(
-                # lambda x: min(private_rankings_approx.items(), key=lambda item: abs(item[0] - x))[1]
-                # if abs(min(private_rankings_approx.items(), key=lambda item: abs(item[0] - x))[0] - x) < 0.001
-                # else None
-            # )
-            # kaggle_df_with_ranks['public_rank'] = kaggle_df_with_ranks['public_score'].map(
-                # lambda x: public_rankings.get(
-                    # min(public_rankings.keys(), key=lambda k: abs(k - x)),
-                    # None
-                # ) if abs(min(public_rankings.keys(), key=lambda k: abs(k - x)) - x) < 0.001
-                # else None
-            # )
+            kaggle_df_with_ranks = kaggle_df.copy()
+            kaggle_df_with_ranks['private_rank'] = kaggle_df_with_ranks['private_score'].map(
+                lambda x: min(private_rankings_approx.items(), key=lambda item: abs(item[0] - x))[1]
+                if abs(min(private_rankings_approx.items(), key=lambda item: abs(item[0] - x))[0] - x) < 0.001
+                else None
+            )
+            kaggle_df_with_ranks['public_rank'] = kaggle_df_with_ranks['public_score'].map(
+                lambda x: public_rankings.get(
+                    min(public_rankings.keys(), key=lambda k: abs(k - x)),
+                    None
+                ) if abs(min(public_rankings.keys(), key=lambda k: abs(k - x)) - x) < 0.001
+                else None
+            )
             
             # 过滤掉没有排名的数据
-            # kaggle_df_with_ranks = kaggle_df_with_ranks[
-                # kaggle_df_with_ranks['private_rank'].notna() & 
-                # kaggle_df_with_ranks['public_rank'].notna()
-            # ].copy()
+            kaggle_df_with_ranks = kaggle_df_with_ranks[
+                kaggle_df_with_ranks['private_rank'].notna() & 
+                kaggle_df_with_ranks['public_rank'].notna()
+            ].copy()
             
-            # if len(kaggle_df_with_ranks) > 0:
+            if len(kaggle_df_with_ranks) > 0:
                 # 小标题：提交排名分析（靠近图表，减小下边距）
-                # st.markdown(
-                    # "<h4 style='margin-bottom:0.3rem;'>提交排名分析</h4>",
-                    # unsafe_allow_html=True
-                # )
+                st.markdown(
+                    "<h4 style='margin-bottom:0.3rem;'>提交排名分析</h4>",
+                    unsafe_allow_html=True
+                )
 
                 # 创建排名图表（两个子图）
-                # fig_ranks = make_subplots(
-                    # rows=1, cols=2,
-                    # horizontal_spacing=0.15
-                # )
+                fig_ranks = make_subplots(
+                    rows=1, cols=2,
+                    horizontal_spacing=0.15
+                )
                 
                 # 按分数排序用于连线
-                # df_sorted_private = kaggle_df_with_ranks.sort_values('private_score')
-                # df_sorted_public = kaggle_df_with_ranks.sort_values('public_score')
+                df_sorted_private = kaggle_df_with_ranks.sort_values('private_score')
+                df_sorted_public = kaggle_df_with_ranks.sort_values('public_score')
                 
                 # 子图1: Private Score vs 排名
                 # 添加连线（灰色，半透明）
-                # fig_ranks.add_trace(
-                    # go.Scatter(
-                        # x=df_sorted_private['private_score'],
-                        # y=df_sorted_private['private_rank'],
-                        # mode='lines',
-                        # name='_连线',
-                        # line=dict(color='gray', width=2, dash='dot'),
-                        # opacity=0.3,
-                        # showlegend=False,
-                        # hoverinfo='skip'
-                    # ),
-                    # row=1, col=1
-                # )
+                fig_ranks.add_trace(
+                    go.Scatter(
+                        x=df_sorted_private['private_score'],
+                        y=df_sorted_private['private_rank'],
+                        mode='lines',
+                        name='_连线',
+                        line=dict(color='gray', width=2, dash='dot'),
+                        opacity=0.3,
+                        showlegend=False,
+                        hoverinfo='skip'
+                    ),
+                    row=1, col=1
+                )
                 
                 # 添加各模型的散点
-                # for model in kaggle_df_with_ranks['model_type'].unique():
-                    # model_data = kaggle_df_with_ranks[kaggle_df_with_ranks['model_type'] == model]
+                for model in kaggle_df_with_ranks['model_type'].unique():
+                    model_data = kaggle_df_with_ranks[kaggle_df_with_ranks['model_type'] == model]
                     
-                    # fig_ranks.add_trace(
-                        # go.Scatter(
-                            # x=model_data['private_score'],
-                            # y=model_data['private_rank'],
-                            # mode='markers+text',
-                            # name=model,
-                            # text=[f"#{int(r)}" for r in model_data['private_rank']],
-                            # textposition='middle right',
-                            # marker=dict(
-                                # color=model_colors.get(model, '#95a5a6'),
-                                # size=12,
-                                # line=dict(width=1.5, color='black')
-                            # ),
-                            # hovertemplate=(
-                                # f"<b>{model}</b><br>"
-                                # "Private Score: %{x:.5f}<br>"
+                    fig_ranks.add_trace(
+                        go.Scatter(
+                            x=model_data['private_score'],
+                            y=model_data['private_rank'],
+                            mode='markers+text',
+                            name=model,
+                            text=[f"#{int(r)}" for r in model_data['private_rank']],
+                            textposition='middle right',
+                            marker=dict(
+                                color=model_colors.get(model, '#95a5a6'),
+                                size=12,
+                                line=dict(width=1.5, color='black')
+                            ),
+                            hovertemplate=(
+                                f"<b>{model}</b><br>"
+                                "Private Score: %{x:.5f}<br>"
                                 # "排名: #%{y}<br>"
                                 # "阶段: %{customdata}<extra></extra>"
-                            # ),
-                            # customdata=model_data['stage_label']
-                        # ),
-                        # row=1, col=1
-                    # )
+                            ),
+                            customdata=model_data['stage_label']
+                        ),
+                        row=1, col=1
+                    )
                 
                 # 添加前25%和前60%参考线
-                # top_25_private = int(total_teams_private * 0.25)
-                # top_60_private = int(total_teams_private * 0.60)
+                top_25_private = int(total_teams_private * 0.25)
+                top_60_private = int(total_teams_private * 0.60)
                 
-                # fig_ranks.add_hline(
-                    # y=top_25_private, 
-                    # line_dash="dash", 
-                    # line_color="green", 
-                    # opacity=0.5,
-                    # annotation_text="前25%",
-                    # row=1, col=1
-                # )
-                # fig_ranks.add_hline(
-                    # y=top_60_private, 
-                    # line_dash="dash", 
-                    # line_color="orange", 
-                    # opacity=0.5,
-                    # annotation_text="前60%",
-                    # row=1, col=1
-                # )
+                fig_ranks.add_hline(
+                    y=top_25_private, 
+                    line_dash="dash", 
+                    line_color="green", 
+                    opacity=0.5,
+                    annotation_text="前25%",
+                    row=1, col=1
+                )
+                fig_ranks.add_hline(
+                    y=top_60_private, 
+                    line_dash="dash", 
+                    line_color="orange", 
+                    opacity=0.5,
+                    annotation_text="前60%",
+                    row=1, col=1
+                )
                 
                 # 子图2: Public Score vs 排名
                 # 添加连线
-                # fig_ranks.add_trace(
-                    # go.Scatter(
-                        # x=df_sorted_public['public_score'],
-                        # y=df_sorted_public['public_rank'],
-                        # mode='lines',
-                        # name='_连线',
-                        # line=dict(color='gray', width=2, dash='dot'),
-                        # opacity=0.3,
-                        # showlegend=False,
-                        # hoverinfo='skip'
-                    # ),
-                    # row=1, col=2
-                # )
+                fig_ranks.add_trace(
+                    go.Scatter(
+                        x=df_sorted_public['public_score'],
+                        y=df_sorted_public['public_rank'],
+                        mode='lines',
+                        name='_连线',
+                        line=dict(color='gray', width=2, dash='dot'),
+                        opacity=0.3,
+                        showlegend=False,
+                        hoverinfo='skip'
+                    ),
+                    row=1, col=2
+                )
                 
                 # 添加各模型的散点
-                # for model in kaggle_df_with_ranks['model_type'].unique():
-                    # model_data = kaggle_df_with_ranks[kaggle_df_with_ranks['model_type'] == model]
+                for model in kaggle_df_with_ranks['model_type'].unique():
+                    model_data = kaggle_df_with_ranks[kaggle_df_with_ranks['model_type'] == model]
                     
-                    # fig_ranks.add_trace(
-                        # go.Scatter(
-                            # x=model_data['public_score'],
-                            # y=model_data['public_rank'],
-                            # mode='markers+text',
-                            # name=model,
-                            # text=[f"#{int(r)}" for r in model_data['public_rank']],
-                            # textposition='middle right',
-                            # marker=dict(
-                                # color=model_colors.get(model, '#95a5a6'),
-                                # size=12,
-                                # line=dict(width=1.5, color='black'),
-                                # symbol='square'
-                            # ),
-                            # hovertemplate=(
-                                # f"<b>{model}</b><br>"
-                                # "Public Score: %{x:.5f}<br>"
+                    fig_ranks.add_trace(
+                        go.Scatter(
+                            x=model_data['public_score'],
+                            y=model_data['public_rank'],
+                            mode='markers+text',
+                            name=model,
+                            text=[f"#{int(r)}" for r in model_data['public_rank']],
+                            textposition='middle right',
+                            marker=dict(
+                                color=model_colors.get(model, '#95a5a6'),
+                                size=12,
+                                line=dict(width=1.5, color='black'),
+                                symbol='square'
+                            ),
+                            hovertemplate=(
+                                f"<b>{model}</b><br>"
+                                "Public Score: %{x:.5f}<br>"
                                 # "排名: #%{y}<br>"
                                 # "阶段: %{customdata}<extra></extra>"
-                            # ),
-                            # customdata=model_data['stage_label'],
-                            # showlegend=False
-                        # ),
-                        # row=1, col=2
-                    # )
+                            ),
+                            customdata=model_data['stage_label'],
+                            showlegend=False
+                        ),
+                        row=1, col=2
+                    )
                 
                 # 添加前25%和前60%参考线
-                # top_25_public = int(total_teams_public * 0.25)
-                # top_60_public = int(total_teams_public * 0.60)
+                top_25_public = int(total_teams_public * 0.25)
+                top_60_public = int(total_teams_public * 0.60)
                 
-                # fig_ranks.add_hline(
-                    # y=top_25_public, 
-                    # line_dash="dash", 
-                    # line_color="green", 
-                    # opacity=0.5,
-                    # annotation_text="前25%",
-                    # row=1, col=2
-                # )
-                # fig_ranks.add_hline(
-                    # y=top_60_public, 
-                    # line_dash="dash", 
-                    # line_color="orange", 
-                    # opacity=0.5,
-                    # annotation_text="前60%",
-                    # row=1, col=2
-                # )
+                fig_ranks.add_hline(
+                    y=top_25_public, 
+                    line_dash="dash", 
+                    line_color="green", 
+                    opacity=0.5,
+                    annotation_text="前25%",
+                    row=1, col=2
+                )
+                fig_ranks.add_hline(
+                    y=top_60_public, 
+                    line_dash="dash", 
+                    line_color="orange", 
+                    opacity=0.5,
+                    annotation_text="前60%",
+                    row=1, col=2
+                )
                 
                 # 更新布局
-                # fig_ranks.update_xaxes(title_text="Private Score", row=1, col=1)
-                # fig_ranks.update_yaxes(
-                    # title_text="排名 (Rank)", 
-                    # row=1, col=1,
-                    # autorange="reversed"  # 反转Y轴，使排名1在顶部
-                # )
+                fig_ranks.update_xaxes(title_text="Private Score", row=1, col=1)
+                fig_ranks.update_yaxes(
+                    title_text="排名 (Rank)", 
+                    row=1, col=1,
+                    autorange="reversed"  # 反转Y轴，使排名1在顶部
+                )
                 
-                # fig_ranks.update_xaxes(title_text="Public Score", row=1, col=2)
-                # fig_ranks.update_yaxes(
-                    # title_text="排名 (Rank)", 
-                    # row=1, col=2,
-                    # autorange="reversed"  # 反转Y轴，使排名1在顶部
-                # )
+                fig_ranks.update_xaxes(title_text="Public Score", row=1, col=2)
+                fig_ranks.update_yaxes(
+                    title_text="排名 (Rank)", 
+                    row=1, col=2,
+                    autorange="reversed"  # 反转Y轴，使排名1在顶部
+                )
                 
-                # fig_ranks.update_layout(
-                    # height=500,
-                    # hovermode='closest'
-                # )
+                fig_ranks.update_layout(
+                    height=500,
+                    hovermode='closest'
+                )
                 
-                # st.plotly_chart(fig_ranks, use_container_width=True)
-            # else:
-                # st.info("无法获取排名数据，跳过排名图表显示。")
-        # else:
-            # st.info("未找到 `results/kaggle_submissions_data.csv`，暂时使用示例数据。")
-    # except Exception as e:
-        # st.error(f"加载Kaggle提交数据时出错: {str(e)}")
-        # import traceback
-        # st.text(traceback.format_exc())
+                st.plotly_chart(fig_ranks, use_container_width=True)
+            else:
+                st.info("无法获取排名数据，跳过排名图表显示。")
+        else:
+            st.info("未找到 `results/kaggle_submissions_data.csv`，暂时使用示例数据。")
+    except Exception as e:
+        st.error(f"加载Kaggle提交数据时出错: {str(e)}")
+        import traceback
+        st.text(traceback.format_exc())
 
 # 核心实现代码板块（使用 try-except 确保即使出错也能继续渲染）
 # try:
