@@ -51,7 +51,6 @@ def compute_missing_stats(data_path, chunk_size=10000, max_rows=10000):
     columns = load_csv_data(data_path, nrows=0).columns.tolist()
     total_rows = 0
     missing_counts = pd.Series(0, index=columns)
-    
     # 分块读取并累计缺失值（限制最大行数）
     for chunk in pd.read_csv(data_path, chunksize=chunk_size, low_memory=False, na_values=['NA', '']):
         total_rows += len(chunk)
@@ -59,14 +58,12 @@ def compute_missing_stats(data_path, chunk_size=10000, max_rows=10000):
         # 如果已达到最大行数，停止读取
         if total_rows >= max_rows:
             break
-    
     # 计算缺失值比例
     missing_percent = (missing_counts / total_rows) * 100
     missing_df = pd.DataFrame({
         '特征': missing_percent.index,
         '缺失比例(%)': missing_percent.values
     }).sort_values('缺失比例(%)', ascending=False)
-    
     return missing_df, total_rows, len(columns)
 
 
@@ -76,10 +73,8 @@ def get_prediction_model_and_features(sample_size=10000):
     """
     加载用于在线个体预测的 LightGBM 最优模型，并推断其使用的特征列表与默认填充值（中位数）。
     注意：此函数会应用与训练时相同的预处理流程（特征工程、特征选择等）。
-    
     Args:
         sample_size: 用于计算中位数的样本数量（默认10000，减少内存占用）
-    
     Returns:
         model: 已加载的 LightGBM 模型（或 None）
         feature_list: 模型使用的特征名称列表（或 None）
@@ -107,7 +102,6 @@ def get_prediction_model_and_features(sample_size=10000):
     preprocessor = None
     selected_features = None
     use_feature_engineering = False
-    
     if preprocessor_path.exists():
         try:
             preprocessor = load_preprocessor(preprocessor_path)
@@ -129,25 +123,21 @@ def get_prediction_model_and_features(sample_size=10000):
             except ImportError:
                 st.warning("无法导入特征工程模块，将跳过特征工程步骤")
                 use_feature_engineering = False
-        
         # 使用更小的样本量来计算中位数，减少内存占用
         train_df = load_csv_data(data_path, nrows=sample_size, low_memory=False, na_values=['NA', ''])
         if 'hospital_death' not in train_df.columns:
             return None, None, None, None
-        
         # 应用特征工程（如果训练时使用了）
         if use_feature_engineering:
             try:
                 train_df = apply_feature_engineering(train_df)
             except Exception as e:
                 st.warning(f"应用特征工程时出错: {str(e)}")
-        
         # 移除APACHE死亡概率特征（避免数据泄露，与训练时一致）
         apache_prob_features = ['apache_4a_hospital_death_prob', 'apache_4a_icu_death_prob']
         for feat in apache_prob_features:
             if feat in train_df.columns:
                 train_df = train_df.drop(columns=[feat])
-        
         # 处理分类特征（使用预处理器中的编码器，如果可用）
         if preprocessor and isinstance(preprocessor, dict) and 'encoders' in preprocessor:
             encoders = preprocessor['encoders']
@@ -167,7 +157,6 @@ def get_prediction_model_and_features(sample_size=10000):
                     except Exception:
                         # 如果编码失败，使用最常见的类别
                         train_df[col] = 0
-        
         # 获取特征列表
         if selected_features:
             # 使用预处理器中保存的特征列表（这是训练时选择的特征）
@@ -188,11 +177,9 @@ def get_prediction_model_and_features(sample_size=10000):
                     model_n_features = model.booster_.num_feature()
             except Exception:
                 model_n_features = None
-            
             numeric_cols = train_df.select_dtypes(include=[np.number]).columns.tolist()
             numeric_cols = [col for col in numeric_cols if col not in 
                             ['encounter_id', 'patient_id', 'hospital_id', 'hospital_death']]
-            
             n_feats = model_n_features if model_n_features else 79
             feature_list = [col for col in numeric_cols if col in train_df.columns][:n_feats]
 
@@ -202,12 +189,10 @@ def get_prediction_model_and_features(sample_size=10000):
         # 计算这些特征在训练集上的中位数，用作默认填充值
         # 注意：对于LightGBM，我们保留缺失值，但为了给用户提供合理的默认值，使用中位数
         feature_medians = train_df[feature_list].median()
-        
         # 确保特征顺序与训练时一致
         feature_list = [f for f in selected_features if f in feature_list] if selected_features else feature_list
 
         return model, feature_list, feature_medians, preprocessor
-        
     except Exception as e:
         st.error(f"准备预测数据时出错: {str(e)}")
         import traceback
@@ -423,7 +408,6 @@ with prediction_expander:
 
                 submitted = st.form_submit_button("计算死亡风险")
             pass
-            
             # 将if submitted移到form外面，但仍在else块内
             # 注意：在表单提交后，将所有结果存储到session_state，然后在表单外部显示
             # 这样可以避免Delta路径错误
@@ -431,16 +415,13 @@ with prediction_expander:
                 # 初始化结果存储
                 st.session_state['prediction_result'] = None
                 st.session_state['prediction_error'] = None
-                
                 try:
                     # 使用与训练时完全一致的预处理流程（参考predict_lightgbm_ensemble.py）
                     import sys
                     sys.path.insert(0, str(BASE_DIR.parent))
-                    
                     # 1. 加载训练数据的一个样本作为基础（用于特征工程）
                     data_path = BASE_DIR / "data" / "training_v2.csv"
                     patient_df = load_csv_data(data_path, nrows=1, low_memory=False, na_values=['NA', ''])
-                    
                     # 2. 应用特征工程（如果训练时使用了）
                     use_feature_engineering = preprocessor.get('use_feature_engineering', False) if preprocessor and isinstance(preprocessor, dict) else False
                     if use_feature_engineering:
@@ -454,16 +435,13 @@ with prediction_expander:
                             if 'warnings' not in st.session_state:
                                 st.session_state['warnings'] = []
                             st.session_state['warnings'].append(f"应用特征工程时出错: {str(e)}")
-                    
                     # 3. 使用prepare_features函数准备特征（与训练时完全一致）
                     try:
                         from model_utils import prepare_features
-                        
                         # 准备特征（保留缺失值，用于LightGBM，与训练时一致）
                         X_prepared, _, _, _ = prepare_features(
                             patient_df.copy(), fill_missing=False, standardize=False
                         )
-                        
                         # 4. 用训练集的中位数填充所有特征（作为基础值）
                         # 注意：这里我们需要确保所有特征都存在
                         for feat in feature_list:
@@ -476,7 +454,6 @@ with prediction_expander:
                             else:
                                 # 如果特征不在DataFrame中，添加它
                                 X_prepared[feat] = feature_medians.get(feat, 0.0) if feat in feature_medians.index else 0.0
-                        
                         # 5. 用用户输入的值覆盖对应特征
                         for feat_name, val in user_values.items():
                             if feat_name in X_prepared.columns:
@@ -484,31 +461,25 @@ with prediction_expander:
                             elif feat_name in feature_list:
                                 # 如果特征在特征列表中但不在DataFrame中，添加它
                                 X_prepared[feat_name] = float(val)
-                        
                         # 6. 特征选择：按照预处理器中保存的特征顺序组织输入
                         # 这是关键步骤：确保特征顺序与训练时完全一致
                         X_input_selected = pd.DataFrame(index=X_prepared.index)
                         missing_features = []
-                        
                         for feat in feature_list:
                             if feat in X_prepared.columns:
                                 X_input_selected[feat] = X_prepared[feat]
                             else:
                                 missing_features.append(feat)
                                 X_input_selected[feat] = 0.0  # 用0填充缺失的特征
-                        
                         # 确保特征顺序与训练时一致
                         X_input_selected = X_input_selected[feature_list]
-                        
                         if missing_features:
                             # 存储警告信息，在表单外部显示
                             if 'warnings' not in st.session_state:
                                 st.session_state['warnings'] = []
                             st.session_state['warnings'].append(f"⚠ 警告: {len(missing_features)} 个特征在数据中不存在，已用0填充")
-                        
                         # 7. 转换为numpy数组
                         X_input = X_input_selected.values
-                        
                         # 8. 验证特征数量和顺序
                         if X_input.shape[1] != len(feature_list):
                             # 存储错误信息，在表单外部显示
@@ -527,7 +498,6 @@ with prediction_expander:
                                     model_n_features = model.booster_.num_feature()
                             except Exception:
                                 pass
-                            
                             if model_n_features and X_input.shape[1] != model_n_features:
                                 # 存储错误信息，在表单外部显示
                                 st.session_state['prediction_error'] = f"❌ 特征数量不匹配！模型期望 {model_n_features} 个特征，但输入有 {X_input.shape[1]} 个"
@@ -539,7 +509,6 @@ with prediction_expander:
                                 # 9. 进行预测（只有在验证通过时）
                                 proba = float(model.predict_proba(X_input)[:, 1][0])
                                 risk_percent = proba * 100.0
-                                
                                 # 调试信息（可选，通过session_state存储，避免在form提交后立即使用expander）
                                 debug_info = f"""
 # **特征数量**: {len(feature_list)}
@@ -550,7 +519,6 @@ with prediction_expander:
                                 if missing_features:
                                     debug_info += f"**缺失的特征（已用0填充）**: {missing_features[:10]}{'...' if len(missing_features) > 10 else ''}\n"
                                 debug_info += f"**预测概率**: {proba:.6f}"
-                                
                                 # 将调试信息和预测结果存储到session_state，在表单外部显示
                                 st.session_state['debug_info'] = debug_info
                                 st.session_state['prediction_result'] = {
@@ -558,27 +526,23 @@ with prediction_expander:
                                     'risk_percent': risk_percent,
                                     'threshold': threshold
                                 }
-                        
                     except ImportError:
                         # 如果无法导入prepare_features，使用简化版本
                         # 存储警告信息，在表单外部显示
                         if 'warnings' not in st.session_state:
                             st.session_state['warnings'] = []
                         st.session_state['warnings'].append("⚠ 无法导入prepare_features模块，使用简化预处理流程")
-                        
                         # 简化流程：直接从训练数据样本开始
                         # 移除APACHE死亡概率特征
                         apache_prob_features = ['apache_4a_hospital_death_prob', 'apache_4a_icu_death_prob']
                         for feat in apache_prob_features:
                             if feat in patient_df.columns:
                                 patient_df = patient_df.drop(columns=[feat])
-                        
                         # 移除ID列和目标变量
                         id_cols = ['encounter_id', 'patient_id', 'hospital_id', 'hospital_death']
                         for col in id_cols:
                             if col in patient_df.columns:
                                 patient_df = patient_df.drop(columns=[col])
-                        
                         # 处理分类特征（如果有预处理器）
                         if preprocessor and isinstance(preprocessor, dict) and 'encoders' in preprocessor:
                             encoders = preprocessor.get('encoders', {})
@@ -594,7 +558,6 @@ with prediction_expander:
                                         patient_df[col] = encoder.transform(patient_df[col])
                                     except Exception:
                                         patient_df[col] = 0
-                        
                         # 用中位数填充所有特征
                         for feat in feature_list:
                             if feat in patient_df.columns:
@@ -604,14 +567,12 @@ with prediction_expander:
                                     patient_df[feat] = 0.0
                             else:
                                 patient_df[feat] = feature_medians.get(feat, 0.0) if feat in feature_medians.index else 0.0
-                        
                         # 用用户输入的值覆盖
                         for feat_name, val in user_values.items():
                             if feat_name in patient_df.columns:
                                 patient_df[feat_name] = float(val)
                             elif feat_name in feature_list:
                                 patient_df[feat_name] = float(val)
-                        
                         # 按特征顺序组织输入
                         X_input_values = []
                         for feat in feature_list:
@@ -622,9 +583,7 @@ with prediction_expander:
                                 X_input_values.append(float(val))
                             else:
                                 X_input_values.append(feature_medians.get(feat, 0.0) if feat in feature_medians.index else 0.0)
-                        
                         X_input = np.array(X_input_values).reshape(1, -1)
-                        
                         # 验证特征数量
                         model_n_features = None
                         try:
@@ -634,7 +593,6 @@ with prediction_expander:
                                 model_n_features = model.booster_.num_feature()
                         except Exception:
                             pass
-                        
                         if model_n_features and X_input.shape[1] != model_n_features:
                             # 存储错误信息，在表单外部显示
                             st.session_state['prediction_error'] = f"❌ 特征数量不匹配！模型期望 {model_n_features} 个特征，但输入有 {X_input.shape[1]} 个"
@@ -646,7 +604,6 @@ with prediction_expander:
                             # 进行预测（只有在验证通过时）
                             proba = float(model.predict_proba(X_input)[:, 1][0])
                             risk_percent = proba * 100.0
-                            
                             # 调试信息（存储到session_state，避免在form提交后立即使用expander）
                             debug_info = f"""
 # **特征数量**: {len(feature_list)}
@@ -663,37 +620,31 @@ with prediction_expander:
                                 'risk_percent': risk_percent,
                                 'threshold': threshold
                             }
-                        
                 except Exception as e:
                     # 存储错误信息，在表单外部显示
                     st.session_state['prediction_error'] = str(e)
                     st.session_state['prediction_result'] = None
-            
             # 在表单外部显示所有结果（避免Delta路径错误）
             # 显示警告信息
             if 'warnings' in st.session_state and st.session_state['warnings']:
                 for warning in st.session_state['warnings']:
                     st.warning(warning)
                 del st.session_state['warnings']
-            
             # 显示错误信息
             if 'prediction_error' in st.session_state and st.session_state['prediction_error']:
                 st.error(f"在线预测时发生错误：{st.session_state['prediction_error']}")
                 del st.session_state['prediction_error']
-            
             if 'prediction_result' in st.session_state and st.session_state['prediction_result']:
                 result = st.session_state['prediction_result']
                 proba = result['proba']
                 risk_percent = result['risk_percent']
                 threshold = result['threshold']
-                
                 # 显示调试信息（在表单外部，避免Delta路径错误）
                 if 'debug_info' in st.session_state:
                     with st.expander("🔍 调试信息（点击查看）"):
                         st.markdown(st.session_state['debug_info'])
                     # 清除调试信息，避免下次显示
                     del st.session_state['debug_info']
-                
                 st.markdown("#### 预测结果")
                 col_result1, col_result2 = st.columns([1, 2])
 
@@ -726,7 +677,6 @@ with prediction_expander:
                         """,
                         unsafe_allow_html=True
                     )
-                
                 # 清除结果，避免下次显示
                 del st.session_state['prediction_result']
 
@@ -765,21 +715,18 @@ with tab1:
         - 医学逻辑：基于数据字典进行特征分类
         - 可视化：缺失值分析、目标变量分布等
         """)
-    
     # 数据字典预览
     st.markdown("#### 数据字典预览")
     try:
         dict_path = BASE_DIR / "data" / "WiDS Datathon 2020 Dictionary.csv"
         if dict_path.exists():
             dict_df = load_csv_data(dict_path)
-            
             # 显示数据字典基本信息
             col1, col2 = st.columns(2)
             with col1:
                 st.metric("总行数", f"{len(dict_df):,}")
             with col2:
                 st.metric("总列数", f"{len(dict_df.columns)}")
-            
             # 提供选项：显示前N行或全部
             display_option = st.radio(
                 "显示选项：",
@@ -787,7 +734,6 @@ with tab1:
                 horizontal=True,
                 index=0
             )
-            
             if display_option == "前10行（预览）":
                 st.dataframe(dict_df.head(10), use_container_width=True, height=400)
             elif display_option == "前50行":
@@ -798,7 +744,6 @@ with tab1:
             st.warning("⚠️ 数据字典文件未找到，请确保 data/WiDS Datathon 2020 Dictionary.csv 存在")
     except Exception as e:
         st.info(f"数据字典加载信息: {str(e)}")
-    
     # 缺失值分析可视化
     st.markdown("#### 缺失值分析")
     st.markdown("""
@@ -807,7 +752,6 @@ with tab1:
     # - 缺失值比例最高的特征
     # - 缺失值统计信息
     """)
-    
     try:
         data_path = BASE_DIR / "data" / "training_v2.csv"
         if data_path.exists():
@@ -816,14 +760,12 @@ with tab1:
             with st.spinner("正在加载数据并计算缺失值（首次加载可能需要几秒钟，后续会使用缓存）..."):
                 missing_df, total_rows, total_cols = compute_missing_stats(data_path, max_rows=10000)
                 columns = missing_df['特征'].tolist()
-            
             # 统计信息
             total_cols = len(columns)
             no_missing = total_cols - len(missing_df[missing_df['缺失比例(%)'] > 0])
             low_missing = len(missing_df[(missing_df['缺失比例(%)'] > 0) & (missing_df['缺失比例(%)'] <= 50)])
             medium_missing = len(missing_df[(missing_df['缺失比例(%)'] > 50) & (missing_df['缺失比例(%)'] <= 70)])
             high_missing = len(missing_df[missing_df['缺失比例(%)'] > 70])
-            
             # 显示统计摘要
             col1, col2, col3, col4 = st.columns(4)
             with col1:
@@ -834,10 +776,8 @@ with tab1:
                 st.metric("中等缺失 (50-70%)", f"{medium_missing}")
             with col4:
                 st.metric("高缺失 (>70%)", f"{high_missing}")
-            
             # 将三个图表和一个表格放在四列布局中
             chart_col1, chart_col2, chart_col3, chart_col4 = st.columns(4)
-            
             # 1. 缺失值比例分布直方图
             with chart_col1:
                 fig_hist = px.histogram(
@@ -855,7 +795,6 @@ with tab1:
                                   annotation_text="70%", annotation_position="top")
                 fig_hist.update_layout(bargap=0.1, showlegend=False, height=400)
                 st.plotly_chart(fig_hist, use_container_width=True)
-            
             # 2. 缺失值比例最高的前20个特征（水平条形图）
             with chart_col2:
                 top_missing = missing_df.head(20)
@@ -875,7 +814,6 @@ with tab1:
                     showlegend=False
                 )
                 st.plotly_chart(fig_bar, use_container_width=True)
-            
             # 3. 缺失值阈值统计（条形图）
             with chart_col3:
                 threshold_data = pd.DataFrame({
@@ -905,7 +843,6 @@ with tab1:
                     yaxis=dict(range=[0, max_y * 1.15] if max_y > 0 else None)
                 )
                 st.plotly_chart(fig_threshold, use_container_width=True)
-            
             # 4. 显示前20个缺失值比例最高的特征表格
             with chart_col4:
                 st.markdown("**详细数据（前20个）**")
@@ -915,13 +852,11 @@ with tab1:
                     hide_index=True,
                     height=400
                 )
-            
         else:
             st.warning("⚠️ 数据文件未找到，请确保 data/training_v2.csv 存在")
     except Exception as e:
         st.error(f"生成缺失值分析图表时出错: {str(e)}")
         st.info("💡 提示：请确保数据文件存在且格式正确")
-    
     # 特征分类可视化
     st.markdown("#### 特征分类可视化")
     st.markdown("""
@@ -929,15 +864,12 @@ with tab1:
     # - 各医学类别特征数量分布
     # - 主要特征类别统计
     """)
-    
     try:
         dict_path = BASE_DIR / "data" / "WiDS Datathon 2020 Dictionary.csv"
         data_path = BASE_DIR / "data" / "training_v2.csv"
-        
         if dict_path.exists() and data_path.exists():
             dict_df = pd.read_csv(dict_path)
             train_df = load_csv_data(data_path, nrows=0)  # 只读取列名
-            
             if 'Category' in dict_df.columns and 'Variable Name' in dict_df.columns:
                 # 创建特征分类字典
                 feature_categories = {}
@@ -947,7 +879,6 @@ with tab1:
                     if category not in feature_categories:
                         feature_categories[category] = []
                     feature_categories[category].append(var_name)
-                
                 # 计算每个类别在实际数据中的特征数量
                 category_names_cn = {
                     'demographic': '人口统计学指标',
@@ -956,16 +887,13 @@ with tab1:
                     'APACHE covariate': 'APACHE评分协变量',
                     'labs blood gas': '血气分析指标'
                 }
-                
                 main_categories = ['demographic', 'vitals', 'labs', 'APACHE covariate', 'labs blood gas']
                 category_counts_dict = {}
-                
                 for cat in main_categories:
                     if cat in feature_categories:
                         features = feature_categories[cat]
                         existing_features = [f for f in features if f in train_df.columns]
                         category_counts_dict[category_names_cn.get(cat, cat)] = len(existing_features)
-                
                 # 计算其他类别
                 other_count = 0
                 for cat in feature_categories.keys():
@@ -973,14 +901,11 @@ with tab1:
                         features = feature_categories[cat]
                         existing_features = [f for f in features if f in train_df.columns]
                         other_count += len(existing_features)
-                
                 if other_count > 0:
                     category_counts_dict['其他类别'] = other_count
-                
                 # 创建DataFrame
                 category_counts = pd.Series(category_counts_dict)
                 total_features = category_counts.sum()
-                
                 # 显示统计摘要
                 st.markdown("**特征分类统计摘要**")
                 col1, col2 = st.columns(2)
@@ -988,10 +913,8 @@ with tab1:
                     st.metric("总特征数", f"{total_features}")
                 with col2:
                     st.metric("主要类别数", f"{len(category_counts)}")
-                
                 # 将图表和表格放在一行（三列布局）
                 chart_col1, chart_col2, chart_col3 = st.columns(3)
-                
                 # 1. 特征类别分布饼图
                 with chart_col1:
                     fig_pie = px.pie(
@@ -1007,7 +930,6 @@ with tab1:
                     )
                     fig_pie.update_layout(height=400)
                     st.plotly_chart(fig_pie, use_container_width=True)
-                
                 # 2. 特征类别分布水平条形图
                 with chart_col2:
                     fig_hbar = px.bar(
@@ -1031,7 +953,6 @@ with tab1:
                         height=400
                     )
                     st.plotly_chart(fig_hbar, use_container_width=True)
-                
                 # 3. 显示详细统计表
                 with chart_col3:
                     st.markdown("**详细数据统计表**")
@@ -1082,7 +1003,6 @@ with tab2:
         - 时间序列特征提取
         - GCS评分特征构建
         """)
-    
     # 显示预处理结果统计
     col1, col2, col3 = st.columns(3)
     with col1:
@@ -1094,7 +1014,6 @@ with tab2:
     with col3:
         st.metric("缺失值填充率", ">95%")
         st.metric("数据完整性", "高")
-    
     # 数据预处理可视化
     st.markdown("#### 数据预处理可视化")
     st.markdown("""
@@ -1104,32 +1023,26 @@ with tab2:
     - 特征类型分布
     - 缺失值处理策略
     """)
-    
     try:
         data_path = BASE_DIR / "data" / "training_v2.csv"
         if data_path.exists():
             with st.spinner("正在加载数据并计算预处理统计信息..."):
                 # 读取数据（优化：使用更小的采样减少内存占用和加载时间）
                 train_df = load_csv_data(data_path, nrows=10000, low_memory=False, na_values=['NA', ''])
-                
                 # 计算缺失值
                 missing_percent = (train_df.isnull().sum() / len(train_df)) * 100
                 high_missing_cols = missing_percent[missing_percent > 70].index.tolist()
                 train_df_cleaned = train_df.drop(columns=high_missing_cols)
-                
                 # 识别分类特征
                 object_cols = train_df_cleaned.select_dtypes(include=['object']).columns.tolist()
                 numeric_cols = train_df_cleaned.select_dtypes(include=[np.number]).columns.tolist()
                 numeric_cols = [col for col in numeric_cols if col not in ['encounter_id', 'patient_id', 'hospital_id', 'hospital_death']]
-                
                 # 计算缺失值总数
                 total_missing = train_df.isnull().sum().sum()
                 after_fill_missing = total_missing  # 保留缺失值，不填充
-            
             # 图表渲染在spinner外
             # 将四个图表放在一行四列布局
             chart_col1, chart_col2, chart_col3, chart_col4 = st.columns(4)
-            
             # 1. 特征降维过程
             with chart_col1:
                 st.markdown("##### 特征降维过程")
@@ -1155,17 +1068,14 @@ with tab2:
                     yaxis=dict(range=[0, max_y * 1.15])
                 )
                 st.plotly_chart(fig1, use_container_width=True)
-            
             # 2. 被删除特征的类型分析
             with chart_col2:
                 st.markdown("##### 被删除特征类型分布")
                 h1_count = sum(1 for col in high_missing_cols if col.startswith('h1_'))
                 d1_count = sum(1 for col in high_missing_cols if col.startswith('d1_'))
                 other_count = len(high_missing_cols) - h1_count - d1_count
-                
                 deleted_types = ['h1_前缀(第一小时)', 'd1_前缀(第一天)', '其他特征']
                 deleted_counts = [h1_count, d1_count, other_count]
-                
                 fig2 = px.bar(
                     x=deleted_types,
                     y=deleted_counts,
@@ -1186,13 +1096,11 @@ with tab2:
                     yaxis=dict(range=[0, max_y * 1.15] if max_y > 0 else None)
                 )
                 st.plotly_chart(fig2, use_container_width=True)
-            
                 # 3. 特征类型分布
             with chart_col3:
                 st.markdown("##### 特征类型分布")
                 feature_types = ['分类特征', '数值型特征']
                 feature_counts = [len(object_cols), len(numeric_cols)]
-                
                 fig3 = px.bar(
                     x=feature_types,
                     y=feature_counts,
@@ -1212,13 +1120,11 @@ with tab2:
                     yaxis=dict(range=[0, max_y * 1.15] if max_y > 0 else None)
                 )
                 st.plotly_chart(fig3, use_container_width=True)
-            
             # 4. 缺失值处理策略
             with chart_col4:
                 st.markdown("##### 缺失值处理策略")
                 fill_stages = ['缺失值统计', '保留缺失值']
                 missing_counts = [total_missing, after_fill_missing]
-                
                 fig4 = px.bar(
                     x=fill_stages,
                     y=missing_counts,
@@ -1242,7 +1148,6 @@ with tab2:
             st.warning("⚠️ 数据文件未找到，请确保 data/training_v2.csv 存在")
     except Exception as e:
         st.error(f"生成数据预处理可视化图表时出错: {str(e)}")
-    
     # 医学特征分析可视化
     st.markdown("#### 医学特征分析可视化")
     st.markdown("""
@@ -1252,23 +1157,19 @@ with tab2:
     - APACHE评分特征
     - 特征与目标变量的关系
     """)
-    
     try:
         data_path = BASE_DIR / "data" / "training_v2.csv"
         if data_path.exists():
             with st.spinner("正在加载数据并分析医学特征..."):
                 # 优化：使用更小的采样减少内存占用和加载时间
                 train_df = load_csv_data(data_path, nrows=10000, low_memory=False, na_values=['NA', ''])
-                
                 # 选择关键医学特征
                 key_features = ['age', 'bmi', 'heart_rate_apache', 'temp_apache', 
                                'd1_glucose_max', 'd1_glucose_min', 'apache_4a_icu_death_prob']
                 available_features = [f for f in key_features if f in train_df.columns]
-                
                 if len(available_features) > 0:
                     # 创建一行三列布局
                     med_col1, med_col2, med_col3 = st.columns(3)
-                    
                     # 1. 关键特征与目标变量的相关性
                     with med_col1:
                         st.markdown("##### 关键特征与目标变量相关性")
@@ -1281,13 +1182,11 @@ with tab2:
                                 )
                                 if pd.notna(corr):
                                     correlations[feature] = corr
-                        
                         if correlations:
                             corr_df = pd.DataFrame({
                                 '特征': list(correlations.keys()),
                                 '相关系数': list(correlations.values())
                             }).sort_values('相关系数', key=abs, ascending=False)
-                            
                             fig_corr = px.bar(
                                 corr_df,
                                 x='特征',
@@ -1299,7 +1198,6 @@ with tab2:
                             )
                             fig_corr.update_layout(height=400, xaxis_tickangle=-45)
                             st.plotly_chart(fig_corr, use_container_width=True)
-                    
                     # 2. 关键特征的分布（按目标变量分组）
                     with med_col2:
                         st.markdown("##### 关键特征分布（按目标变量分组）")
@@ -1307,7 +1205,6 @@ with tab2:
                         if available_features:
                             feature = available_features[0]
                             valid_data = train_df[[feature, 'hospital_death']].dropna()
-                            
                             if len(valid_data) > 0:
                                 fig_dist = px.histogram(
                                     valid_data,
@@ -1319,7 +1216,6 @@ with tab2:
                                 )
                                 fig_dist.update_layout(height=400)
                                 st.plotly_chart(fig_dist, use_container_width=True)
-                    
                     # 3. 关键特征统计摘要表格
                     with med_col3:
                         st.markdown("##### 关键特征统计摘要")
@@ -1335,7 +1231,6 @@ with tab2:
                                     '最小值': valid_data.min(),
                                     '最大值': valid_data.max()
                                 })
-                        
                         if summary_data:
                             summary_df = pd.DataFrame(summary_data)
                             st.dataframe(summary_df, use_container_width=True, hide_index=True, height=400)
@@ -1374,7 +1269,6 @@ with tab3:
         - 综合多个统计指标
         - 为模型建立提供依据
         """)
-    
     # 统计分析可视化
     try:
         data_path = BASE_DIR / "data" / "training_v2.csv"
@@ -1382,7 +1276,6 @@ with tab3:
             with st.spinner("正在加载数据并生成统计分析图表..."):
                 # 优化：使用更小的采样减少内存占用和加载时间
                 train_df = load_csv_data(data_path, nrows=10000, low_memory=False, na_values=['NA', ''])
-                
                 # 常见临床特征列表（12个）
                 common_features = [
                     'age', 'bmi', 'weight', 'height', 'heart_rate_apache', 
@@ -1391,7 +1284,6 @@ with tab3:
                     'glucose_apache', 'wbc_apache'
                 ]
                 available_features = [f for f in common_features if f in train_df.columns][:12]
-                
                 # 特征中文名称
                 feature_names_cn = {
                     'age': '年龄', 'bmi': 'BMI', 'weight': '体重', 'height': '身高',
@@ -1401,16 +1293,13 @@ with tab3:
                     'sodium_apache': '血钠', 'glucose_apache': '血糖', 
                     'wbc_apache': '白细胞计数'
                 }
-                
                 # 1. 12个常见临床特征箱线图分布对比
                 st.markdown("#### 常见临床特征箱线图分布对比")
                 st.markdown("**12个常见临床特征在存活组（绿色）与死亡组（红色）间的箱线图分布对比**")
-                
                 if len(available_features) > 0:
                     # 创建6列布局，两行显示（12个特征 = 2行 × 6列）
                     n_cols = 6
                     n_features = min(len(available_features), 12)
-                    
                     # 按行显示
                     for row in range((n_features + n_cols - 1) // n_cols):
                         cols = st.columns(n_cols)
@@ -1420,13 +1309,11 @@ with tab3:
                                 with cols[col_idx]:
                                     feature = available_features[feature_idx]
                                     feature_name = feature_names_cn.get(feature, feature)
-                                    
                                     # 准备数据
                                     data = train_df[[feature, 'hospital_death']].dropna()
                                     if len(data) > 0:
                                         # 创建分组标签
                                         data['组别'] = data['hospital_death'].map({0: '存活组', 1: '死亡组'})
-                                        
                                         # 使用plotly express创建箱线图
                                         fig = px.box(
                                             data,
@@ -1436,7 +1323,6 @@ with tab3:
                                             color_discrete_map={'存活组': '#2ecc71', '死亡组': '#e74c3c'},
                                             title=feature_name
                                         )
-                                        
                                         fig.update_layout(
                                             title=dict(
                                                 text=feature_name,
@@ -1449,15 +1335,12 @@ with tab3:
                                             margin=dict(l=30, r=20, t=50, b=40)
                                         )
                                         st.plotly_chart(fig, use_container_width=True)
-                
                 # 2. 关键特征均值与中位数归一化对比和数值型特征分布类型统计（一行四列）
                 st.markdown("#### 关键特征均值与中位数归一化对比和数值型特征分布类型统计")
-                
                 if len(available_features) > 0:
                     # 计算均值和中位数
                     mean_data = []
                     median_data = []
-                    
                     for feature in available_features[:10]:  # 前10个特征
                         data = train_df[[feature, 'hospital_death']].dropna()
                         if len(data) > 0:
@@ -1465,32 +1348,26 @@ with tab3:
                             death_mean = data[data['hospital_death'] == 1][feature].mean()
                             alive_median = data[data['hospital_death'] == 0][feature].median()
                             death_median = data[data['hospital_death'] == 1][feature].median()
-                            
                             # 归一化（相对于总体均值）
                             overall_mean = data[feature].mean()
                             overall_median = data[feature].median()
-                            
                             mean_data.append({
                                 '特征': feature_names_cn.get(feature, feature),
                                 '存活组': (alive_mean - overall_mean) / overall_mean if overall_mean != 0 else 0,
                                 '死亡组': (death_mean - overall_mean) / overall_mean if overall_mean != 0 else 0
                             })
-                            
                             median_data.append({
                                 '特征': feature_names_cn.get(feature, feature),
                                 '存活组': (alive_median - overall_median) / overall_median if overall_median != 0 else 0,
                                 '死亡组': (death_median - overall_median) / overall_median if overall_median != 0 else 0
                             })
-                    
                     # 获取数值型特征并计算偏度和峰度
                     numeric_cols = train_df.select_dtypes(include=[np.number]).columns.tolist()
                     numeric_cols = [col for col in numeric_cols if col not in 
                                    ['encounter_id', 'patient_id', 'hospital_id', 'hospital_death']]
-                    
                     skewness_list = []
                     kurtosis_list = []
                     feature_list = []
-                    
                     for col in numeric_cols[:50]:  # 限制前50个特征
                         data = train_df[col].dropna()
                         if len(data) > 100:  # 至少100个样本
@@ -1500,10 +1377,8 @@ with tab3:
                             skewness_list.append(sk)
                             kurtosis_list.append(kt)
                             feature_list.append(col)
-                    
                     # 创建四列布局
                     col1, col2, col3, col4 = st.columns(4)
-                    
                     with col1:
                         st.markdown("##### (a) 均值归一化对比")
                         if mean_data:
@@ -1528,7 +1403,6 @@ with tab3:
                                 showlegend=True
                             )
                             st.plotly_chart(fig_mean, use_container_width=True)
-                    
                     with col2:
                         st.markdown("##### (b) 中位数归一化对比")
                         if median_data:
@@ -1553,7 +1427,6 @@ with tab3:
                                 showlegend=True
                             )
                             st.plotly_chart(fig_median, use_container_width=True)
-                    
                     with col3:
                         st.markdown("##### (c) 分布类型统计")
                         if len(skewness_list) > 0:
@@ -1563,10 +1436,8 @@ with tab3:
                             skewed_count = sum(1 for s in skewness_list if abs(s) >= 0.5)
                             heavy_tail_count = sum(1 for k in kurtosis_list if abs(k) >= 0.5)
                             other_count = len(skewness_list) - normal_count - skewed_count - heavy_tail_count
-                            
                             dist_types = ['正态分布', '偏态分布', '重尾分布', '其他']
                             dist_counts = [normal_count, skewed_count, heavy_tail_count, other_count]
-                            
                             fig_dist = px.pie(
                                 values=dist_counts,
                                 names=dist_types,
@@ -1574,7 +1445,6 @@ with tab3:
                             )
                             fig_dist.update_layout(height=400)
                             st.plotly_chart(fig_dist, use_container_width=True)
-                    
                     with col4:
                         st.markdown("##### (d) 偏度-峰度关联散点图")
                         if len(skewness_list) > 0:
@@ -1589,23 +1459,18 @@ with tab3:
                             fig_scatter.add_vline(x=0, line_dash="dash", line_color="gray")
                             fig_scatter.update_layout(height=400)
                             st.plotly_chart(fig_scatter, use_container_width=True)
-                
                 # 3. 特征相关性分析、矩阵热力图和初步特征重要性综合评分（一行三列）
                 st.markdown("#### 特征相关性分析、矩阵热力图和初步特征重要性综合评分")
-                
                 # 尝试加载相关性结果文件（相对于应用目录）
                 corr_path = BASE_DIR / "results" / "statistical_analysis" / "correlation_with_target.csv"
                 corr_matrix_path = BASE_DIR / "results" / "statistical_analysis" / "feature_correlation_matrix.csv"
                 importance_path = BASE_DIR / "results" / "statistical_analysis" / "feature_importance_preliminary.csv"
-                
                 col1, col2, col3 = st.columns(3)
-                
                 with col1:
                     st.markdown("##### (a) 与目标变量相关性 Top 20")
                     if corr_path.exists():
                         corr_df = load_csv_data(corr_path)
                         top_corr = corr_df.head(20)
-                        
                         fig_corr_bar = px.bar(
                             top_corr,
                             x='相关系数',
@@ -1624,20 +1489,16 @@ with tab3:
                         st.plotly_chart(fig_corr_bar, use_container_width=True)
                     else:
                         st.info("💡 运行 statistical_analysis.py 生成相关性分析结果")
-                
                 with col2:
                     st.markdown("##### (b) 特征间相关性矩阵热力图")
                     if corr_matrix_path.exists() and corr_path.exists():
                         corr_matrix = load_csv_data(corr_matrix_path, index_col=0)
                         corr_df = load_csv_data(corr_path)
-                        
                         # 选择Top 30特征（基于与目标变量的相关性）
                         top_features = corr_df.head(30)['特征名'].tolist()
                         available_top = [f for f in top_features if f in corr_matrix.index and f in corr_matrix.columns]
-                        
                         if len(available_top) > 1:
                             corr_subset = corr_matrix.loc[available_top, available_top]
-                            
                             fig_heatmap = px.imshow(
                                 corr_subset,
                                 color_continuous_scale='RdBu',
@@ -1651,13 +1512,11 @@ with tab3:
                             st.info("💡 无法生成相关性矩阵热力图")
                     else:
                         st.info("💡 运行 statistical_analysis.py 生成特征间相关性矩阵")
-                
                 with col3:
                     st.markdown("##### (c) 初步特征重要性综合评分 Top 30")
                     if importance_path.exists():
                         importance_df = load_csv_data(importance_path)
                         top_importance = importance_df.head(30).sort_values('重要性得分', ascending=True)
-                        
                         fig_importance = px.bar(
                             top_importance,
                             x='重要性得分',
@@ -1674,22 +1533,18 @@ with tab3:
                         st.plotly_chart(fig_importance, use_container_width=True)
                     else:
                         st.info("💡 运行 statistical_analysis.py 生成特征重要性评估结果")
-                
                 # 5. 重要性评分 Top 10 关键特征的频率分布对比（一行五列）
                 st.markdown("#### 重要性评分 Top 10 关键特征分布对比")
                 st.markdown("**存活组 vs 死亡组的频率分布对比**")
-                
                 importance_path = BASE_DIR / "results" / "statistical_analysis" / "feature_importance_preliminary.csv"
                 if importance_path.exists():
                     importance_df = pd.read_csv(importance_path)
                     top10_features = importance_df.head(10)['特征名'].tolist()
                     available_top10 = [f for f in top10_features if f in train_df.columns]
-                    
                     if len(available_top10) > 0:
                         # 创建一行五列布局
                         n_cols = 5
                         n_features = min(len(available_top10), 10)
-                        
                         for row in range((n_features + n_cols - 1) // n_cols):
                             cols = st.columns(n_cols)
                             for col_idx in range(n_cols):
@@ -1698,7 +1553,6 @@ with tab3:
                                     with cols[col_idx]:
                                         feature = available_top10[feature_idx]
                                         feature_name = feature_names_cn.get(feature, feature)
-                                        
                                         data = train_df[[feature, 'hospital_death']].dropna()
                                         if len(data) > 0:
                                             fig_dist = px.histogram(
@@ -1748,7 +1602,6 @@ with tab4:
         - Wide & Deep 网络
         - 残差网络（ResNet）
         """)
-    
     # 1. 各算法模型在住院死亡预测任务上的性能指标对比（仅依赖本地 results 目录中的CSV）
     st.markdown("#### 各算法模型性能指标对比")
     
@@ -1773,28 +1626,8 @@ with tab4:
             for old_col, new_col in column_mapping.items():
                 if old_col in metrics_df.columns and new_col not in metrics_df.columns:
                     metrics_df.rename(columns={old_col: new_col}, inplace=True)
-            # 标准化列名（处理大小写不一致的情况）
-            column_mapping = {
-                'accuracy': 'Accuracy',
-                'precision': 'Precision',
-                'recall': 'Recall',
-                'f1-score': 'F1-Score',
-                'f1_score': 'F1-Score',
-                'auc-roc': 'AUC-ROC',
-                'auc_roc': 'AUC-ROC',
-                'ap-score': 'AP-Score',
-                'ap_score': 'AP-Score'
-            }
-            # 重命名列（如果存在小写版本）
-            for old_col, new_col in column_mapping.items():
-                if old_col in metrics_df.columns and new_col not in metrics_df.columns:
-                    metrics_df.rename(columns={old_col: new_col}, inplace=True)
-        
-        # 确保所有必需的列都存在，如果不存在则使用默认值
-        required_columns = ['Accuracy', 'Precision', 'Recall', 'F1-Score', 'AUC-ROC', 'AP-Score']
-        for col in required_columns:
-            if col not in metrics_df.columns:
-                metrics_df[col] = 0.0  # 使用默认值0.0
+            # 添加集成模型数据
+            ensemble_path = BASE_DIR / "results" / "model_evaluation" / "lightgbm_ensemble_metrics.csv"
             if ensemble_path.exists():
                 ensemble_df = load_csv_data(ensemble_path, index_col=0)
                 # 标准化集成模型的列名
@@ -1813,21 +1646,22 @@ with tab4:
                 'AUC-ROC': [0.8768, 0.8876, 0.8999, 0.9018, 0.9014, 0.9070],
                 'AP-Score': [0.4811, 0.5170, 0.5688, 0.5716, 0.5701, 0.5951]
             }, index=['Logistic Regression', 'Random Forest', 'Gradient Boosting', 'XGBoost', 'LightGBM', 'LightGBM_Ensemble'])
+        
+        
         # 确保所有必需的列都存在，如果不存在则使用默认值
         required_columns = ['Accuracy', 'Precision', 'Recall', 'F1-Score', 'AUC-ROC', 'AP-Score']
         for col in required_columns:
             if col not in metrics_df.columns:
                 metrics_df[col] = 0.0  # 使用默认值0.0
-        
         metrics_df.index.name = '模型'
         metrics_df = metrics_df.reset_index()
         metrics_df['模型'] = metrics_df['模型'].map({
-            # 'Logistic Regression': '逻辑回归',
-            # 'Random Forest': '随机森林',
-            # 'Gradient Boosting': '梯度提升树',
+            'Logistic Regression': '逻辑回归',
+            'Random Forest': '随机森林',
+            'Gradient Boosting': '梯度提升树',
             'XGBoost': 'XGBoost',
             'LightGBM': 'LightGBM',
-            # 'LightGBM_Ensemble': 'LightGBM集成'
+            'LightGBM_Ensemble': 'LightGBM集成'
         })
         
         # 创建交互式多指标对比图 - 三列布局
@@ -1837,111 +1671,29 @@ with tab4:
             # 雷达图展示多维度性能
             metrics_for_radar = ['Accuracy', 'Precision', 'Recall', 'F1-Score', 'AUC-ROC', 'AP-Score']
             metrics_cn = {
-                # 'Accuracy': '准确率',
-                # 'Precision': '精确率',
-                # 'Recall': '召回率',
-                # 'F1-Score': 'F1分数',
+                'Accuracy': '准确率',
+                'Precision': '精确率',
+                'Recall': '召回率',
+                'F1-Score': 'F1分数',
                 'AUC-ROC': 'AUC-ROC',
-                # 'AP-Score': 'AP分数'
+                'AP-Score': 'AP分数'
             }
-            
-            # 定义每个指标的自定义范围
-            metric_ranges = {
-                'Accuracy': [0.9, 0.95],
-                'Precision': [0.5, 0.6],
-                'Recall': [0.5, 0.55],
-                'F1-Score': [0.5, 0.55],
-                'AUC-ROC': [0.85, 0.95],
-                'AP-Score': [0.55, 0.6]
-            }
-            
-            # 归一化函数：将原始值映射到[0,1]范围
-            def normalize_value(value, metric):
-                min_val, max_val = metric_ranges[metric]
-                # 将值限制在范围内
-                clamped_value = max(min_val, min(max_val, value))
-                # 归一化到[0,1]
-                normalized = (clamped_value - min_val) / (max_val - min_val)
-                return normalized
             
             # 选择前4个模型进行雷达图对比
-            # 定义模型颜色映射和填充模式（深红色放在底层，先添加）
-            model_configs = {
-                'XGBoost': {
-                    # 'color': '#8B0000',  # 深红色 - 底层
-                    'fill': 'toself',
-                    # 'fill_opacity': 0.2,  # 很低的填充透明度
-                    'line_width': 3
-                },
-                'LightGBM': {
-                    # 'color': '#3498db',  # 蓝色
-                    'fill': 'toself',
-                    'fill_opacity': 0.25,
-                    'line_width': 3
-                },
-                'LightGBM集成': {
-                    'color': '#2ecc71',  # 绿色
-                    'fill': 'toself',
-                    'fill_opacity': 0.25,
-                    'line_width': 3
-                },
-                # '梯度提升树': {
-                    # 'color': '#f39c12',  # 橙色
-                    # 'fill': 'toself',
-                    # 'fill_opacity': 0.25,
-                    # 'line_width': 3
-                # }
-            }
             top_models = ['XGBoost', 'LightGBM', 'LightGBM集成', '梯度提升树']
             fig_radar = go.Figure()
-            
-            # 将hex颜色转换为rgba以控制填充透明度
-            def hex_to_rgba(hex_color, alpha):
-                hex_color = hex_color.lstrip('#')
-                r = int(hex_color[0:2], 16)
-                g = int(hex_color[2:4], 16)
-                b = int(hex_color[4:6], 16)
-                return f'rgba({r}, {g}, {b}, {alpha})'
             
             for model_name in top_models:
                 model_data = metrics_df[metrics_df['模型'] == model_name]
                 if len(model_data) > 0:
-                    # 对每个指标的值进行归一化，同时保存原始值
-                    normalized_values = []
-                    original_values = []
-                    theta_labels = []
-                    for metric in metrics_for_radar:
-                        original_value = model_data[metric].values[0]
-                        normalized_value = normalize_value(original_value, metric)
-                        normalized_values.append(normalized_value)
-                        original_values.append(original_value)
-                        theta_labels.append(metrics_cn[metric])
-                    
-                    # 为了形成闭合的雷达图，需要在末尾添加第一个点的值
-                    normalized_values.append(normalized_values[0])
-                    original_values.append(original_values[0])
-                    theta_labels.append(theta_labels[0])
-                    
-                    config = model_configs.get(model_name, {})
-                    color = config.get('color', '#000000')
-                    fill_opacity = config.get('fill_opacity', 0.3)
-                    line_width = config.get('line_width', 2)
-                    
+                    values = [model_data[metric].values[0] for metric in metrics_for_radar]
                     fig_radar.add_trace(go.Scatterpolar(
-                        r=normalized_values,  # 使用归一化后的值（已闭合）
-                        theta=theta_labels,  # 已闭合的标签
+                        r=values,
+                        theta=[metrics_cn[m] for m in metrics_for_radar],
                         fill='toself',
-                        name=model_name,
-                        line_color=color,
-                        fillcolor=hex_to_rgba(color, fill_opacity),  # 使用rgba控制填充透明度
-                        line=dict(width=line_width, color=color),  # 线条保持不透明，更清晰
-                        opacity=1.0,  # trace本身不透明，只让填充透明
-                        # 添加自定义数据用于悬停时显示原始值
-                        customdata=original_values,
-                        hovertemplate='<b>%{theta}</b><br>归一化值: %{r:.3f}<br>原始值: %{customdata:.4f}<extra></extra>'
+                        name=model_name
                     ))
             
-            # 设置radialaxis范围为[0,1]，因为数据已经归一化
             fig_radar.update_layout(
                 polar=dict(
                     radialaxis=dict(
@@ -1949,29 +1701,19 @@ with tab4:
                         range=[0, 1]
                     )),
                 showlegend=True,
-                title="多维度性能雷达图对比（已按指标范围归一化）",
+                title="多维度性能雷达图对比",
                 height=400
             )
             st.plotly_chart(fig_radar, use_container_width=True)
-            
-            # 显示各指标的范围说明
-            st.markdown("""
-            <div style="font-size: 0.85em; color: #666; margin-top: -25px; margin-bottom: 10px;">
-            # <b>指标范围说明：</b><br>
-            # 准确率: [0.9, 0.95] | 精确率: [0.5, 0.6] | 召回率: [0.5, 0.55] | 
-            # F1分数: [0.5, 0.55] | AUC-ROC: [0.85, 0.95] | AP分数: [0.55, 0.6]<br>
-            # <i>注：雷达图已按各指标范围归一化显示，悬停可查看原始值</i>
-            </div>
-            """, unsafe_allow_html=True)
         
         with col2:
             # 多指标条形图对比
             selected_metrics = ['AUC-ROC', 'F1-Score', 'Precision', 'Recall']
             metrics_cn_map = {
                 'AUC-ROC': 'AUC-ROC',
-                # 'F1-Score': 'F1分数',
-                # 'Precision': '精确率',
-                # 'Recall': '召回率'
+                'F1-Score': 'F1分数',
+                'Precision': '精确率',
+                'Recall': '召回率'
             }
             
             fig_multi = go.Figure()
@@ -2029,7 +1771,6 @@ with tab4:
     
     # 2. LightGBM基础模型与 Optuna 优化模型性能对比
     st.markdown("#### LightGBM 基础模型与 Optuna 优化模型性能对比")
-    
     try:
         comparison_path = BASE_DIR / "results" / "model_evaluation" / "base_vs_optuna_comparison.csv"
         if comparison_path.exists():
@@ -2041,17 +1782,13 @@ with tab4:
                 'Optuna_Model': [0.8762, 0.3852, 0.7277, 0.5037, 0.9069, 0.5946],
                 'Difference': [0.0425, 0.0702, -0.0606, 0.0536, 0.0055, 0.0245]
             }, index=['Accuracy', 'Precision', 'Recall', 'F1-Score', 'AUC-ROC', 'AP-Score'])
-        
         comparison_df = comparison_df.reset_index()
         comparison_df.columns = ['指标', '基础模型', 'Optuna优化模型', '提升幅度']
-        
         # 三列布局：两个图和一个表
         col1, col2, col3 = st.columns(3)
-        
         with col1:
             # 性能对比条形图
             fig_comparison = go.Figure()
-            
             fig_comparison.add_trace(go.Bar(
                 x=comparison_df['指标'],
                 y=comparison_df['基础模型'],
@@ -2060,7 +1797,6 @@ with tab4:
                 text=comparison_df['基础模型'].round(4),
                 textposition='outside'
             ))
-            
             fig_comparison.add_trace(go.Bar(
                 x=comparison_df['指标'],
                 y=comparison_df['Optuna优化模型'],
@@ -2069,7 +1805,6 @@ with tab4:
                 text=comparison_df['Optuna优化模型'].round(4),
                 textposition='outside'
             ))
-            
             fig_comparison.update_layout(
                 title='基础模型 vs Optuna优化模型性能对比',
                 xaxis_title='指标',
@@ -2079,13 +1814,10 @@ with tab4:
                 xaxis_tickangle=-45
             )
             st.plotly_chart(fig_comparison, use_container_width=True)
-        
         with col2:
             # 提升幅度可视化
             fig_improvement = go.Figure()
-            
             colors = ['#e74c3c' if x < 0 else '#2ecc71' for x in comparison_df['提升幅度']]
-            
             fig_improvement.add_trace(go.Bar(
                 x=comparison_df['指标'],
                 y=comparison_df['提升幅度'],
@@ -2094,14 +1826,11 @@ with tab4:
                 textposition='outside',
                 hovertemplate='<b>%{x}</b><br>提升幅度: %{y:.4f}<extra></extra>'
             ))
-            
             fig_improvement.add_hline(y=0, line_dash="dash", line_color="gray")
-            
             # 扩大y轴范围，确保顶部数字完整显示
             max_y = comparison_df['提升幅度'].max()
             min_y = comparison_df['提升幅度'].min()
             y_range_padding = max(abs(max_y), abs(min_y)) * 0.35  # 35%的边距（再增加10%）
-            
             fig_improvement.update_layout(
                 title='Optuna优化带来的性能提升',
                 xaxis_title='指标',
@@ -2112,7 +1841,6 @@ with tab4:
                 yaxis=dict(range=[min_y - y_range_padding, max_y + y_range_padding])
             )
             st.plotly_chart(fig_improvement, use_container_width=True)
-        
         with col3:
             # 详细对比数据表
             st.markdown("##### 详细性能对比数据")
@@ -2122,7 +1850,6 @@ with tab4:
             display_comparison_df['提升幅度'] = display_comparison_df['提升幅度'].apply(lambda x: f'{x:+.4f}')
             display_comparison_df['提升百分比'] = ((comparison_df['Optuna优化模型'] - comparison_df['基础模型']) / comparison_df['基础模型'] * 100).round(2).apply(lambda x: f'{x:+.2f}%')
             st.dataframe(display_comparison_df, use_container_width=True, hide_index=True, height=400)
-        
         # 关键发现总结
         st.markdown("##### 💡 关键发现")
         st.markdown("""
@@ -2131,7 +1858,6 @@ with tab4:
         # - **准确率提升**: 从 0.8338 提升到 0.8762（+5.1%），整体分类准确性改善
         # - **F1-Score提升**: 从 0.4501 提升到 0.5037（+11.9%），平衡性能更好
         """)
-        
     except Exception as e:
         st.error(f"加载对比数据时出错: {str(e)}")
         st.info("💡 提示：请运行 evaluate_lightgbm_optuna.py 生成对比数据")
@@ -2139,16 +1865,13 @@ with tab4:
 with tab5:
     st.markdown("### 模型评估模块")
     st.markdown("**本模块对 Optuna 调优的 LightGBM 模型进行全面评估**")
-    
     # 第一部分：Optuna优化LightGBM模型性能表格
     st.markdown("#### 🎯 Optuna优化LightGBM模型性能")
-    
     try:
         metrics_path = BASE_DIR / "results" / "model_evaluation" / "lightgbm_optuna_metrics.csv"
         if metrics_path.exists():
             optuna_metrics = load_csv_data(metrics_path, index_col=0)
             metrics_row = optuna_metrics.iloc[0]
-            
             # 创建性能指标表格
             ap_score = metrics_row.get('AP-Score', None)
             performance_data = {
@@ -2163,7 +1886,6 @@ with tab5:
                 ]
             }
             performance_df = pd.DataFrame(performance_data)
-            
             # 使用st.table显示表格（更简洁）
             st.table(performance_df)
         else:
@@ -2178,9 +1900,7 @@ with tab5:
     except Exception as e:
         st.error(f"加载指标数据时出错: {str(e)}")
         st.info("💡 提示：请先运行 `evaluate_lightgbm_optuna.py` 生成评估指标数据")
-    
     st.markdown("---")
-    
     # 评估指标说明
     st.markdown("""
     # **评估指标说明：**
@@ -2191,34 +1911,27 @@ with tab5:
     # - **F1-Score**：精确率和召回率的调和平均数
     # - **AP-Score**：平均精确率，PR曲线下面积
     """)
-    
     # ROC曲线、PR曲线和混淆矩阵 - 同一行显示
     st.markdown("#### ROC曲线、PR曲线和混淆矩阵")
-    
     # 创建三列布局
     col_roc, col_pr, col_cm = st.columns(3)
-    
     # 准备数据
     fig_roc = None
     fig_pr = None
     fig_cm = None
-    
     try:
         from sklearn.metrics import roc_curve, auc, precision_recall_curve, average_precision_score
         from sklearn.model_selection import train_test_split
         import pickle
         import lightgbm as lgb
-        
         model_path = BASE_DIR / "models" / "LightGBM_tuned_advanced.pkl"
         preprocessor_path = BASE_DIR / "models" / "preprocessor_lightgbm_advanced.pkl"
         data_path = BASE_DIR / "data" / "training_v2.csv"
         cm_path = BASE_DIR / "results" / "model_evaluation" / "confusion_matrix.csv"
-        
         # 尝试加载模型和数据
         model = None
         y_proba = None
         y_val = None
-        
         if model_path.exists() and data_path.exists():
             try:
                 with st.spinner("正在加载Optuna优化模型并计算评估指标（这可能需要几秒钟）..."):
@@ -2228,7 +1941,6 @@ with tab5:
                         model = model_data.get('model')
                     else:
                         model = model_data
-                    
                     if model is not None:
                         # 获取模型期望的特征数量
                         model_n_features = None
@@ -2239,7 +1951,6 @@ with tab5:
                                 model_n_features = model.booster_.num_feature()
                         except:
                             pass
-                        
                         # 尝试加载预处理器获取特征列表（静默，仅在出错时提示）
                         selected_features = None
                         if preprocessor_path.exists():
@@ -2293,7 +2004,6 @@ with tab5:
                 st.warning(f"加载模型或数据时出错: {str(e)}")
                 import traceback
                 st.text(traceback.format_exc())
-        
         # 1. ROC曲线
         with col_roc:
             st.markdown("##### ROC曲线")
@@ -2319,7 +2029,6 @@ with tab5:
                     name='AUC = 0.9069',
                     line=dict(color='#e74c3c', width=2)
                 ))
-            
             fig_roc.add_trace(go.Scatter(
                 x=[0, 1],
                 y=[0, 1],
@@ -2335,7 +2044,6 @@ with tab5:
                 margin=dict(l=30, r=20, t=50, b=40)
             )
             st.plotly_chart(fig_roc, use_container_width=True)
-        
         # 2. PR曲线
         with col_pr:
             st.markdown("##### PR曲线")
@@ -2371,7 +2079,6 @@ with tab5:
                     fill='tozeroy'
                 ))
                 fig_pr.add_hline(y=0.13, line_dash="dash", line_color="gray", annotation_text="基线 (0.13)")
-            
             fig_pr.update_layout(
                 xaxis_title='召回率',
                 yaxis_title='精确率',
@@ -2380,7 +2087,6 @@ with tab5:
                 margin=dict(l=30, r=20, t=50, b=40)
             )
             st.plotly_chart(fig_pr, use_container_width=True)
-        
         # 3. 混淆矩阵
         with col_cm:
             st.markdown("##### 混淆矩阵")
@@ -2389,7 +2095,6 @@ with tab5:
                 cm = cm_df.values
             else:
                 cm = np.array([[16101, 659], [731, 852]])
-            
             cm_normalized = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
             fig_cm = go.Figure(data=go.Heatmap(
                 z=cm,
@@ -2399,7 +2104,6 @@ with tab5:
                 hovertemplate='真实: %{y}<br>预测: %{x}<br>数量: %{z}<extra></extra>',
                 showscale=True
             ))
-            
             annotations = []
             for i in range(2):
                 for j in range(2):
@@ -2411,7 +2115,6 @@ with tab5:
                             font=dict(size=12, color='white' if cm[i, j] > cm.max()/2 else 'black')
                         )
                     )
-            
             fig_cm.update_layout(
                 xaxis_title='预测标签',
                 yaxis_title='真实标签',
@@ -2420,27 +2123,21 @@ with tab5:
                 margin=dict(l=30, r=20, t=50, b=40)
             )
             st.plotly_chart(fig_cm, use_container_width=True)
-            
             # 显示统计摘要
             tn, fp, fn, tp = cm[0, 0], cm[0, 1], cm[1, 0], cm[1, 1]
             st.caption(f"TN: {tn:,} | FP: {fp:,} | FN: {fn:,} | TP: {tp:,}")
-    
     except Exception as e:
         st.error(f"生成评估图表时出错: {str(e)}")
-    
     # 4. SHAP可解释性分析
     st.markdown("#### SHAP可解释性分析")
-    
     # 尝试生成交互式SHAP图表
     shap_interactive_success = False
     try:
         import shap
         import pickle
         import lightgbm as lgb
-        
         model_path = BASE_DIR / "models" / "LightGBM_tuned_advanced.pkl"
         data_path = BASE_DIR / "data" / "training_v2.csv"
-        
         if model_path.exists() and data_path.exists():
             with st.spinner("正在计算SHAP值并生成交互式图表..."):
                 try:
@@ -2451,7 +2148,6 @@ with tab5:
                             shap_model = model_data.get('model')
                         else:
                             shap_model = model_data
-                    
                     if shap_model is not None:
                         # 模型期望特征数
                         model_n_features = None
@@ -2462,7 +2158,6 @@ with tab5:
                                 model_n_features = shap_model.booster_.num_feature()
                         except Exception:
                             model_n_features = None
-                        
                         # 预处理器特征
                         selected_features = None
                         preprocessor_path = BASE_DIR / "models" / "preprocessor_lightgbm_advanced.pkl"
@@ -2473,7 +2168,6 @@ with tab5:
                                     selected_features = preprocessor['feature_names']
                             except Exception:
                                 selected_features = None
-                        
                         # 读取数据
                         # 优化：减少样本量，加快加载速度
                         train_df = load_csv_data(data_path, nrows=1000, low_memory=False, na_values=['NA', ''])
@@ -2481,7 +2175,6 @@ with tab5:
                             numeric_cols = train_df.select_dtypes(include=[np.number]).columns.tolist()
                             numeric_cols = [col for col in numeric_cols if col not in 
                                            ['encounter_id', 'patient_id', 'hospital_id', 'hospital_death']]
-                            
                             # 选择特征：优先预处理器，否则按模型期望特征数
                             if selected_features:
                                 features = [f for f in selected_features if f in train_df.columns]
@@ -2490,20 +2183,16 @@ with tab5:
                             else:
                                 n_feats = model_n_features if model_n_features else 79
                                 features = [col for col in numeric_cols if col in train_df.columns][:n_feats]
-                            
                             # 校验特征数量
                             if model_n_features and len(features) != model_n_features:
                                 if len(features) < model_n_features:
                                     st.warning(f"可用特征数 ({len(features)}) 少于模型期望 ({model_n_features})，跳过交互式SHAP")
                                     # raise ValueError("特征数量不足，无法计算SHAP")
                                 # 多余的已截断
-                            
                             X_shap = train_df[features].fillna(train_df[features].median())
-                            
                             # 创建SHAP解释器
                             explainer = shap.TreeExplainer(shap_model)
                             shap_values_all = explainer.shap_values(X_shap)
-                            
                             # LightGBM二分类：shap_values通常为[class0, class1]
                             if isinstance(shap_values_all, list) and len(shap_values_all) > 1:
                                 shap_values = shap_values_all[1]
@@ -2511,23 +2200,18 @@ with tab5:
                             else:
                                 shap_values = shap_values_all
                                 expected_value = explainer.expected_value
-                            
                             # 创建两列布局
                             col1, col2 = st.columns(2)
-                            
                             with col1:
                                 st.markdown("##### SHAP Summary Plot（类似官方shap_summary风格）")
-                                
                                 # 取Top N特征，模仿shap.summary_plot的散点/蜂群效果
                                 top_n = 20
                                 mean_abs = np.abs(shap_values).mean(0)
                                 order_idx = np.argsort(mean_abs)[-top_n:]
                                 top_features = X_shap.columns[order_idx]
-                                
                                 # 采样样本减少渲染负载
                                 sample_n = min(500, shap_values.shape[0])
                                 shap_subset = shap_values[:sample_n, :]
-                                
                                 records = []
                                 for feat in top_features:
                                     f_idx = list(X_shap.columns).index(feat)
@@ -2539,14 +2223,12 @@ with tab5:
                                             # "SHAP值": sv,
                                             # "特征值": fv
                                         })
-                                
                                 shap_long_df = pd.DataFrame(records)
                                 shap_long_df["特征"] = pd.Categorical(
                                     # shap_long_df["特征"],
                                     categories=list(top_features),
                                     ordered=True
                                 )
-                                
                                 # 使用散点图模拟蜂群效果，并保留连续色阶
                                 fig_shap_summary = px.scatter(
                                     shap_long_df,
@@ -2569,7 +2251,6 @@ with tab5:
                                     coloraxis_colorbar=dict(title="特征值")
                                 )
                                 st.plotly_chart(fig_shap_summary, use_container_width=True)
-                                
                                 st.markdown("##### SHAP Dependence Plot（特征依赖图）")
                                 # 取最重要的特征（Top列表最后一个）并绘制依赖图
                                 if len(top_features) > 0:
@@ -2596,21 +2277,18 @@ with tab5:
                                             height=500
                                         )
                                         st.plotly_chart(fig_shap_dep, use_container_width=True)
-                            
                             with col2:
                                 st.markdown("##### SHAP Force Plot（个体解释示例）")
                                 # 选择一个示例样本
                                 example_idx = 0
                                 example_shap_values = shap_values[example_idx]
                                 example_features = X_shap.iloc[example_idx]
-                                
                                 # 创建交互式force plot（使用条形图）
                                 force_df = pd.DataFrame({
                                     # '特征': X_shap.columns,
                                     # 'SHAP值': example_shap_values,
                                     # '特征值': example_features.values
                                 }).sort_values('SHAP值', key=abs, ascending=False).head(15)
-                                
                                 colors = ['#e74c3c' if x > 0 else '#3498db' for x in force_df['SHAP值']]
                                 fig_shap_force = go.Figure()
                                 fig_shap_force.add_trace(go.Bar(
@@ -2631,21 +2309,17 @@ with tab5:
                                     showlegend=False
                                 )
                                 st.plotly_chart(fig_shap_force, use_container_width=True)
-                                
                                 st.markdown("##### SHAP说明")
                                 st.markdown("""
                                 # **SHAP (SHapley Additive exPlanations)** 提供了模型的可解释性分析：
-                                
                                 # - **Summary Plot**: 展示各特征对模型输出的整体贡献大小及方向
                                 # - **Dependence Plot**: 展示特征取值与SHAP值的关系，揭示特征影响模式
                                 # - **Force Plot**: 展示单个患者预测中各特征推高或降低死亡风险的贡献
-                                
                                 # **临床意义**：
                                 # - 帮助医生理解模型的决策依据
                                 # - 识别主要风险驱动因素
                                 # - 提供个体化解释，辅助临床决策
                                 """)
-                            
                             shap_interactive_success = True
                 except Exception as e:
                     st.warning(f"生成交互式SHAP图表时出错: {str(e)}")
@@ -2654,7 +2328,6 @@ with tab5:
         st.info("💡 SHAP库未安装，无法生成交互式SHAP图表。运行 `pip install shap` 可启用交互式SHAP图表")
     except Exception as e:
         st.info(f"💡 无法生成交互式SHAP图表: {str(e)}")
-    
     # 如果无法生成交互式图表，显示提示信息
     if not shap_interactive_success:
         st.info("💡 交互式SHAP图表需要加载模型和数据。请确保模型文件和数据文件已正确放置在对应目录下。")
@@ -2677,23 +2350,19 @@ with tab6:
         - 基础LightGBM → Optuna优化：排名提升约420名
         - 成功跨越前25%优秀性能分界线
         """)
-    
     # 提交结果可视化（使用完整Kaggle提交数据，参考kaggle_late_submissions_comprehensive_new）
     try:
         kaggle_csv_path = BASE_DIR / "results" / "kaggle_submissions_data.csv"
         if kaggle_csv_path.exists():
             kaggle_df = load_csv_data(kaggle_csv_path)
-            
             # 解析模型类型：优先使用CSV中的model列，如果为Unknown则从文件名和分数判断
             def parse_model_type(row):
                 # 如果model列有值且不是Unknown，直接使用
                 if pd.notna(row.get('model')) and row['model'] != 'Unknown':
                     return row['model']
-                
                 # 否则从文件名解析
                 filename = str(row['filename']).lower()
                 private_score = row.get('private_score', 0)
-                
                 if 'lightgbm_ensemble' in filename:
                     return 'LightGBM Ensemble'
                 elif 'lightgbm' in filename:
@@ -2712,15 +2381,12 @@ with tab6:
                         return None  # 返回None，稍后过滤
                 else:
                     return 'Unknown'
-            
             kaggle_df['model_type'] = kaggle_df.apply(parse_model_type, axis=1)
-            
             # 过滤掉None和Unknown类型的数据（避免显示不确定或重复的模型）
             kaggle_df = kaggle_df[
                 (kaggle_df['model_type'].notna()) & 
                 (kaggle_df['model_type'] != 'Unknown')
             ].copy()
-            
             # 转换时间
             from datetime import datetime, timedelta
             if 'submission_time' in kaggle_df.columns:
@@ -2730,7 +2396,6 @@ with tab6:
                 kaggle_df['submission_time'] = kaggle_df['hours_ago'].apply(
                     lambda x: base_time - timedelta(hours=x)
                 )
-            
             # 去重：每个模型的每种调优方法只保留一个
             kaggle_df_deduped = []
             for (model, stage), group in kaggle_df.groupby(['model_type', 'stage']):
@@ -2740,15 +2405,12 @@ with tab6:
                     kaggle_df_deduped.append(best_row)
                 else:
                     kaggle_df_deduped.append(group.iloc[0])
-            
             kaggle_df = pd.DataFrame(kaggle_df_deduped).reset_index(drop=True)
             kaggle_df = kaggle_df.sort_values('submission_time').reset_index(drop=True)
-            
             # 分配优化阶段标签
             def get_stage_label(row):
                 model = row['model_type']
                 stage = row['stage']
-                
                 if model == 'LightGBM Ensemble':
                     return 'Ensemble'
                 elif stage == '基础模型':
@@ -2761,7 +2423,6 @@ with tab6:
                     return 'Ensemble'
                 else:
                     return stage
-            
             kaggle_df['stage_label'] = kaggle_df.apply(get_stage_label, axis=1)
 
             # 小标题：Late Submission 结果分析（靠近图表，减小下边距）
@@ -2778,28 +2439,22 @@ with tab6:
                 'Deep Learning': '#f39c12',
                 'Linear Regression': '#95a5a6'
             }
-            
             # 创建三个子图的布局
             fig = make_subplots(
                 rows=1, cols=3,
                 horizontal_spacing=0.12
             )
-            
             # 合并LightGBM和LightGBM Ensemble的数据用于时间序列
             lightgbm_data = kaggle_df[kaggle_df['model_type'].isin(['LightGBM', 'LightGBM Ensemble'])].sort_values('submission_time')
-            
             # 子图1: Private Score时间序列
             for model in kaggle_df['model_type'].unique():
                 if model == 'LightGBM Ensemble':
                     continue  # 稍后合并到LightGBM
-                
                 model_data = kaggle_df[kaggle_df['model_type'] == model].sort_values('submission_time')
-                
                 if model == 'LightGBM':
                     ensemble_data = kaggle_df[kaggle_df['model_type'] == 'LightGBM Ensemble'].sort_values('submission_time')
                     if len(ensemble_data) > 0:
                         model_data = pd.concat([model_data, ensemble_data]).sort_values('submission_time')
-                
                 fig.add_trace(
                     go.Scatter(
                         x=model_data['submission_time'],
@@ -2818,19 +2473,15 @@ with tab6:
                     ),
                     row=1, col=1
                 )
-            
             # 子图2: Public Score时间序列
             for model in kaggle_df['model_type'].unique():
                 if model == 'LightGBM Ensemble':
                     continue
-                
                 model_data = kaggle_df[kaggle_df['model_type'] == model].sort_values('submission_time')
-                
                 if model == 'LightGBM':
                     ensemble_data = kaggle_df[kaggle_df['model_type'] == 'LightGBM Ensemble'].sort_values('submission_time')
                     if len(ensemble_data) > 0:
                         model_data = pd.concat([model_data, ensemble_data]).sort_values('submission_time')
-                
                 fig.add_trace(
                     go.Scatter(
                         x=model_data['submission_time'],
@@ -2850,11 +2501,9 @@ with tab6:
                     ),
                     row=1, col=2
                 )
-            
             # 子图3: Private vs Public Score散点图
             for model in kaggle_df['model_type'].unique():
                 model_data = kaggle_df[kaggle_df['model_type'] == model]
-                
                 fig.add_trace(
                     go.Scatter(
                         x=model_data['public_score'],
@@ -2877,7 +2526,6 @@ with tab6:
                     ),
                     row=1, col=3
                 )
-            
             # 添加对角线（理想线）
             min_score = min(kaggle_df['private_score'].min(), kaggle_df['public_score'].min()) - 0.002
             max_score = max(kaggle_df['private_score'].max(), kaggle_df['public_score'].max()) + 0.002
@@ -2893,24 +2541,18 @@ with tab6:
                 ),
                 row=1, col=3
             )
-            
             # 更新布局
             fig.update_xaxes(title_text="提交时间", row=1, col=1)
             fig.update_yaxes(title_text="Private Score", row=1, col=1)
-            
             fig.update_xaxes(title_text="提交时间", row=1, col=2)
             fig.update_yaxes(title_text="Public Score", row=1, col=2)
-            
             fig.update_xaxes(title_text="Public Score", row=1, col=3)
             fig.update_yaxes(title_text="Private Score", row=1, col=3)
-            
             fig.update_layout(
                 height=500,
                 hovermode='closest'
             )
-            
             st.plotly_chart(fig, use_container_width=True)
-            
             # Public Score排名数据（硬编码，来自plot_combined_submission_rankings.py）
             public_rankings = {
                 0.87408: 778,
@@ -2923,7 +2565,6 @@ with tab6:
                 0.90540: 275,
                 0.90584: 269,
             }
-            
             # Private排名数据（根据分数估算，实际应该从leaderboard文件读取）
             # 这里使用近似值，基于plot_combined_submission_rankings.py的逻辑
             private_rankings_approx = {
@@ -2937,10 +2578,8 @@ with tab6:
                 # 0.90417: 280,  # LightGBM高级调优
                 # 0.90470: 222,  # LightGBM Ensemble / LightGBM高级调优
             }
-            
             total_teams_private = 1120  # 近似值
             total_teams_public = 951
-            
             # 为每个提交添加排名信息
             kaggle_df_with_ranks = kaggle_df.copy()
             kaggle_df_with_ranks['private_rank'] = kaggle_df_with_ranks['private_score'].map(
@@ -2955,13 +2594,11 @@ with tab6:
                 ) if abs(min(public_rankings.keys(), key=lambda k: abs(k - x)) - x) < 0.001
                 else None
             )
-            
             # 过滤掉没有排名的数据
             kaggle_df_with_ranks = kaggle_df_with_ranks[
                 kaggle_df_with_ranks['private_rank'].notna() & 
                 kaggle_df_with_ranks['public_rank'].notna()
             ].copy()
-            
             if len(kaggle_df_with_ranks) > 0:
                 # 小标题：提交排名分析（靠近图表，减小下边距）
                 st.markdown(
@@ -2974,11 +2611,9 @@ with tab6:
                     rows=1, cols=2,
                     horizontal_spacing=0.15
                 )
-                
                 # 按分数排序用于连线
                 df_sorted_private = kaggle_df_with_ranks.sort_values('private_score')
                 df_sorted_public = kaggle_df_with_ranks.sort_values('public_score')
-                
                 # 子图1: Private Score vs 排名
                 # 添加连线（灰色，半透明）
                 fig_ranks.add_trace(
@@ -2994,11 +2629,9 @@ with tab6:
                     ),
                     row=1, col=1
                 )
-                
                 # 添加各模型的散点
                 for model in kaggle_df_with_ranks['model_type'].unique():
                     model_data = kaggle_df_with_ranks[kaggle_df_with_ranks['model_type'] == model]
-                    
                     fig_ranks.add_trace(
                         go.Scatter(
                             x=model_data['private_score'],
@@ -3022,11 +2655,9 @@ with tab6:
                         ),
                         row=1, col=1
                     )
-                
                 # 添加前25%和前60%参考线
                 top_25_private = int(total_teams_private * 0.25)
                 top_60_private = int(total_teams_private * 0.60)
-                
                 fig_ranks.add_hline(
                     y=top_25_private, 
                     line_dash="dash", 
@@ -3043,7 +2674,6 @@ with tab6:
                     annotation_text="前60%",
                     row=1, col=1
                 )
-                
                 # 子图2: Public Score vs 排名
                 # 添加连线
                 fig_ranks.add_trace(
@@ -3059,11 +2689,9 @@ with tab6:
                     ),
                     row=1, col=2
                 )
-                
                 # 添加各模型的散点
                 for model in kaggle_df_with_ranks['model_type'].unique():
                     model_data = kaggle_df_with_ranks[kaggle_df_with_ranks['model_type'] == model]
-                    
                     fig_ranks.add_trace(
                         go.Scatter(
                             x=model_data['public_score'],
@@ -3089,11 +2717,9 @@ with tab6:
                         ),
                         row=1, col=2
                     )
-                
                 # 添加前25%和前60%参考线
                 top_25_public = int(total_teams_public * 0.25)
                 top_60_public = int(total_teams_public * 0.60)
-                
                 fig_ranks.add_hline(
                     y=top_25_public, 
                     line_dash="dash", 
@@ -3110,7 +2736,6 @@ with tab6:
                     annotation_text="前60%",
                     row=1, col=2
                 )
-                
                 # 更新布局
                 fig_ranks.update_xaxes(title_text="Private Score", row=1, col=1)
                 fig_ranks.update_yaxes(
@@ -3118,19 +2743,16 @@ with tab6:
                     row=1, col=1,
                     autorange="reversed"  # 反转Y轴，使排名1在顶部
                 )
-                
                 fig_ranks.update_xaxes(title_text="Public Score", row=1, col=2)
                 fig_ranks.update_yaxes(
                     title_text="排名 (Rank)", 
                     row=1, col=2,
                     autorange="reversed"  # 反转Y轴，使排名1在顶部
                 )
-                
                 fig_ranks.update_layout(
                     height=500,
                     hovermode='closest'
                 )
-                
                 st.plotly_chart(fig_ranks, use_container_width=True)
             else:
                 st.info("无法获取排名数据，跳过排名图表显示。")
@@ -3163,81 +2785,64 @@ try:
     with code_tab1:
         st.markdown("#### 数据加载核心代码")
         st.markdown("**功能：** 加载训练数据和数据字典，进行初步检查和目标变量分析")
-        
         data_loading_code = '''def load_data():
     """
     # 加载数据文件
-    
     Returns:
         # train_df: 训练数据DataFrame
         # dict_df: 数据字典DataFrame
     """
     # print("【步骤 1】加载数据...")
     print("-" * 80)
-    
     # 加载训练数据（将 "NA" 字符串识别为缺失值）
     train_df = pd.read_csv('data/training_v2.csv', 
                           low_memory=False, 
                           na_values=['NA', ''])
     # print(f"✓ 训练数据已加载: {train_df.shape[0]:,} 行 × {train_df.shape[1]} 列")
-    
     # 加载数据字典
     dict_df = pd.read_csv('data/WiDS Datathon 2020 Dictionary.csv')
     # print(f"✓ 数据字典已加载: {dict_df.shape[0]:,} 行 × {dict_df.shape[1]} 列")
-    
     return train_df, dict_df
 
 def analyze_target_variable(train_df):
     """
     # 分析目标变量
-    
     Args:
         # train_df: 训练数据DataFrame
-    
     Returns:
         # target_counts: 目标变量计数
         # target_percent: 目标变量百分比
     """
     # print("【步骤 3】目标变量 (hospital_death) 分析")
     print("-" * 80)
-    
     # 统计分布
     target_counts = train_df['hospital_death'].value_counts()
     target_percent = train_df['hospital_death'].value_counts(normalize=True) * 100
-    
     # print("目标变量分布:")
     # print(f"  - 存活 (0): {target_counts[0]:,} 例 ({target_percent[0]:.2f}%)")
     # print(f"  - 死亡 (1): {target_counts[1]:,} 例 ({target_percent[1]:.2f}%)")
-    
     return target_counts, target_percent'''
-        
         st.code(data_loading_code, language='python')
-        
         st.markdown("**关键特性：**")
         st.markdown("""
         - 使用 `low_memory=False` 确保完整加载数据
         # - 标准化缺失值处理（将 'NA' 和空字符串映射为 NaN）
         # - 自动统计目标变量分布，识别类别不平衡问题
         """)
-    
     with code_tab2:
         st.markdown("#### 数据预处理核心代码")
         st.markdown("**功能：** 特征分类、缺失值处理、异常值检测")
-        
         preprocessing_code = '''def classify_features(train_df, dict_df):
     """
     # 基于数据字典进行特征分类
-    
     Args:
         # train_df: 训练数据DataFrame
         # dict_df: 数据字典DataFrame
-    
     Returns:
         # feature_categories: 特征分类字典
     """
     # print("【步骤 4】特征分类（基于数据字典）")
     print("-" * 80)
-    
     # 创建特征分类字典
     feature_categories = {}
     for _, row in dict_df.iterrows():
@@ -3246,42 +2851,33 @@ def analyze_target_variable(train_df):
         if category not in feature_categories:
             feature_categories[category] = []
         feature_categories[category].append(var_name)
-    
     # 打印每个类别的特征数量
     # print("特征分类统计:")
     for category in sorted(feature_categories.keys()):
         features = feature_categories[category]
         existing_features = [f for f in features if f in train_df.columns]
         # print(f"  - {category:30s}: {len(existing_features):3d} 个特征")
-    
     return feature_categories
 
 def basic_preprocessing(train_df, missing_df):
     """
     # 执行基础数据预处理
-    
     Args:
         # train_df: 训练数据DataFrame
         # missing_df: 缺失值分析DataFrame
-    
     Returns:
         # train_df_cleaned: 清洗后的数据（删除高缺失值列）
         # high_missing_cols: 被删除的高缺失值列
     """
     # print("【步骤 5】基础预处理")
     print("-" * 80)
-    
     # 剔除缺失值比例超过 70% 的列
     high_missing_cols = missing_df[missing_df['缺失比例(%)'] > 70].index.tolist()
     train_df_cleaned = train_df.drop(columns=high_missing_cols)
-    
     # print(f"✓ 删除了 {len(high_missing_cols)} 个高缺失值列（缺失率 > 70%）")
     # print(f"✓ 剩余特征数: {train_df_cleaned.shape[1]}")
-    
     return train_df_cleaned, high_missing_cols'''
-        
         st.code(preprocessing_code, language='python')
-        
         st.markdown("**处理策略：**")
         st.markdown("""
         # - **高缺失率特征（>70%）**: 直接剔除，避免引入噪声
@@ -3289,23 +2885,18 @@ def basic_preprocessing(train_df, missing_df):
         # - **分类特征**: 使用众数填充
         # - **医学逻辑填充**: 基于临床知识进行智能填充
         """)
-    
     with code_tab3:
         st.markdown("#### 特征工程核心代码")
         st.markdown("**功能：** 创建GCS评分、生命体征、实验室指标等新特征")
-        
         feature_engineering_code = '''def create_gcs_features(df):
     """
     # 创建GCS（格拉斯哥昏迷评分）相关特征
-    
     Args:
         # df: 数据DataFrame
-    
     Returns:
         # df: 添加了GCS特征的DataFrame
     """
     # print("创建GCS特征...")
-    
     GCS总分 = 眼睛 + 运动 + 语言
     if all(col in df.columns for col in ['gcs_eyes_apache', 
                                          'gcs_motor_apache', 
@@ -3316,36 +2907,28 @@ def basic_preprocessing(train_df, missing_df):
             gcs_total[df['gcs_unable_apache'] == 1] = np.nan
         df['gcs_total'] = gcs_total
         # print(f"  ✓ 创建 gcs_total: 范围 [{df['gcs_total'].min():.1f}, {df['gcs_total'].max():.1f}]")
-    
     return df
 
 def create_vital_signs_features(df):
     """
     # 创建生命体征相关特征
-    
     Args:
         # df: 数据DataFrame
-    
     Returns:
         # df: 添加了生命体征特征的DataFrame
     """
     # print("创建生命体征特征...")
-    
     # 1. 血压相关特征 - 收缩压范围（最大值-最小值）
     if all(col in df.columns for col in ['d1_sysbp_max', 'd1_sysbp_min']):
         df['d1_sysbp_range'] = df['d1_sysbp_max'] - df['d1_sysbp_min']
         # print(f"  ✓ 创建 d1_sysbp_range")
-    
     # 2. 心率相关特征
     if all(col in df.columns for col in ['d1_heartrate_max', 'd1_heartrate_min']):
         df['d1_heartrate_range'] = df['d1_heartrate_max'] - df['d1_heartrate_min']
         df['d1_heartrate_mean'] = (df['d1_heartrate_max'] + df['d1_heartrate_min']) / 2
         # print(f"  ✓ 创建 d1_heartrate_range 和 d1_heartrate_mean")
-    
     return df'''
-        
         st.code(feature_engineering_code, language='python')
-        
         st.markdown("**特征类型：**")
         st.markdown("""
         # - **GCS评分特征**: 格拉斯哥昏迷评分总分和组件
@@ -3353,23 +2936,19 @@ def create_vital_signs_features(df):
         # - **实验室指标特征**: 血常规、生化指标、血气分析等
         # - **交互特征**: 特征间的乘积、比值等
         """)
-    
     with code_tab4:
         st.markdown("#### 模型训练核心代码")
         st.markdown("**功能：** 训练多种机器学习模型，包括传统ML和梯度提升模型")
-        
         model_training_code = '''def train_models(X_train_filled, y_train, X_val_filled, y_val, 
                  use_class_weight=True):
     """
     # 训练多个预测模型
-    
     Args:
         # X_train_filled: 训练特征（填充缺失值版本）
         # y_train: 训练目标
         # X_val_filled: 验证特征（填充缺失值版本）
         # y_val: 验证目标
         # use_class_weight: 是否使用类别权重平衡
-    
     Returns:
         # models: 训练好的模型字典
         # predictions: 预测结果字典
@@ -3377,11 +2956,9 @@ def create_vital_signs_features(df):
     """
     # print("【步骤 3】模型训练")
     print("-" * 80)
-    
     models = {}
     predictions = {}
     metrics = {}
-    
     # 计算类别权重（用于处理类别不平衡）
     if use_class_weight:
         from sklearn.utils.class_weight import compute_class_weight
@@ -3390,7 +2967,6 @@ def create_vital_signs_features(df):
                                            y=y_train)
         class_weight_dict = {0: class_weights[0], 1: class_weights[1]}
         print(f"类别权重: 存活={class_weight_dict[0]:.4f}, 死亡={class_weight_dict[1]:.4f}")
-    
     # 3.1 逻辑回归
     # print("3.1 训练逻辑回归模型...")
     lr_model = LogisticRegression(
@@ -3406,7 +2982,6 @@ def create_vital_signs_features(df):
         'pred': lr_model.predict(X_val_filled)
     }
     # print("  ✓ 完成")
-    
     # 3.4 XGBoost（支持缺失值）
     # print("3.4 训练XGBoost模型（保留缺失值，让模型学习处理）...")
     xgb_model = xgb.XGBClassifier(
@@ -3425,7 +3000,6 @@ def create_vital_signs_features(df):
         'pred': xgb_model.predict(X_val_filled)
     }
     # print("  ✓ 完成")
-    
     # 3.5 LightGBM（支持缺失值，GPU加速）
     # print("3.5 训练LightGBM模型（保留缺失值，GPU加速）...")
     lgb_model = lgb.LGBMClassifier(
@@ -3444,11 +3018,8 @@ def create_vital_signs_features(df):
         'pred': lgb_model.predict(X_val_filled)
     }
     # print("  ✓ 完成")
-    
     return models, predictions, metrics'''
-        
         st.code(model_training_code, language='python')
-        
         st.markdown("**模型类型：**")
         st.markdown("""
         # - **逻辑回归**: 基准模型，线性分类器
@@ -3457,16 +3028,13 @@ def create_vital_signs_features(df):
         # - **LightGBM**: 快速梯度提升，支持GPU加速
         # - **深度学习**: 深度神经网络，Wide & Deep架构
         """)
-    
     with code_tab5:
         st.markdown("#### 模型集成核心代码")
         st.markdown("**功能：** 训练多个LightGBM模型并集成，提升预测性能")
-        
         ensemble_code = '''def train_ensemble_models(X_train, y_train, X_val, y_val, 
                           base_params, n_models=5, use_gpu=False):
     """
     # 训练多个LightGBM模型（不同随机种子）
-    
     Args:
         # X_train: 训练特征
         # y_train: 训练目标
@@ -3475,27 +3043,21 @@ def create_vital_signs_features(df):
         # base_params: 基础参数（从调优后的模型获取）
         # n_models: 模型数量
         # use_gpu: 是否使用GPU
-    
     Returns:
         # models: 模型列表
         # predictions: 每个模型的预测结果
     """
     # print(f"训练 {n_models} 个LightGBM模型（不同随机种子）...")
     print()
-    
     models = []
     predictions = []
-    
     for i in range(n_models):
         # print(f"训练模型 {i+1}/{n_models}...")
-        
         # 复制基础参数，修改随机种子
         params = base_params.copy()
         params['random_state'] = 42 + i * 100  # 不同的随机种子
-        
         # 创建模型
         model = lgb.LGBMClassifier(**params)
-        
         # 训练模型（使用早停）
         model.fit(
             X_train, y_train,
@@ -3506,29 +3068,23 @@ def create_vital_signs_features(df):
                 lgb.log_evaluation(period=0)
             ]
         )
-        
         # 预测
         val_pred = model.predict_proba(X_val)[:, 1]
-        
         models.append(model)
         predictions.append(val_pred)
-        
         # 计算AUC
         from sklearn.metrics import roc_auc_score
         auc = roc_auc_score(y_val, val_pred)
         # print(f"  模型 {i+1} AUC-ROC: {auc:.5f}")
         print()
-    
     return models, predictions
 
 def ensemble_predict(models, X_test):
     """
     # 集成多个模型的预测结果
-    
     Args:
         # models: 模型列表
         # X_test: 测试特征
-    
     Returns:
         # ensemble_pred: 集成预测结果（加权平均）
     """
@@ -3536,14 +3092,10 @@ def ensemble_predict(models, X_test):
     for model in models:
         pred = model.predict_proba(X_test)[:, 1]
         predictions.append(pred)
-    
     # 简单平均（也可以使用加权平均）
     ensemble_pred = np.mean(predictions, axis=0)
-    
     return ensemble_pred'''
-        
         st.code(ensemble_code, language='python')
-        
         st.markdown("**集成策略：**")
         st.markdown("""
         # - **多模型训练**: 使用5个不同随机种子的LightGBM模型
@@ -3551,9 +3103,7 @@ def ensemble_predict(models, X_test):
         # - **预测融合**: 对多个模型的预测概率进行加权平均
         # - **性能提升**: 集成模型相比单模型AUC-ROC提升约0.002-0.005
         """)
-        
         st.markdown("**超参数优化代码（Optuna）：**")
-        
         optuna_code = '''import optuna
 
 def objective(trial):
@@ -3568,15 +3118,12 @@ def objective(trial):
         'reg_alpha': trial.suggest_float('reg_alpha', 0.0, 10.0),
         'reg_lambda': trial.suggest_float('reg_lambda', 0.0, 10.0),
     }
-    
     model = lgb.LGBMClassifier(**params, random_state=42)
     model.fit(X_train, y_train, 
               eval_set=[(X_val, y_val)],
               callbacks=[lgb.early_stopping(50, verbose=False)])
-    
     y_pred = model.predict_proba(X_val)[:, 1]
     auc = roc_auc_score(y_val, y_pred)
-    
     return auc
 
 # 创建Optuna研究并优化
@@ -3587,9 +3134,7 @@ study.optimize(objective, n_trials=100)
 best_params = study.best_params
 # print(f"最佳AUC-ROC: {study.best_value:.5f}")
 # print(f"最佳参数: {best_params}")'''
-        
         st.code(optuna_code, language='python')
-        
         st.markdown("**优化效果：**")
         st.markdown("""
         # - 使用Optuna贝叶斯优化自动搜索最佳超参数
@@ -3638,7 +3183,6 @@ best_params = study.best_params
             'AUC-ROC': [0.9069, 0.915, 0.868],
             # '差距': [0.0081, 0, 0.047]
         })
-        
         fig = px.bar(
             comparison_data,
             x='方案',
