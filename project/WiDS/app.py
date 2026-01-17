@@ -426,196 +426,196 @@ with prediction_expander:
             # 将if submitted移到form外面，但仍在else块内
             if submitted:
                 try:
-                # 使用与训练时完全一致的预处理流程（参考predict_lightgbm_ensemble.py）
-                import sys
-                sys.path.insert(0, str(BASE_DIR.parent))
-                
-                # 1. 加载训练数据的一个样本作为基础（用于特征工程）
-                data_path = BASE_DIR / "data" / "training_v2.csv"
-                patient_df = load_csv_data(data_path, nrows=1, low_memory=False, na_values=['NA', ''])
-                
-                # 2. 应用特征工程（如果训练时使用了）
-                use_feature_engineering = preprocessor.get('use_feature_engineering', False) if preprocessor and isinstance(preprocessor, dict) else False
-                if use_feature_engineering:
+                    # 使用与训练时完全一致的预处理流程（参考predict_lightgbm_ensemble.py）
+                    import sys
+                    sys.path.insert(0, str(BASE_DIR.parent))
+                    
+                    # 1. 加载训练数据的一个样本作为基础（用于特征工程）
+                    data_path = BASE_DIR / "data" / "training_v2.csv"
+                    patient_df = load_csv_data(data_path, nrows=1, low_memory=False, na_values=['NA', ''])
+                    
+                    # 2. 应用特征工程（如果训练时使用了）
+                    use_feature_engineering = preprocessor.get('use_feature_engineering', False) if preprocessor and isinstance(preprocessor, dict) else False
+                    if use_feature_engineering:
+                        try:
+                            from feature_engineering import apply_feature_engineering
+                            patient_df = apply_feature_engineering(patient_df.copy())
+                        except Exception as e:
+                            st.warning(f"应用特征工程时出错: {str(e)}")
+                    
+                    # 3. 使用prepare_features函数准备特征（与训练时完全一致）
                     try:
-                        from feature_engineering import apply_feature_engineering
-                        patient_df = apply_feature_engineering(patient_df.copy())
-                    except Exception as e:
-                        st.warning(f"应用特征工程时出错: {str(e)}")
-                
-                # 3. 使用prepare_features函数准备特征（与训练时完全一致）
-                try:
-                    from model_training import prepare_features
-                    
-                    # 准备特征（保留缺失值，用于LightGBM，与训练时一致）
-                    X_prepared, _, _, _ = prepare_features(
-                        patient_df.copy(), fill_missing=False, standardize=False
-                    )
-                    
-                    # 4. 用训练集的中位数填充所有特征（作为基础值）
-                    # 注意：这里我们需要确保所有特征都存在
-                    for feat in feature_list:
-                        if feat in X_prepared.columns:
-                            # 用中位数填充（如果特征在medians中）
-                            if feat in feature_medians.index:
-                                X_prepared[feat] = feature_medians[feat]
+                        from model_training import prepare_features
+                        
+                        # 准备特征（保留缺失值，用于LightGBM，与训练时一致）
+                        X_prepared, _, _, _ = prepare_features(
+                            patient_df.copy(), fill_missing=False, standardize=False
+                        )
+                        
+                        # 4. 用训练集的中位数填充所有特征（作为基础值）
+                        # 注意：这里我们需要确保所有特征都存在
+                        for feat in feature_list:
+                            if feat in X_prepared.columns:
+                                # 用中位数填充（如果特征在medians中）
+                                if feat in feature_medians.index:
+                                    X_prepared[feat] = feature_medians[feat]
+                                else:
+                                    X_prepared[feat] = 0.0
                             else:
-                                X_prepared[feat] = 0.0
-                        else:
-                            # 如果特征不在DataFrame中，添加它
-                            X_prepared[feat] = feature_medians.get(feat, 0.0) if feat in feature_medians.index else 0.0
-                    
-                    # 5. 用用户输入的值覆盖对应特征
-                    for feat_name, val in user_values.items():
-                        if feat_name in X_prepared.columns:
-                            X_prepared[feat_name] = float(val)
-                        elif feat_name in feature_list:
-                            # 如果特征在特征列表中但不在DataFrame中，添加它
-                            X_prepared[feat_name] = float(val)
-                    
-                    # 6. 特征选择：按照预处理器中保存的特征顺序组织输入
-                    # 这是关键步骤：确保特征顺序与训练时完全一致
-                    X_input_selected = pd.DataFrame(index=X_prepared.index)
-                    missing_features = []
-                    
-                    for feat in feature_list:
-                        if feat in X_prepared.columns:
-                            X_input_selected[feat] = X_prepared[feat]
-                        else:
-                            missing_features.append(feat)
-                            X_input_selected[feat] = 0.0  # 用0填充缺失的特征
-                    
-                    # 确保特征顺序与训练时一致
-                    X_input_selected = X_input_selected[feature_list]
-                    
-                    if missing_features:
-                        st.warning(f"⚠ 警告: {len(missing_features)} 个特征在数据中不存在，已用0填充")
-                    
-                    # 7. 转换为numpy数组
-                    X_input = X_input_selected.values
-                    
-                    # 8. 验证特征数量和顺序
-                    if X_input.shape[1] != len(feature_list):
-                        st.error(f"❌ 特征数量不匹配！模型期望 {len(feature_list)} 个特征，但输入有 {X_input.shape[1]} 个")
-                        st.stop()
-                    
-                    # 检查模型期望的特征数
-                    model_n_features = None
-                    try:
-                        if hasattr(model, 'n_features_'):
-                            model_n_features = model.n_features_
-                        elif hasattr(model, 'booster_'):
-                            model_n_features = model.booster_.num_feature()
-                    except:
-                        pass
-                    
-                    if model_n_features and X_input.shape[1] != model_n_features:
-                        st.error(f"❌ 特征数量不匹配！模型期望 {model_n_features} 个特征，但输入有 {X_input.shape[1]} 个")
-                        st.stop()
-                    
-                    # 9. 进行预测
-                    proba = float(model.predict_proba(X_input)[:, 1][0])
-                    risk_percent = proba * 100.0
-                    
-                    # 调试信息（可选，通过expander显示）
-                    # 优化：避免在form提交后立即使用expander，可能导致JavaScript错误
-                    debug_info = f"""
+                                # 如果特征不在DataFrame中，添加它
+                                X_prepared[feat] = feature_medians.get(feat, 0.0) if feat in feature_medians.index else 0.0
+                        
+                        # 5. 用用户输入的值覆盖对应特征
+                        for feat_name, val in user_values.items():
+                            if feat_name in X_prepared.columns:
+                                X_prepared[feat_name] = float(val)
+                            elif feat_name in feature_list:
+                                # 如果特征在特征列表中但不在DataFrame中，添加它
+                                X_prepared[feat_name] = float(val)
+                        
+                        # 6. 特征选择：按照预处理器中保存的特征顺序组织输入
+                        # 这是关键步骤：确保特征顺序与训练时完全一致
+                        X_input_selected = pd.DataFrame(index=X_prepared.index)
+                        missing_features = []
+                        
+                        for feat in feature_list:
+                            if feat in X_prepared.columns:
+                                X_input_selected[feat] = X_prepared[feat]
+                            else:
+                                missing_features.append(feat)
+                                X_input_selected[feat] = 0.0  # 用0填充缺失的特征
+                        
+                        # 确保特征顺序与训练时一致
+                        X_input_selected = X_input_selected[feature_list]
+                        
+                        if missing_features:
+                            st.warning(f"⚠ 警告: {len(missing_features)} 个特征在数据中不存在，已用0填充")
+                        
+                        # 7. 转换为numpy数组
+                        X_input = X_input_selected.values
+                        
+                        # 8. 验证特征数量和顺序
+                        if X_input.shape[1] != len(feature_list):
+                            st.error(f"❌ 特征数量不匹配！模型期望 {len(feature_list)} 个特征，但输入有 {X_input.shape[1]} 个")
+                            st.stop()
+                        
+                        # 检查模型期望的特征数
+                        model_n_features = None
+                        try:
+                            if hasattr(model, 'n_features_'):
+                                model_n_features = model.n_features_
+                            elif hasattr(model, 'booster_'):
+                                model_n_features = model.booster_.num_feature()
+                        except:
+                            pass
+                        
+                        if model_n_features and X_input.shape[1] != model_n_features:
+                            st.error(f"❌ 特征数量不匹配！模型期望 {model_n_features} 个特征，但输入有 {X_input.shape[1]} 个")
+                            st.stop()
+                        
+                        # 9. 进行预测
+                        proba = float(model.predict_proba(X_input)[:, 1][0])
+                        risk_percent = proba * 100.0
+                        
+                        # 调试信息（可选，通过expander显示）
+                        # 优化：避免在form提交后立即使用expander，可能导致JavaScript错误
+                        debug_info = f"""
 **特征数量**: {len(feature_list)}
 **模型期望特征数**: {model_n_features if model_n_features else '未知'}
 **输入数据形状**: {X_input.shape}
 **用户输入的特征**: {list(user_values.keys())}
 """
-                    if missing_features:
-                        debug_info += f"**缺失的特征（已用0填充）**: {missing_features[:10]}{'...' if len(missing_features) > 10 else ''}\n"
-                    debug_info += f"**预测概率**: {proba:.6f}"
-                    
-                    with st.expander("🔍 调试信息（点击查看）"):
-                        st.markdown(debug_info)
-                    
-                except ImportError:
-                    # 如果无法导入prepare_features，使用简化版本
-                    st.warning("⚠ 无法导入prepare_features模块，使用简化预处理流程")
-                    
-                    # 简化流程：直接从训练数据样本开始
-                    # 移除APACHE死亡概率特征
-                    apache_prob_features = ['apache_4a_hospital_death_prob', 'apache_4a_icu_death_prob']
-                    for feat in apache_prob_features:
-                        if feat in patient_df.columns:
-                            patient_df = patient_df.drop(columns=[feat])
-                    
-                    # 移除ID列和目标变量
-                    id_cols = ['encounter_id', 'patient_id', 'hospital_id', 'hospital_death']
-                    for col in id_cols:
-                        if col in patient_df.columns:
-                            patient_df = patient_df.drop(columns=[col])
-                    
-                    # 处理分类特征（如果有预处理器）
-                    if preprocessor and isinstance(preprocessor, dict) and 'encoders' in preprocessor:
-                        encoders = preprocessor.get('encoders', {})
-                        for col, encoder in encoders.items():
+                        if missing_features:
+                            debug_info += f"**缺失的特征（已用0填充）**: {missing_features[:10]}{'...' if len(missing_features) > 10 else ''}\n"
+                        debug_info += f"**预测概率**: {proba:.6f}"
+                        
+                        with st.expander("🔍 调试信息（点击查看）"):
+                            st.markdown(debug_info)
+                        
+                    except ImportError:
+                        # 如果无法导入prepare_features，使用简化版本
+                        st.warning("⚠ 无法导入prepare_features模块，使用简化预处理流程")
+                        
+                        # 简化流程：直接从训练数据样本开始
+                        # 移除APACHE死亡概率特征
+                        apache_prob_features = ['apache_4a_hospital_death_prob', 'apache_4a_icu_death_prob']
+                        for feat in apache_prob_features:
+                            if feat in patient_df.columns:
+                                patient_df = patient_df.drop(columns=[feat])
+                        
+                        # 移除ID列和目标变量
+                        id_cols = ['encounter_id', 'patient_id', 'hospital_id', 'hospital_death']
+                        for col in id_cols:
                             if col in patient_df.columns:
-                                patient_df[col] = patient_df[col].fillna('Missing')
-                                try:
-                                    patient_df[col] = patient_df[col].astype(str)
-                                    known_classes = set(encoder.classes_)
-                                    patient_df[col] = patient_df[col].apply(
-                                        lambda x: x if x in known_classes else encoder.classes_[0]
-                                    )
-                                    patient_df[col] = encoder.transform(patient_df[col])
-                                except Exception:
-                                    patient_df[col] = 0
-                    
-                    # 用中位数填充所有特征
-                    for feat in feature_list:
-                        if feat in patient_df.columns:
-                            if feat in feature_medians.index:
-                                patient_df[feat] = feature_medians[feat]
+                                patient_df = patient_df.drop(columns=[col])
+                        
+                        # 处理分类特征（如果有预处理器）
+                        if preprocessor and isinstance(preprocessor, dict) and 'encoders' in preprocessor:
+                            encoders = preprocessor.get('encoders', {})
+                            for col, encoder in encoders.items():
+                                if col in patient_df.columns:
+                                    patient_df[col] = patient_df[col].fillna('Missing')
+                                    try:
+                                        patient_df[col] = patient_df[col].astype(str)
+                                        known_classes = set(encoder.classes_)
+                                        patient_df[col] = patient_df[col].apply(
+                                            lambda x: x if x in known_classes else encoder.classes_[0]
+                                        )
+                                        patient_df[col] = encoder.transform(patient_df[col])
+                                    except Exception:
+                                        patient_df[col] = 0
+                        
+                        # 用中位数填充所有特征
+                        for feat in feature_list:
+                            if feat in patient_df.columns:
+                                if feat in feature_medians.index:
+                                    patient_df[feat] = feature_medians[feat]
+                                else:
+                                    patient_df[feat] = 0.0
                             else:
-                                patient_df[feat] = 0.0
-                        else:
-                            patient_df[feat] = feature_medians.get(feat, 0.0) if feat in feature_medians.index else 0.0
-                    
-                    # 用用户输入的值覆盖
-                    for feat_name, val in user_values.items():
-                        if feat_name in patient_df.columns:
-                            patient_df[feat_name] = float(val)
-                        elif feat_name in feature_list:
-                            patient_df[feat_name] = float(val)
-                    
-                    # 按特征顺序组织输入
-                    X_input_values = []
-                    for feat in feature_list:
-                        if feat in patient_df.columns:
-                            val = patient_df[feat].iloc[0]
-                            if pd.isna(val):
-                                val = feature_medians.get(feat, 0.0) if feat in feature_medians.index else 0.0
-                            X_input_values.append(float(val))
-                        else:
-                            X_input_values.append(feature_medians.get(feat, 0.0) if feat in feature_medians.index else 0.0)
-                    
-                    X_input = np.array(X_input_values).reshape(1, -1)
-                    
-                    # 验证特征数量
-                    model_n_features = None
-                    try:
-                        if hasattr(model, 'n_features_'):
-                            model_n_features = model.n_features_
-                        elif hasattr(model, 'booster_'):
-                            model_n_features = model.booster_.num_feature()
-                    except:
-                        pass
-                    
-                    if model_n_features and X_input.shape[1] != model_n_features:
-                        st.error(f"❌ 特征数量不匹配！模型期望 {model_n_features} 个特征，但输入有 {X_input.shape[1]} 个")
-                        st.stop()
-                    
-                    # 进行预测
-                    proba = float(model.predict_proba(X_input)[:, 1][0])
-                    risk_percent = proba * 100.0
-                    
-                    # 调试信息
-                    # 优化：避免在form提交后立即使用expander，可能导致JavaScript错误
-                    debug_info = f"""
+                                patient_df[feat] = feature_medians.get(feat, 0.0) if feat in feature_medians.index else 0.0
+                        
+                        # 用用户输入的值覆盖
+                        for feat_name, val in user_values.items():
+                            if feat_name in patient_df.columns:
+                                patient_df[feat_name] = float(val)
+                            elif feat_name in feature_list:
+                                patient_df[feat_name] = float(val)
+                        
+                        # 按特征顺序组织输入
+                        X_input_values = []
+                        for feat in feature_list:
+                            if feat in patient_df.columns:
+                                val = patient_df[feat].iloc[0]
+                                if pd.isna(val):
+                                    val = feature_medians.get(feat, 0.0) if feat in feature_medians.index else 0.0
+                                X_input_values.append(float(val))
+                            else:
+                                X_input_values.append(feature_medians.get(feat, 0.0) if feat in feature_medians.index else 0.0)
+                        
+                        X_input = np.array(X_input_values).reshape(1, -1)
+                        
+                        # 验证特征数量
+                        model_n_features = None
+                        try:
+                            if hasattr(model, 'n_features_'):
+                                model_n_features = model.n_features_
+                            elif hasattr(model, 'booster_'):
+                                model_n_features = model.booster_.num_feature()
+                        except:
+                            pass
+                        
+                        if model_n_features and X_input.shape[1] != model_n_features:
+                            st.error(f"❌ 特征数量不匹配！模型期望 {model_n_features} 个特征，但输入有 {X_input.shape[1]} 个")
+                            st.stop()
+                        
+                        # 进行预测
+                        proba = float(model.predict_proba(X_input)[:, 1][0])
+                        risk_percent = proba * 100.0
+                        
+                        # 调试信息
+                        # 优化：避免在form提交后立即使用expander，可能导致JavaScript错误
+                        debug_info = f"""
 **特征数量**: {len(feature_list)}
 **模型期望特征数**: {model_n_features if model_n_features else '未知'}
 **输入数据形状**: {X_input.shape}
@@ -623,43 +623,43 @@ with prediction_expander:
 **预测概率**: {proba:.6f}
 ⚠ 注意：使用了简化预处理流程，可能与训练时不完全一致
 """
-                    with st.expander("🔍 调试信息（点击查看）"):
-                        st.markdown(debug_info)
+                        with st.expander("🔍 调试信息（点击查看）"):
+                            st.markdown(debug_info)
 
-                st.markdown("#### 预测结果")
-                col_result1, col_result2 = st.columns([1, 2])
+                    st.markdown("#### 预测结果")
+                    col_result1, col_result2 = st.columns([1, 2])
 
-                with col_result1:
-                    st.metric("预测住院死亡概率", f"{risk_percent:.2f} %")
+                    with col_result1:
+                        st.metric("预测住院死亡概率", f"{risk_percent:.2f} %")
 
-                # 风险分层
-                if proba >= threshold:
-                    risk_level = "高风险"
-                    color_class = "warning-box"
-                elif proba >= 0.2:
-                    risk_level = "中等风险"
-                    color_class = "info-box"
-                else:
-                    risk_level = "低风险"
-                    color_class = "success-box"
+                    # 风险分层
+                    if proba >= threshold:
+                        risk_level = "高风险"
+                        color_class = "warning-box"
+                    elif proba >= 0.2:
+                        risk_level = "中等风险"
+                        color_class = "info-box"
+                    else:
+                        risk_level = "低风险"
+                        color_class = "success-box"
 
-                with col_result2:
-                    st.markdown(
-                        f"""
-                        <div class="{color_class}">
-                            <h4>风险分层：{risk_level}</h4>
-                            <p><strong>模型输出的死亡概率：</strong>{risk_percent:.2f}%</p>
-                            <p><strong>判定阈值：</strong>{threshold * 100:.0f}%</p>
-                            <p style="margin-top:0.5rem; font-size:0.9rem;">
-                                注：本结果基于 WiDS Datathon 2020 ICU 数据训练的机器学习模型，仅作为科研与教学参考，
-                                不应直接用于真实临床决策。
-                            </p>
-                        </div>
-                        """,
-                        unsafe_allow_html=True
-                    )
-            except Exception as e:
-                st.error(f"在线预测时发生错误：{str(e)}")
+                    with col_result2:
+                        st.markdown(
+                            f"""
+                            <div class="{color_class}">
+                                <h4>风险分层：{risk_level}</h4>
+                                <p><strong>模型输出的死亡概率：</strong>{risk_percent:.2f}%</p>
+                                <p><strong>判定阈值：</strong>{threshold * 100:.0f}%</p>
+                                <p style="margin-top:0.5rem; font-size:0.9rem;">
+                                    注：本结果基于 WiDS Datathon 2020 ICU 数据训练的机器学习模型，仅作为科研与教学参考，
+                                    不应直接用于真实临床决策。
+                                </p>
+                            </div>
+                            """,
+                            unsafe_allow_html=True
+                        )
+                except Exception as e:
+                    st.error(f"在线预测时发生错误：{str(e)}")
 
 # 主要分析模块
 st.markdown('<div class="section-header">🔬 主要分析模块</div>', unsafe_allow_html=True)
