@@ -317,6 +317,8 @@ with col3:
     st.metric("🎯 目标变量", "hospital_death")
     st.markdown('</div>', unsafe_allow_html=True)
 
+# ========== 以下代码已注释，用于逐步排错 ==========
+"""
 # 临床个体预测板块（独立板块，放在主要分析模块之前）
 # 优化：使用expander延迟加载，减少初始页面加载时间
 prediction_expander = st.expander("🩺 临床个体风险预测（点击展开使用）", expanded=False)
@@ -3695,3 +3697,5 @@ except Exception as e:
     st.error(f"渲染页面内容时出错: {str(e)}")
     import traceback
     st.text(traceback.format_exc())
+"""
+# ========== 注释结束 ==========
