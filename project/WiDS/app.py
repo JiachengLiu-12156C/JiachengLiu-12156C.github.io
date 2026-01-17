@@ -422,9 +422,10 @@ with prediction_expander:
                 )
 
                 submitted = st.form_submit_button("计算死亡风险")
-
-        if submitted:
-            try:
+            
+            # 将if submitted移到form外面，但仍在else块内
+            if submitted:
+                try:
                 # 使用与训练时完全一致的预处理流程（参考predict_lightgbm_ensemble.py）
                 import sys
                 sys.path.insert(0, str(BASE_DIR.parent))
@@ -517,14 +518,19 @@ with prediction_expander:
                     risk_percent = proba * 100.0
                     
                     # 调试信息（可选，通过expander显示）
+                    # 优化：避免在form提交后立即使用expander，可能导致JavaScript错误
+                    debug_info = f"""
+**特征数量**: {len(feature_list)}
+**模型期望特征数**: {model_n_features if model_n_features else '未知'}
+**输入数据形状**: {X_input.shape}
+**用户输入的特征**: {list(user_values.keys())}
+"""
+                    if missing_features:
+                        debug_info += f"**缺失的特征（已用0填充）**: {missing_features[:10]}{'...' if len(missing_features) > 10 else ''}\n"
+                    debug_info += f"**预测概率**: {proba:.6f}"
+                    
                     with st.expander("🔍 调试信息（点击查看）"):
-                        st.write(f"**特征数量**: {len(feature_list)}")
-                        st.write(f"**模型期望特征数**: {model_n_features if model_n_features else '未知'}")
-                        st.write(f"**输入数据形状**: {X_input.shape}")
-                        st.write(f"**用户输入的特征**: {list(user_values.keys())}")
-                        if missing_features:
-                            st.write(f"**缺失的特征（已用0填充）**: {missing_features[:10]}{'...' if len(missing_features) > 10 else ''}")
-                        st.write(f"**预测概率**: {proba:.6f}")
+                        st.markdown(debug_info)
                     
                 except ImportError:
                     # 如果无法导入prepare_features，使用简化版本
@@ -608,13 +614,17 @@ with prediction_expander:
                     risk_percent = proba * 100.0
                     
                     # 调试信息
+                    # 优化：避免在form提交后立即使用expander，可能导致JavaScript错误
+                    debug_info = f"""
+**特征数量**: {len(feature_list)}
+**模型期望特征数**: {model_n_features if model_n_features else '未知'}
+**输入数据形状**: {X_input.shape}
+**用户输入的特征**: {list(user_values.keys())}
+**预测概率**: {proba:.6f}
+⚠ 注意：使用了简化预处理流程，可能与训练时不完全一致
+"""
                     with st.expander("🔍 调试信息（点击查看）"):
-                        st.write(f"**特征数量**: {len(feature_list)}")
-                        st.write(f"**模型期望特征数**: {model_n_features if model_n_features else '未知'}")
-                        st.write(f"**输入数据形状**: {X_input.shape}")
-                        st.write(f"**用户输入的特征**: {list(user_values.keys())}")
-                        st.write(f"**预测概率**: {proba:.6f}")
-                        st.write("⚠ 注意：使用了简化预处理流程，可能与训练时不完全一致")
+                        st.markdown(debug_info)
 
                 st.markdown("#### 预测结果")
                 col_result1, col_result2 = st.columns([1, 2])
