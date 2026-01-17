@@ -17,18 +17,6 @@ from PIL import Image
 # 以当前应用目录为根目录，避免依赖仓库根目录
 BASE_DIR = Path(__file__).resolve().parent
 
-# 添加当前目录到 Python 路径，确保可以导入同目录下的模块
-if str(BASE_DIR) not in sys.path:
-    sys.path.insert(0, str(BASE_DIR))
-
-# 尝试导入特征工程模块（如果可用）
-try:
-    from feature_engineering import apply_feature_engineering
-    FEATURE_ENGINEERING_AVAILABLE = True
-except ImportError:
-    FEATURE_ENGINEERING_AVAILABLE = False
-    apply_feature_engineering = None
-
 # 缓存函数：加载CSV数据
 @st.cache_data
 def load_csv_data(file_path, **kwargs):
@@ -53,18 +41,24 @@ def load_preprocessor(preprocessor_path):
         preprocessor = pickle.load(f)
     return preprocessor
 
-# 缓存函数：计算缺失值统计
+# 缓存函数：计算缺失值统计（优化：使用采样减少计算时间）
 @st.cache_data
-def compute_missing_stats(data_path, chunk_size=10000):
-    """缓存缺失值统计计算"""
+def compute_missing_stats(data_path, chunk_size=10000, max_rows=50000):
+    """
+    缓存缺失值统计计算
+    优化：限制最大读取行数，减少计算时间
+    """
     columns = load_csv_data(data_path, nrows=0).columns.tolist()
     total_rows = 0
     missing_counts = pd.Series(0, index=columns)
     
-    # 分块读取并累计缺失值
+    # 分块读取并累计缺失值（限制最大行数）
     for chunk in pd.read_csv(data_path, chunksize=chunk_size, low_memory=False, na_values=['NA', '']):
         total_rows += len(chunk)
         missing_counts += chunk.isnull().sum()
+        # 如果已达到最大行数，停止读取
+        if total_rows >= max_rows:
+            break
     
     # 计算缺失值比例
     missing_percent = (missing_counts / total_rows) * 100
@@ -76,12 +70,15 @@ def compute_missing_stats(data_path, chunk_size=10000):
     return missing_df, total_rows, len(columns)
 
 
-# 缓存函数：获取用于在线预测的模型与特征信息
+# 缓存函数：获取用于在线预测的模型与特征信息（优化：减少初始数据加载量）
 @st.cache_resource
-def get_prediction_model_and_features():
+def get_prediction_model_and_features(sample_size=10000):
     """
     加载用于在线个体预测的 LightGBM 最优模型，并推断其使用的特征列表与默认填充值（中位数）。
     注意：此函数会应用与训练时相同的预处理流程（特征工程、特征选择等）。
+    
+    Args:
+        sample_size: 用于计算中位数的样本数量（默认10000，减少内存占用）
     
     Returns:
         model: 已加载的 LightGBM 模型（或 None）
@@ -121,15 +118,20 @@ def get_prediction_model_and_features():
             st.warning(f"加载预处理器时出错: {str(e)}")
             preprocessor = None
 
-    # 加载训练数据（用于特征工程和计算中位数）
+    # 加载训练数据（用于特征工程和计算中位数）- 优化：减少样本数量
     try:
-        # 使用特征工程函数（如果可用）
+        # 导入特征工程函数（如果可用）
         if use_feature_engineering:
-            if not FEATURE_ENGINEERING_AVAILABLE or apply_feature_engineering is None:
-                st.warning("特征工程模块不可用，将跳过特征工程步骤")
+            try:
+                import sys
+                sys.path.insert(0, str(BASE_DIR.parent))
+                from feature_engineering import apply_feature_engineering
+            except ImportError:
+                st.warning("无法导入特征工程模块，将跳过特征工程步骤")
                 use_feature_engineering = False
         
-        train_df = load_csv_data(data_path, nrows=50000, low_memory=False, na_values=['NA', ''])
+        # 使用更小的样本量来计算中位数，减少内存占用
+        train_df = load_csv_data(data_path, nrows=sample_size, low_memory=False, na_values=['NA', ''])
         if 'hospital_death' not in train_df.columns:
             return None, None, None, None
         
@@ -220,6 +222,10 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# 初始化session_state（用于缓存已加载的数据）
+if 'data_loaded' not in st.session_state:
+    st.session_state['data_loaded'] = False
+
 # 自定义CSS样式
 st.markdown("""
 <style>
@@ -283,8 +289,10 @@ st.markdown("""
 # 主标题
 st.markdown('<div class="main-header">🏥 WiDS Datathon 2020 - ICU死亡风险预测分析系统</div>', unsafe_allow_html=True)
 
-# 项目信息
-col1, col2, col3 = st.columns([2, 1, 1], gap="large")
+# 添加全局错误处理，防止白屏
+try:
+    # 项目信息
+    col1, col2, col3 = st.columns([2, 1, 1], gap="large")
 
 with col1:
     st.markdown("""
@@ -316,7 +324,19 @@ st.markdown("""
 - 未输入的其他特征自动使用训练集典型值（中位数）填充，保证与离线模型使用的特征保持一致  
 """)
 
-model, feature_list, feature_medians, preprocessor = get_prediction_model_and_features()
+# 懒加载：只在需要时加载模型（使用session_state缓存）
+if 'prediction_model' not in st.session_state:
+    with st.spinner("正在加载预测模型（首次加载可能需要几秒钟）..."):
+        model, feature_list, feature_medians, preprocessor = get_prediction_model_and_features(sample_size=10000)
+        st.session_state['prediction_model'] = model
+        st.session_state['prediction_feature_list'] = feature_list
+        st.session_state['prediction_feature_medians'] = feature_medians
+        st.session_state['prediction_preprocessor'] = preprocessor
+else:
+    model = st.session_state['prediction_model']
+    feature_list = st.session_state['prediction_feature_list']
+    feature_medians = st.session_state['prediction_feature_medians']
+    preprocessor = st.session_state['prediction_preprocessor']
 
 if model is None or feature_list is None or feature_medians is None:
     st.warning("⚠️ 未能加载在线预测所需的模型或数据，请确认 `models/LightGBM_tuned_advanced.pkl` 和 `data/training_v2.csv` 已放置在 `streamlit_app` 目录下。")
@@ -402,6 +422,9 @@ else:
         if submitted:
             try:
                 # 使用与训练时完全一致的预处理流程（参考predict_lightgbm_ensemble.py）
+                import sys
+                sys.path.insert(0, str(BASE_DIR.parent))
+                
                 # 1. 加载训练数据的一个样本作为基础（用于特征工程）
                 data_path = BASE_DIR / "data" / "training_v2.csv"
                 patient_df = load_csv_data(data_path, nrows=1, low_memory=False, na_values=['NA', ''])
@@ -409,17 +432,15 @@ else:
                 # 2. 应用特征工程（如果训练时使用了）
                 use_feature_engineering = preprocessor.get('use_feature_engineering', False) if preprocessor and isinstance(preprocessor, dict) else False
                 if use_feature_engineering:
-                    if FEATURE_ENGINEERING_AVAILABLE and apply_feature_engineering is not None:
-                        try:
-                            patient_df = apply_feature_engineering(patient_df.copy())
-                        except Exception as e:
-                            st.warning(f"应用特征工程时出错: {str(e)}")
-                    else:
-                        st.warning("特征工程模块不可用，将跳过特征工程步骤")
+                    try:
+                        from feature_engineering import apply_feature_engineering
+                        patient_df = apply_feature_engineering(patient_df.copy())
+                    except Exception as e:
+                        st.warning(f"应用特征工程时出错: {str(e)}")
                 
                 # 3. 使用prepare_features函数准备特征（与训练时完全一致）
                 try:
-                    from model_utils import prepare_features
+                    from model_training import prepare_features
                     
                     # 准备特征（保留缺失值，用于LightGBM，与训练时一致）
                     X_prepared, _, _, _ = prepare_features(
@@ -1000,8 +1021,8 @@ with tab2:
         data_path = BASE_DIR / "data" / "training_v2.csv"
         if data_path.exists():
             with st.spinner("正在加载数据并计算预处理统计信息..."):
-                # 读取数据
-                train_df = load_csv_data(data_path, low_memory=False, na_values=['NA', ''])
+                # 读取数据（优化：使用采样减少内存占用）
+                train_df = load_csv_data(data_path, nrows=20000, low_memory=False, na_values=['NA', ''])
                 
                 # 计算缺失值
                 missing_percent = (train_df.isnull().sum() / len(train_df)) * 100
@@ -1147,7 +1168,8 @@ with tab2:
         data_path = BASE_DIR / "data" / "training_v2.csv"
         if data_path.exists():
             with st.spinner("正在加载数据并分析医学特征..."):
-                train_df = load_csv_data(data_path, low_memory=False, na_values=['NA', ''])
+                # 优化：使用采样减少内存占用
+                train_df = load_csv_data(data_path, nrows=20000, low_memory=False, na_values=['NA', ''])
                 
                 # 选择关键医学特征
                 key_features = ['age', 'bmi', 'heart_rate_apache', 'temp_apache', 
@@ -1269,7 +1291,8 @@ with tab3:
         data_path = BASE_DIR / "data" / "training_v2.csv"
         if data_path.exists():
             with st.spinner("正在加载数据并生成统计分析图表..."):
-                train_df = load_csv_data(data_path, low_memory=False, na_values=['NA', ''])
+                # 优化：使用采样减少内存占用
+                train_df = load_csv_data(data_path, nrows=20000, low_memory=False, na_values=['NA', ''])
                 
                 # 常见临床特征列表（12个）
                 common_features = [
@@ -3578,3 +3601,11 @@ st.markdown("""
     <p>数据来源：MIT GOSSIS Initiative | 最后更新：2026年1月</p>
 </div>
 """, unsafe_allow_html=True)
+
+# 全局错误处理结束
+except Exception as e:
+    st.error(f"⚠️ 应用加载时出现错误: {str(e)}")
+    st.info("💡 提示：如果问题持续存在，请检查数据文件是否存在，或尝试刷新页面。")
+    import traceback
+    with st.expander("🔍 查看详细错误信息（用于调试）"):
+        st.code(traceback.format_exc())
