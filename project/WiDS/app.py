@@ -1098,11 +1098,11 @@ with tab2:
     # 数据预处理可视化
     st.markdown("#### 数据预处理可视化")
     st.markdown("""
-    # 以下图表展示了数据预处理的全流程，包括：
-    # - 特征降维过程
-    # - 被删除特征的类型分析
-    # - 特征类型分布
-    # - 缺失值处理策略
+    以下图表展示了数据预处理的全流程，包括：
+    - 特征降维过程
+    - 被删除特征的类型分析
+    - 特征类型分布
+    - 缺失值处理策略
     """)
     
     try:
@@ -1140,9 +1140,9 @@ with tab2:
                         labels={'x': '处理阶段', 'y': '特征数量'},
                         color=stages,
                         color_discrete_map={
-                            # '原始特征': '#3498db',
-                            # '删除高缺失值列': '#e74c3c',
-                            # '最终特征': '#2ecc71'
+                            '原始特征': '#3498db',
+                            '删除高缺失值列': '#e74c3c',
+                            '最终特征': '#2ecc71'
                         }
                     )
                     fig1.update_traces(texttemplate='%{y}', textposition='outside')
@@ -1173,7 +1173,7 @@ with tab2:
                         color_discrete_map={
                             'h1_前缀(第一小时)': '#e74c3c',
                             'd1_前缀(第一天)': '#f39c12',
-                            # '其他特征': '#95a5a6'
+                            '其他特征': '#95a5a6'
                         }
                     )
                     fig2.update_traces(texttemplate='%{y}', textposition='outside')
@@ -1198,8 +1198,8 @@ with tab2:
                         labels={'x': '特征类型', 'y': '特征数量'},
                         color=feature_types,
                         color_discrete_map={
-                            # '分类特征': '#9b59b6',
-                            # '数值型特征': '#3498db'
+                            '分类特征': '#9b59b6',
+                            '数值型特征': '#3498db'
                         }
                     )
                     fig3.update_traces(texttemplate='%{y}', textposition='outside')
@@ -1224,8 +1224,8 @@ with tab2:
                         labels={'x': '处理阶段', 'y': '缺失值数量'},
                         color=fill_stages,
                         color_discrete_map={
-                            # '缺失值统计': '#e74c3c',
-                            # '保留缺失值': '#2ecc71'
+                            '缺失值统计': '#e74c3c',
+                            '保留缺失值': '#2ecc71'
                         }
                     )
                     fig4.update_traces(texttemplate='%{y:,}', textposition='outside')
@@ -1245,11 +1245,11 @@ with tab2:
     # 医学特征分析可视化
     st.markdown("#### 医学特征分析可视化")
     st.markdown("""
-    # 以下图表展示了关键医学特征的分析结果，包括：
-    # - 生命体征特征分布
-    # - 实验室指标特征分析
-    # - APACHE评分特征
-    # - 特征与目标变量的关系
+    以下图表展示了关键医学特征的分析结果，包括：
+    - 生命体征特征分布
+    - 实验室指标特征分析
+    - APACHE评分特征
+    - 特征与目标变量的关系
     """)
     
     try:
@@ -1327,7 +1327,7 @@ with tab2:
                             valid_data = train_df[feature].dropna()
                             if len(valid_data) > 0:
                                 summary_data.append({
-                                    # '特征': feature,
+                                    '特征': feature,
                                     '均值': valid_data.mean(),
                                     '中位数': valid_data.median(),
                                     '标准差': valid_data.std(),
