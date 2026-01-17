@@ -424,7 +424,13 @@ with prediction_expander:
                 submitted = st.form_submit_button("计算死亡风险")
             
             # 将if submitted移到form外面，但仍在else块内
+            # 注意：在表单提交后，将所有结果存储到session_state，然后在表单外部显示
+            # 这样可以避免Delta路径错误
             if submitted:
+                # 初始化结果存储
+                st.session_state['prediction_result'] = None
+                st.session_state['prediction_error'] = None
+                
                 try:
                     # 使用与训练时完全一致的预处理流程（参考predict_lightgbm_ensemble.py）
                     import sys
@@ -443,7 +449,10 @@ with prediction_expander:
                             from feature_engineering import apply_feature_engineering
                             patient_df = apply_feature_engineering(patient_df.copy())
                         except Exception as e:
-                            st.warning(f"应用特征工程时出错: {str(e)}")
+                            # 存储警告信息，在表单外部显示
+                            if 'warnings' not in st.session_state:
+                                st.session_state['warnings'] = []
+                            st.session_state['warnings'].append(f"应用特征工程时出错: {str(e)}")
                     
                     # 3. 使用prepare_features函数准备特征（与训练时完全一致）
                     try:
@@ -491,15 +500,20 @@ with prediction_expander:
                         X_input_selected = X_input_selected[feature_list]
                         
                         if missing_features:
-                            st.warning(f"⚠ 警告: {len(missing_features)} 个特征在数据中不存在，已用0填充")
+                            # 存储警告信息，在表单外部显示
+                            if 'warnings' not in st.session_state:
+                                st.session_state['warnings'] = []
+                            st.session_state['warnings'].append(f"⚠ 警告: {len(missing_features)} 个特征在数据中不存在，已用0填充")
                         
                         # 7. 转换为numpy数组
                         X_input = X_input_selected.values
                         
                         # 8. 验证特征数量和顺序
                         if X_input.shape[1] != len(feature_list):
-                            st.error(f"❌ 特征数量不匹配！模型期望 {len(feature_list)} 个特征，但输入有 {X_input.shape[1]} 个")
-                            st.stop()
+                            # 存储错误信息，在表单外部显示
+                            st.session_state['prediction_error'] = f"❌ 特征数量不匹配！模型期望 {len(feature_list)} 个特征，但输入有 {X_input.shape[1]} 个"
+                            st.session_state['prediction_result'] = None
+                            raise ValueError(st.session_state['prediction_error'])
                         
                         # 检查模型期望的特征数
                         model_n_features = None
@@ -512,8 +526,10 @@ with prediction_expander:
                             pass
                         
                         if model_n_features and X_input.shape[1] != model_n_features:
-                            st.error(f"❌ 特征数量不匹配！模型期望 {model_n_features} 个特征，但输入有 {X_input.shape[1]} 个")
-                            st.stop()
+                            # 存储错误信息，在表单外部显示
+                            st.session_state['prediction_error'] = f"❌ 特征数量不匹配！模型期望 {model_n_features} 个特征，但输入有 {X_input.shape[1]} 个"
+                            st.session_state['prediction_result'] = None
+                            raise ValueError(st.session_state['prediction_error'])
                         
                         # 9. 进行预测
                         proba = float(model.predict_proba(X_input)[:, 1][0])
@@ -530,12 +546,20 @@ with prediction_expander:
                             debug_info += f"**缺失的特征（已用0填充）**: {missing_features[:10]}{'...' if len(missing_features) > 10 else ''}\n"
                         debug_info += f"**预测概率**: {proba:.6f}"
                         
-                        # 将调试信息存储到session_state，在表单外部显示
+                        # 将调试信息和预测结果存储到session_state，在表单外部显示
                         st.session_state['debug_info'] = debug_info
+                        st.session_state['prediction_result'] = {
+                            'proba': proba,
+                            'risk_percent': risk_percent,
+                            'threshold': threshold
+                        }
                         
                     except ImportError:
                         # 如果无法导入prepare_features，使用简化版本
-                        st.warning("⚠ 无法导入prepare_features模块，使用简化预处理流程")
+                        # 存储警告信息，在表单外部显示
+                        if 'warnings' not in st.session_state:
+                            st.session_state['warnings'] = []
+                        st.session_state['warnings'].append("⚠ 无法导入prepare_features模块，使用简化预处理流程")
                         
                         # 简化流程：直接从训练数据样本开始
                         # 移除APACHE死亡概率特征
@@ -607,8 +631,10 @@ with prediction_expander:
                             pass
                         
                         if model_n_features and X_input.shape[1] != model_n_features:
-                            st.error(f"❌ 特征数量不匹配！模型期望 {model_n_features} 个特征，但输入有 {X_input.shape[1]} 个")
-                            st.stop()
+                            # 存储错误信息，在表单外部显示
+                            st.session_state['prediction_error'] = f"❌ 特征数量不匹配！模型期望 {model_n_features} 个特征，但输入有 {X_input.shape[1]} 个"
+                            st.session_state['prediction_result'] = None
+                            raise ValueError(st.session_state['prediction_error'])
                         
                         # 进行预测
                         proba = float(model.predict_proba(X_input)[:, 1][0])
@@ -623,50 +649,79 @@ with prediction_expander:
 **预测概率**: {proba:.6f}
 ⚠ 注意：使用了简化预处理流程，可能与训练时不完全一致
 """
-                        # 将调试信息存储到session_state，在表单外部显示
+                        # 将调试信息和预测结果存储到session_state，在表单外部显示
                         st.session_state['debug_info'] = debug_info
-
-                    # 显示调试信息（在表单外部，避免Delta路径错误）
-                    if 'debug_info' in st.session_state:
-                        with st.expander("🔍 调试信息（点击查看）"):
-                            st.markdown(st.session_state['debug_info'])
-                        # 清除调试信息，避免下次显示
-                        del st.session_state['debug_info']
-                    
-                    st.markdown("#### 预测结果")
-                    col_result1, col_result2 = st.columns([1, 2])
-
-                    with col_result1:
-                        st.metric("预测住院死亡概率", f"{risk_percent:.2f} %")
-
-                    # 风险分层
-                    if proba >= threshold:
-                        risk_level = "高风险"
-                        color_class = "warning-box"
-                    elif proba >= 0.2:
-                        risk_level = "中等风险"
-                        color_class = "info-box"
-                    else:
-                        risk_level = "低风险"
-                        color_class = "success-box"
-
-                    with col_result2:
-                        st.markdown(
-                            f"""
-                            <div class="{color_class}">
-                                <h4>风险分层：{risk_level}</h4>
-                                <p><strong>模型输出的死亡概率：</strong>{risk_percent:.2f}%</p>
-                                <p><strong>判定阈值：</strong>{threshold * 100:.0f}%</p>
-                                <p style="margin-top:0.5rem; font-size:0.9rem;">
-                                    注：本结果基于 WiDS Datathon 2020 ICU 数据训练的机器学习模型，仅作为科研与教学参考，
-                                    不应直接用于真实临床决策。
-                                </p>
-                            </div>
-                            """,
-                            unsafe_allow_html=True
-                        )
+                        st.session_state['prediction_result'] = {
+                            'proba': proba,
+                            'risk_percent': risk_percent,
+                            'threshold': threshold
+                        }
+                        
                 except Exception as e:
-                    st.error(f"在线预测时发生错误：{str(e)}")
+                    # 存储错误信息，在表单外部显示
+                    st.session_state['prediction_error'] = str(e)
+                    st.session_state['prediction_result'] = None
+            
+            # 在表单外部显示所有结果（避免Delta路径错误）
+            # 显示警告信息
+            if 'warnings' in st.session_state and st.session_state['warnings']:
+                for warning in st.session_state['warnings']:
+                    st.warning(warning)
+                del st.session_state['warnings']
+            
+            # 显示错误信息
+            if 'prediction_error' in st.session_state and st.session_state['prediction_error']:
+                st.error(f"在线预测时发生错误：{st.session_state['prediction_error']}")
+                del st.session_state['prediction_error']
+            
+            if 'prediction_result' in st.session_state and st.session_state['prediction_result']:
+                result = st.session_state['prediction_result']
+                proba = result['proba']
+                risk_percent = result['risk_percent']
+                threshold = result['threshold']
+                
+                # 显示调试信息（在表单外部，避免Delta路径错误）
+                if 'debug_info' in st.session_state:
+                    with st.expander("🔍 调试信息（点击查看）"):
+                        st.markdown(st.session_state['debug_info'])
+                    # 清除调试信息，避免下次显示
+                    del st.session_state['debug_info']
+                
+                st.markdown("#### 预测结果")
+                col_result1, col_result2 = st.columns([1, 2])
+
+                with col_result1:
+                    st.metric("预测住院死亡概率", f"{risk_percent:.2f} %")
+
+                # 风险分层
+                if proba >= threshold:
+                    risk_level = "高风险"
+                    color_class = "warning-box"
+                elif proba >= 0.2:
+                    risk_level = "中等风险"
+                    color_class = "info-box"
+                else:
+                    risk_level = "低风险"
+                    color_class = "success-box"
+
+                with col_result2:
+                    st.markdown(
+                        f"""
+                        <div class="{color_class}">
+                            <h4>风险分层：{risk_level}</h4>
+                            <p><strong>模型输出的死亡概率：</strong>{risk_percent:.2f}%</p>
+                            <p><strong>判定阈值：</strong>{threshold * 100:.0f}%</p>
+                            <p style="margin-top:0.5rem; font-size:0.9rem;">
+                                注：本结果基于 WiDS Datathon 2020 ICU 数据训练的机器学习模型，仅作为科研与教学参考，
+                                不应直接用于真实临床决策。
+                            </p>
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
+                
+                # 清除结果，避免下次显示
+                del st.session_state['prediction_result']
 
 # 主要分析模块
 st.markdown('<div class="section-header">🔬 主要分析模块</div>', unsafe_allow_html=True)
