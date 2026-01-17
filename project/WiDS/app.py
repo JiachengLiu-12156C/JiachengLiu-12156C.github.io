@@ -2219,13 +2219,13 @@ with tab5:
                                     feat_vals = X_shap[feat].values[:sample_n]
                                     for sv, fv in zip(shap_vals_feat, feat_vals):
                                         records.append({
-                                            "特征": feat,
-                                            "SHAP值": sv,
-                                            "特征值": fv
+                                            # "特征": feat,
+                                            # "SHAP值": sv,
+                                            # "特征值": fv
                                         })
                                 shap_long_df = pd.DataFrame(records)
                                 shap_long_df["特征"] = pd.Categorical(
-                                    shap_long_df["特征"],
+                                    # shap_long_df["特征"],
                                     categories=list(top_features),
                                     ordered=True
                                 )
