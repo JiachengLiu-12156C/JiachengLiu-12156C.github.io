@@ -513,46 +513,50 @@ with prediction_expander:
                             # 存储错误信息，在表单外部显示
                             st.session_state['prediction_error'] = f"❌ 特征数量不匹配！模型期望 {len(feature_list)} 个特征，但输入有 {X_input.shape[1]} 个"
                             st.session_state['prediction_result'] = None
-                            raise ValueError(st.session_state['prediction_error'])
-                        
-                        # 检查模型期望的特征数
-                        model_n_features = None
-                        try:
-                            if hasattr(model, 'n_features_'):
-                                model_n_features = model.n_features_
-                            elif hasattr(model, 'booster_'):
-                                model_n_features = model.booster_.num_feature()
-                        except Exception:
-                            pass
-                        
-                        if model_n_features and X_input.shape[1] != model_n_features:
-                            # 存储错误信息，在表单外部显示
-                            st.session_state['prediction_error'] = f"❌ 特征数量不匹配！模型期望 {model_n_features} 个特征，但输入有 {X_input.shape[1]} 个"
-                            st.session_state['prediction_result'] = None
-                            raise ValueError(st.session_state['prediction_error'])
-                        
-                        # 9. 进行预测
-                        proba = float(model.predict_proba(X_input)[:, 1][0])
-                        risk_percent = proba * 100.0
-                        
-                        # 调试信息（可选，通过session_state存储，避免在form提交后立即使用expander）
-                        debug_info = f"""
+                            # 不抛出异常，让代码继续执行到外部显示错误
+                            proba = None
+                            risk_percent = None
+                        else:
+                            # 检查模型期望的特征数
+                            model_n_features = None
+                            try:
+                                if hasattr(model, 'n_features_'):
+                                    model_n_features = model.n_features_
+                                elif hasattr(model, 'booster_'):
+                                    model_n_features = model.booster_.num_feature()
+                            except Exception:
+                                pass
+                            
+                            if model_n_features and X_input.shape[1] != model_n_features:
+                                # 存储错误信息，在表单外部显示
+                                st.session_state['prediction_error'] = f"❌ 特征数量不匹配！模型期望 {model_n_features} 个特征，但输入有 {X_input.shape[1]} 个"
+                                st.session_state['prediction_result'] = None
+                                # 不抛出异常，让代码继续执行到外部显示错误
+                                proba = None
+                                risk_percent = None
+                            else:
+                                # 9. 进行预测（只有在验证通过时）
+                                proba = float(model.predict_proba(X_input)[:, 1][0])
+                                risk_percent = proba * 100.0
+                                
+                                # 调试信息（可选，通过session_state存储，避免在form提交后立即使用expander）
+                                debug_info = f"""
 **特征数量**: {len(feature_list)}
 **模型期望特征数**: {model_n_features if model_n_features else '未知'}
 **输入数据形状**: {X_input.shape}
 **用户输入的特征**: {list(user_values.keys())}
 """
-                        if missing_features:
-                            debug_info += f"**缺失的特征（已用0填充）**: {missing_features[:10]}{'...' if len(missing_features) > 10 else ''}\n"
-                        debug_info += f"**预测概率**: {proba:.6f}"
-                        
-                        # 将调试信息和预测结果存储到session_state，在表单外部显示
-                        st.session_state['debug_info'] = debug_info
-                        st.session_state['prediction_result'] = {
-                            'proba': proba,
-                            'risk_percent': risk_percent,
-                            'threshold': threshold
-                        }
+                                if missing_features:
+                                    debug_info += f"**缺失的特征（已用0填充）**: {missing_features[:10]}{'...' if len(missing_features) > 10 else ''}\n"
+                                debug_info += f"**预测概率**: {proba:.6f}"
+                                
+                                # 将调试信息和预测结果存储到session_state，在表单外部显示
+                                st.session_state['debug_info'] = debug_info
+                                st.session_state['prediction_result'] = {
+                                    'proba': proba,
+                                    'risk_percent': risk_percent,
+                                    'threshold': threshold
+                                }
                         
                     except ImportError:
                         # 如果无法导入prepare_features，使用简化版本
@@ -634,14 +638,16 @@ with prediction_expander:
                             # 存储错误信息，在表单外部显示
                             st.session_state['prediction_error'] = f"❌ 特征数量不匹配！模型期望 {model_n_features} 个特征，但输入有 {X_input.shape[1]} 个"
                             st.session_state['prediction_result'] = None
-                            raise ValueError(st.session_state['prediction_error'])
-                        
-                        # 进行预测
-                        proba = float(model.predict_proba(X_input)[:, 1][0])
-                        risk_percent = proba * 100.0
-                        
-                        # 调试信息（存储到session_state，避免在form提交后立即使用expander）
-                        debug_info = f"""
+                            # 不抛出异常，让代码继续执行到外部显示错误
+                            proba = None
+                            risk_percent = None
+                        else:
+                            # 进行预测（只有在验证通过时）
+                            proba = float(model.predict_proba(X_input)[:, 1][0])
+                            risk_percent = proba * 100.0
+                            
+                            # 调试信息（存储到session_state，避免在form提交后立即使用expander）
+                            debug_info = f"""
 **特征数量**: {len(feature_list)}
 **模型期望特征数**: {model_n_features if model_n_features else '未知'}
 **输入数据形状**: {X_input.shape}
@@ -649,13 +655,13 @@ with prediction_expander:
 **预测概率**: {proba:.6f}
 ⚠ 注意：使用了简化预处理流程，可能与训练时不完全一致
 """
-                        # 将调试信息和预测结果存储到session_state，在表单外部显示
-                        st.session_state['debug_info'] = debug_info
-                        st.session_state['prediction_result'] = {
-                            'proba': proba,
-                            'risk_percent': risk_percent,
-                            'threshold': threshold
-                        }
+                            # 将调试信息和预测结果存储到session_state，在表单外部显示
+                            st.session_state['debug_info'] = debug_info
+                            st.session_state['prediction_result'] = {
+                                'proba': proba,
+                                'risk_percent': risk_percent,
+                                'threshold': threshold
+                            }
                         
                 except Exception as e:
                     # 存储错误信息，在表单外部显示
@@ -3675,12 +3681,16 @@ with nav_cols[2]:
     - `plot_kaggle_rankings.py` - 排名可视化
     """)
 
-# 页脚
-st.markdown("---")
-st.markdown("""
-<div style="text-align: center; color: #7f8c8d; padding: 2rem 0;">
-    <p><strong>WiDS Datathon 2020 - ICU死亡风险预测分析系统</strong></p>
-    <p>基于多中心临床数据的机器学习预测模型 | 作者：刘佳城</p>
-    <p>数据来源：MIT GOSSIS Initiative | 最后更新：2026年1月</p>
-</div>
-""", unsafe_allow_html=True)
+    # 页脚
+    st.markdown("---")
+    st.markdown("""
+    <div style="text-align: center; color: #7f8c8d; padding: 2rem 0;">
+        <p><strong>WiDS Datathon 2020 - ICU死亡风险预测分析系统</strong></p>
+        <p>基于多中心临床数据的机器学习预测模型 | 作者：刘佳城</p>
+        <p>数据来源：MIT GOSSIS Initiative | 最后更新：2026年1月</p>
+    </div>
+    """, unsafe_allow_html=True)
+except Exception as e:
+    st.error(f"渲染页面内容时出错: {str(e)}")
+    import traceback
+    st.text(traceback.format_exc())
