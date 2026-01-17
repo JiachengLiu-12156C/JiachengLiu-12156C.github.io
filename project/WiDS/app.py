@@ -2092,53 +2092,53 @@ with tab4:
         st.error(f"加载对比数据时出错: {str(e)}")
         st.info("💡 提示：请运行 evaluate_lightgbm_optuna.py 生成对比数据")
 
-# with tab5:
-    # st.markdown("### 模型评估模块")
-    # st.markdown("**本模块对 Optuna 调优的 LightGBM 模型进行全面评估**")
+with tab5:
+    st.markdown("### 模型评估模块")
+    st.markdown("**本模块对 Optuna 调优的 LightGBM 模型进行全面评估**")
     
     # 第一部分：Optuna优化LightGBM模型性能表格
-    # st.markdown("#### 🎯 Optuna优化LightGBM模型性能")
+    st.markdown("#### 🎯 Optuna优化LightGBM模型性能")
     
-    # try:
-        # metrics_path = BASE_DIR / "results" / "model_evaluation" / "lightgbm_optuna_metrics.csv"
-        # if metrics_path.exists():
-            # optuna_metrics = load_csv_data(metrics_path, index_col=0)
-            # metrics_row = optuna_metrics.iloc[0]
+    try:
+        metrics_path = BASE_DIR / "results" / "model_evaluation" / "lightgbm_optuna_metrics.csv"
+        if metrics_path.exists():
+            optuna_metrics = load_csv_data(metrics_path, index_col=0)
+            metrics_row = optuna_metrics.iloc[0]
             
             # 创建性能指标表格
-            # ap_score = metrics_row.get('AP-Score', None)
-            # performance_data = {
-                # '评估指标': ['AUC-ROC', '准确率 (Accuracy)', '精确率 (Precision)', '召回率 (Recall)', 'F1-Score', 'AP-Score'],
-                # '数值': [
-                    # f"{metrics_row['AUC-ROC']:.4f}",
-                    # f"{metrics_row['Accuracy']:.4f}",
-                    # f"{metrics_row['Precision']:.4f}",
-                    # f"{metrics_row['Recall']:.4f}",
-                    # f"{metrics_row['F1-Score']:.4f}",
-                    # f"{ap_score:.4f}" if ap_score is not None and not pd.isna(ap_score) else "N/A"
-                # ]
-            # }
-            # performance_df = pd.DataFrame(performance_data)
+            ap_score = metrics_row.get('AP-Score', None)
+            performance_data = {
+                '评估指标': ['AUC-ROC', '准确率 (Accuracy)', '精确率 (Precision)', '召回率 (Recall)', 'F1-Score', 'AP-Score'],
+                '数值': [
+                    f"{metrics_row['AUC-ROC']:.4f}",
+                    f"{metrics_row['Accuracy']:.4f}",
+                    f"{metrics_row['Precision']:.4f}",
+                    f"{metrics_row['Recall']:.4f}",
+                    f"{metrics_row['F1-Score']:.4f}",
+                    f"{ap_score:.4f}" if ap_score is not None and not pd.isna(ap_score) else "N/A"
+                ]
+            }
+            performance_df = pd.DataFrame(performance_data)
             
             # 使用st.table显示表格（更简洁）
-            # st.table(performance_df)
-        # else:
+            st.table(performance_df)
+        else:
             # 如果没有数据文件，显示默认值
-            # performance_data = {
+            performance_data = {
                 # '评估指标': ['AUC-ROC', '准确率 (Accuracy)', '精确率 (Precision)', '召回率 (Recall)', 'F1-Score', 'AP-Score'],
                 # '数值': ['0.9069', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A']
-            # }
-            # performance_df = pd.DataFrame(performance_data)
-            # st.table(performance_df)
-            # st.info("💡 提示：请先运行 `evaluate_lightgbm_optuna.py` 生成评估指标数据")
-    # except Exception as e:
-        # st.error(f"加载指标数据时出错: {str(e)}")
-        # st.info("💡 提示：请先运行 `evaluate_lightgbm_optuna.py` 生成评估指标数据")
+            }
+            performance_df = pd.DataFrame(performance_data)
+            st.table(performance_df)
+            st.info("💡 提示：请先运行 `evaluate_lightgbm_optuna.py` 生成评估指标数据")
+    except Exception as e:
+        st.error(f"加载指标数据时出错: {str(e)}")
+        st.info("💡 提示：请先运行 `evaluate_lightgbm_optuna.py` 生成评估指标数据")
     
-    # st.markdown("---")
+    st.markdown("---")
     
     # 评估指标说明
-    # st.markdown("""
+    st.markdown("""
     # **评估指标说明：**
     # - **AUC-ROC**：ROC曲线下面积，衡量模型区分正负样本的能力（主要指标）
     # - **准确率 (Accuracy)**：正确预测的样本占总样本的比例
@@ -2146,450 +2146,450 @@ with tab4:
     # - **召回率 (Recall)**：实际正例中被正确预测的比例
     # - **F1-Score**：精确率和召回率的调和平均数
     # - **AP-Score**：平均精确率，PR曲线下面积
-    # """)
+    """)
     
     # ROC曲线、PR曲线和混淆矩阵 - 同一行显示
-    # st.markdown("#### ROC曲线、PR曲线和混淆矩阵")
+    st.markdown("#### ROC曲线、PR曲线和混淆矩阵")
     
     # 创建三列布局
-    # col_roc, col_pr, col_cm = st.columns(3)
+    col_roc, col_pr, col_cm = st.columns(3)
     
     # 准备数据
-    # fig_roc = None
-    # fig_pr = None
-    # fig_cm = None
+    fig_roc = None
+    fig_pr = None
+    fig_cm = None
     
-    # try:
-        # from sklearn.metrics import roc_curve, auc, precision_recall_curve, average_precision_score
-        # from sklearn.model_selection import train_test_split
-        # import pickle
-        # import lightgbm as lgb
+    try:
+        from sklearn.metrics import roc_curve, auc, precision_recall_curve, average_precision_score
+        from sklearn.model_selection import train_test_split
+        import pickle
+        import lightgbm as lgb
         
-        # model_path = BASE_DIR / "models" / "LightGBM_tuned_advanced.pkl"
-        # preprocessor_path = BASE_DIR / "models" / "preprocessor_lightgbm_advanced.pkl"
-        # data_path = BASE_DIR / "data" / "training_v2.csv"
-        # cm_path = BASE_DIR / "results" / "model_evaluation" / "confusion_matrix.csv"
+        model_path = BASE_DIR / "models" / "LightGBM_tuned_advanced.pkl"
+        preprocessor_path = BASE_DIR / "models" / "preprocessor_lightgbm_advanced.pkl"
+        data_path = BASE_DIR / "data" / "training_v2.csv"
+        cm_path = BASE_DIR / "results" / "model_evaluation" / "confusion_matrix.csv"
         
         # 尝试加载模型和数据
-        # model = None
-        # y_proba = None
-        # y_val = None
+        model = None
+        y_proba = None
+        y_val = None
         
-        # if model_path.exists() and data_path.exists():
-            # try:
-                # with st.spinner("正在加载Optuna优化模型并计算评估指标（这可能需要几秒钟）..."):
+        if model_path.exists() and data_path.exists():
+            try:
+                with st.spinner("正在加载Optuna优化模型并计算评估指标（这可能需要几秒钟）..."):
                     # 加载模型（使用缓存）
-                    # model_data = load_model(model_path)
-                    # if isinstance(model_data, dict):
-                        # model = model_data.get('model')
-                    # else:
-                        # model = model_data
+                    model_data = load_model(model_path)
+                    if isinstance(model_data, dict):
+                        model = model_data.get('model')
+                    else:
+                        model = model_data
                     
-                    # if model is not None:
+                    if model is not None:
                         # 获取模型期望的特征数量
-                        # model_n_features = None
-                        # try:
-                            # if hasattr(model, 'n_features_'):
-                                # model_n_features = model.n_features_
-                            # elif hasattr(model, 'booster_'):
-                                # model_n_features = model.booster_.num_feature()
-                        # except:
-                            # pass
+                        model_n_features = None
+                        try:
+                            if hasattr(model, 'n_features_'):
+                                model_n_features = model.n_features_
+                            elif hasattr(model, 'booster_'):
+                                model_n_features = model.booster_.num_feature()
+                        except:
+                            pass
                         
                         # 尝试加载预处理器获取特征列表（静默，仅在出错时提示）
-                        # selected_features = None
-                        # if preprocessor_path.exists():
-                            # try:
-                                # preprocessor = load_preprocessor(preprocessor_path)
-                                # if isinstance(preprocessor, dict) and 'feature_names' in preprocessor:
-                                    # selected_features = preprocessor['feature_names']
-                            # except Exception as e:
-                                # st.warning(f"无法加载预处理器: {str(e)}")
+                        selected_features = None
+                        if preprocessor_path.exists():
+                            try:
+                                preprocessor = load_preprocessor(preprocessor_path)
+                                if isinstance(preprocessor, dict) and 'feature_names' in preprocessor:
+                                    selected_features = preprocessor['feature_names']
+                            except Exception as e:
+                                st.warning(f"无法加载预处理器: {str(e)}")
 
                         # 简化方法：直接使用本地 data 目录中的 CSV，不依赖仓库根目录的 Python 脚本
                         # 优化：减少样本量，加快加载速度
-                        # train_df = load_csv_data(data_path, nrows=5000, low_memory=False, na_values=['NA', ''])
-                        # if 'hospital_death' in train_df.columns:
-                            # numeric_cols = train_df.select_dtypes(include=[np.number]).columns.tolist()
-                            # numeric_cols = [col for col in numeric_cols if col not in 
-                                           # ['encounter_id', 'patient_id', 'hospital_id', 'hospital_death']]
+                        train_df = load_csv_data(data_path, nrows=5000, low_memory=False, na_values=['NA', ''])
+                        if 'hospital_death' in train_df.columns:
+                            numeric_cols = train_df.select_dtypes(include=[np.number]).columns.tolist()
+                            numeric_cols = [col for col in numeric_cols if col not in 
+                                           ['encounter_id', 'patient_id', 'hospital_id', 'hospital_death']]
 
                             # 使用模型期望的特征数量，如果没有则使用79（根据之前调试信息）
-                            # n_features = model_n_features if model_n_features else 79
+                            n_features = model_n_features if model_n_features else 79
 
-                            # if selected_features is not None:
+                            if selected_features is not None:
                                 # 优先使用预处理器中的特征列表
-                                # available_features = [col for col in selected_features if col in numeric_cols][:n_features]
-                            # else:
-                                # available_features = [col for col in numeric_cols if col in train_df.columns][:n_features]
+                                available_features = [col for col in selected_features if col in numeric_cols][:n_features]
+                            else:
+                                available_features = [col for col in numeric_cols if col in train_df.columns][:n_features]
 
-                            # if len(available_features) < n_features:
-                                # st.warning(f"可用特征数 ({len(available_features)}) 少于模型期望 ({n_features})")
+                            if len(available_features) < n_features:
+                                st.warning(f"可用特征数 ({len(available_features)}) 少于模型期望 ({n_features})")
 
-                            # X_sample = train_df[available_features].fillna(train_df[available_features].median())
-                            # y_sample = train_df['hospital_death']
+                            X_sample = train_df[available_features].fillna(train_df[available_features].median())
+                            y_sample = train_df['hospital_death']
 
                             # 数据分割
-                            # X_train, X_val, y_train, y_val = train_test_split(
-                                # X_sample, y_sample, test_size=0.2, random_state=42, stratify=y_sample
-                            # )
+                            X_train, X_val, y_train, y_val = train_test_split(
+                                X_sample, y_sample, test_size=0.2, random_state=42, stratify=y_sample
+                            )
 
                             # 确保特征数量匹配
-                            # if model_n_features and X_val.shape[1] != model_n_features:
-                                # if X_val.shape[1] > model_n_features:
-                                    # X_val = X_val.iloc[:, :model_n_features]
-                                # else:
-                                    # st.error(f"特征数量不足: 需要 {model_n_features} 个，但只有 {X_val.shape[1]} 个")
+                            if model_n_features and X_val.shape[1] != model_n_features:
+                                if X_val.shape[1] > model_n_features:
+                                    X_val = X_val.iloc[:, :model_n_features]
+                                else:
+                                    st.error(f"特征数量不足: 需要 {model_n_features} 个，但只有 {X_val.shape[1]} 个")
                                     # raise ValueError("特征数量不匹配")
 
-                            # y_proba = model.predict_proba(
-                                # X_val.values if isinstance(X_val, pd.DataFrame) else X_val
-                            # )[:, 1]
-            # except Exception as e:
-                # st.warning(f"加载模型或数据时出错: {str(e)}")
-                # import traceback
-                # st.text(traceback.format_exc())
+                            y_proba = model.predict_proba(
+                                X_val.values if isinstance(X_val, pd.DataFrame) else X_val
+                            )[:, 1]
+            except Exception as e:
+                st.warning(f"加载模型或数据时出错: {str(e)}")
+                import traceback
+                st.text(traceback.format_exc())
         
         # 1. ROC曲线
-        # with col_roc:
-            # st.markdown("##### ROC曲线")
-            # if y_proba is not None and y_val is not None:
-                # fpr, tpr, _ = roc_curve(y_val, y_proba)
-                # roc_auc = auc(fpr, tpr)
-                # fig_roc = go.Figure()
-                # fig_roc.add_trace(go.Scatter(
-                    # x=fpr,
-                    # y=tpr,
-                    # mode='lines',
-                    # name=f'AUC = {roc_auc:.4f}',
-                    # line=dict(color='#e74c3c', width=2)
-                # ))
-            # else:
-                # fpr_example = np.linspace(0, 1, 100)
-                # tpr_example = np.sqrt(fpr_example)
-                # fig_roc = go.Figure()
-                # fig_roc.add_trace(go.Scatter(
-                    # x=fpr_example,
-                    # y=tpr_example,
-                    # mode='lines',
-                    # name='AUC = 0.9069',
-                    # line=dict(color='#e74c3c', width=2)
-                # ))
+        with col_roc:
+            st.markdown("##### ROC曲线")
+            if y_proba is not None and y_val is not None:
+                fpr, tpr, _ = roc_curve(y_val, y_proba)
+                roc_auc = auc(fpr, tpr)
+                fig_roc = go.Figure()
+                fig_roc.add_trace(go.Scatter(
+                    x=fpr,
+                    y=tpr,
+                    mode='lines',
+                    name=f'AUC = {roc_auc:.4f}',
+                    line=dict(color='#e74c3c', width=2)
+                ))
+            else:
+                fpr_example = np.linspace(0, 1, 100)
+                tpr_example = np.sqrt(fpr_example)
+                fig_roc = go.Figure()
+                fig_roc.add_trace(go.Scatter(
+                    x=fpr_example,
+                    y=tpr_example,
+                    mode='lines',
+                    name='AUC = 0.9069',
+                    line=dict(color='#e74c3c', width=2)
+                ))
             
-            # fig_roc.add_trace(go.Scatter(
-                # x=[0, 1],
-                # y=[0, 1],
-                # mode='lines',
-                # name='随机猜测',
-                # line=dict(color='gray', width=1.5, dash='dash')
-            # ))
-            # fig_roc.update_layout(
-                # xaxis_title='假阳性率',
-                # yaxis_title='真阳性率',
-                # height=400,
-                # showlegend=True,
-                # margin=dict(l=30, r=20, t=50, b=40)
-            # )
-            # st.plotly_chart(fig_roc, use_container_width=True)
+            fig_roc.add_trace(go.Scatter(
+                x=[0, 1],
+                y=[0, 1],
+                mode='lines',
+                name='随机猜测',
+                line=dict(color='gray', width=1.5, dash='dash')
+            ))
+            fig_roc.update_layout(
+                xaxis_title='假阳性率',
+                yaxis_title='真阳性率',
+                height=400,
+                showlegend=True,
+                margin=dict(l=30, r=20, t=50, b=40)
+            )
+            st.plotly_chart(fig_roc, use_container_width=True)
         
         # 2. PR曲线
-        # with col_pr:
-            # st.markdown("##### PR曲线")
-            # if y_proba is not None and y_val is not None:
-                # precision, recall, _ = precision_recall_curve(y_val, y_proba)
-                # ap_score = average_precision_score(y_val, y_proba)
-                # baseline = np.sum(y_val) / len(y_val)
-                # fig_pr = go.Figure()
-                # fig_pr.add_trace(go.Scatter(
-                    # x=recall,
-                    # y=precision,
-                    # mode='lines',
-                    # name=f'AP = {ap_score:.4f}',
-                    # line=dict(color='#3498db', width=2),
-                    # fill='tozeroy'
-                # ))
-                # fig_pr.add_hline(
-                    # y=baseline,
-                    # line_dash="dash",
-                    # line_color="gray",
-                    # annotation_text=f"基线 ({baseline:.3f})"
-                # )
-            # else:
-                # recall_example = np.linspace(0, 1, 100)
-                # precision_example = 0.6 - 0.3 * recall_example
-                # fig_pr = go.Figure()
-                # fig_pr.add_trace(go.Scatter(
-                    # x=recall_example,
-                    # y=precision_example,
-                    # mode='lines',
-                    # name='AP = 0.5946',
-                    # line=dict(color='#3498db', width=2),
-                    # fill='tozeroy'
-                # ))
-                # fig_pr.add_hline(y=0.13, line_dash="dash", line_color="gray", annotation_text="基线 (0.13)")
+        with col_pr:
+            st.markdown("##### PR曲线")
+            if y_proba is not None and y_val is not None:
+                precision, recall, _ = precision_recall_curve(y_val, y_proba)
+                ap_score = average_precision_score(y_val, y_proba)
+                baseline = np.sum(y_val) / len(y_val)
+                fig_pr = go.Figure()
+                fig_pr.add_trace(go.Scatter(
+                    x=recall,
+                    y=precision,
+                    mode='lines',
+                    name=f'AP = {ap_score:.4f}',
+                    line=dict(color='#3498db', width=2),
+                    fill='tozeroy'
+                ))
+                fig_pr.add_hline(
+                    y=baseline,
+                    line_dash="dash",
+                    line_color="gray",
+                    annotation_text=f"基线 ({baseline:.3f})"
+                )
+            else:
+                recall_example = np.linspace(0, 1, 100)
+                precision_example = 0.6 - 0.3 * recall_example
+                fig_pr = go.Figure()
+                fig_pr.add_trace(go.Scatter(
+                    x=recall_example,
+                    y=precision_example,
+                    mode='lines',
+                    name='AP = 0.5946',
+                    line=dict(color='#3498db', width=2),
+                    fill='tozeroy'
+                ))
+                fig_pr.add_hline(y=0.13, line_dash="dash", line_color="gray", annotation_text="基线 (0.13)")
             
-            # fig_pr.update_layout(
-                # xaxis_title='召回率',
-                # yaxis_title='精确率',
-                # height=400,
-                # showlegend=True,
-                # margin=dict(l=30, r=20, t=50, b=40)
-            # )
-            # st.plotly_chart(fig_pr, use_container_width=True)
+            fig_pr.update_layout(
+                xaxis_title='召回率',
+                yaxis_title='精确率',
+                height=400,
+                showlegend=True,
+                margin=dict(l=30, r=20, t=50, b=40)
+            )
+            st.plotly_chart(fig_pr, use_container_width=True)
         
         # 3. 混淆矩阵
-        # with col_cm:
-            # st.markdown("##### 混淆矩阵")
-            # if cm_path.exists():
-                # cm_df = load_csv_data(cm_path, index_col=0)
-                # cm = cm_df.values
-            # else:
-                # cm = np.array([[16101, 659], [731, 852]])
+        with col_cm:
+            st.markdown("##### 混淆矩阵")
+            if cm_path.exists():
+                cm_df = load_csv_data(cm_path, index_col=0)
+                cm = cm_df.values
+            else:
+                cm = np.array([[16101, 659], [731, 852]])
             
-            # cm_normalized = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
-            # fig_cm = go.Figure(data=go.Heatmap(
-                # z=cm,
-                # x=['存活', '死亡'],
-                # y=['存活', '死亡'],
-                # colorscale='Blues',
-                # hovertemplate='真实: %{y}<br>预测: %{x}<br>数量: %{z}<extra></extra>',
-                # showscale=True
-            # ))
+            cm_normalized = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+            fig_cm = go.Figure(data=go.Heatmap(
+                z=cm,
+                x=['存活', '死亡'],
+                y=['存活', '死亡'],
+                colorscale='Blues',
+                hovertemplate='真实: %{y}<br>预测: %{x}<br>数量: %{z}<extra></extra>',
+                showscale=True
+            ))
             
-            # annotations = []
-            # for i in range(2):
-                # for j in range(2):
-                    # annotations.append(
-                        # dict(
-                            # x=j, y=i,
-                            # text=f'{cm[i, j]}<br>({cm_normalized[i, j]*100:.1f}%)',
-                            # showarrow=False,
-                            # font=dict(size=12, color='white' if cm[i, j] > cm.max()/2 else 'black')
-                        # )
-                    # )
+            annotations = []
+            for i in range(2):
+                for j in range(2):
+                    annotations.append(
+                        dict(
+                            x=j, y=i,
+                            text=f'{cm[i, j]}<br>({cm_normalized[i, j]*100:.1f}%)',
+                            showarrow=False,
+                            font=dict(size=12, color='white' if cm[i, j] > cm.max()/2 else 'black')
+                        )
+                    )
             
-            # fig_cm.update_layout(
-                # xaxis_title='预测标签',
-                # yaxis_title='真实标签',
-                # height=400,
-                # annotations=annotations,
-                # margin=dict(l=30, r=20, t=50, b=40)
-            # )
-            # st.plotly_chart(fig_cm, use_container_width=True)
+            fig_cm.update_layout(
+                xaxis_title='预测标签',
+                yaxis_title='真实标签',
+                height=400,
+                annotations=annotations,
+                margin=dict(l=30, r=20, t=50, b=40)
+            )
+            st.plotly_chart(fig_cm, use_container_width=True)
             
             # 显示统计摘要
-            # tn, fp, fn, tp = cm[0, 0], cm[0, 1], cm[1, 0], cm[1, 1]
-            # st.caption(f"TN: {tn:,} | FP: {fp:,} | FN: {fn:,} | TP: {tp:,}")
+            tn, fp, fn, tp = cm[0, 0], cm[0, 1], cm[1, 0], cm[1, 1]
+            st.caption(f"TN: {tn:,} | FP: {fp:,} | FN: {fn:,} | TP: {tp:,}")
     
-    # except Exception as e:
-        # st.error(f"生成评估图表时出错: {str(e)}")
+    except Exception as e:
+        st.error(f"生成评估图表时出错: {str(e)}")
     
     # 4. SHAP可解释性分析
-    # st.markdown("#### SHAP可解释性分析")
+    st.markdown("#### SHAP可解释性分析")
     
     # 尝试生成交互式SHAP图表
-    # shap_interactive_success = False
-    # try:
-        # import shap
-        # import pickle
-        # import lightgbm as lgb
+    shap_interactive_success = False
+    try:
+        import shap
+        import pickle
+        import lightgbm as lgb
         
-        # model_path = BASE_DIR / "models" / "LightGBM_tuned_advanced.pkl"
-        # data_path = BASE_DIR / "data" / "training_v2.csv"
+        model_path = BASE_DIR / "models" / "LightGBM_tuned_advanced.pkl"
+        data_path = BASE_DIR / "data" / "training_v2.csv"
         
-        # if model_path.exists() and data_path.exists():
-            # with st.spinner("正在计算SHAP值并生成交互式图表..."):
-                # try:
+        if model_path.exists() and data_path.exists():
+            with st.spinner("正在计算SHAP值并生成交互式图表..."):
+                try:
                     # 加载模型
-                    # with open(model_path, 'rb') as f:
-                        # model_data = pickle.load(f)
-                        # if isinstance(model_data, dict):
-                            # shap_model = model_data.get('model')
-                        # else:
-                            # shap_model = model_data
+                    with open(model_path, 'rb') as f:
+                        model_data = pickle.load(f)
+                        if isinstance(model_data, dict):
+                            shap_model = model_data.get('model')
+                        else:
+                            shap_model = model_data
                     
-                    # if shap_model is not None:
+                    if shap_model is not None:
                         # 模型期望特征数
-                        # model_n_features = None
-                        # try:
-                            # if hasattr(shap_model, 'n_features_'):
-                                # model_n_features = shap_model.n_features_
-                            # elif hasattr(shap_model, 'booster_'):
-                                # model_n_features = shap_model.booster_.num_feature()
-                        # except Exception:
-                            # model_n_features = None
+                        model_n_features = None
+                        try:
+                            if hasattr(shap_model, 'n_features_'):
+                                model_n_features = shap_model.n_features_
+                            elif hasattr(shap_model, 'booster_'):
+                                model_n_features = shap_model.booster_.num_feature()
+                        except Exception:
+                            model_n_features = None
                         
                         # 预处理器特征
-                        # selected_features = None
-                        # preprocessor_path = BASE_DIR / "models" / "preprocessor_lightgbm_advanced.pkl"
-                        # if preprocessor_path.exists():
-                            # try:
-                                # preprocessor = load_preprocessor(preprocessor_path)
-                                # if isinstance(preprocessor, dict) and 'feature_names' in preprocessor:
-                                    # selected_features = preprocessor['feature_names']
-                            # except Exception:
-                                # selected_features = None
+                        selected_features = None
+                        preprocessor_path = BASE_DIR / "models" / "preprocessor_lightgbm_advanced.pkl"
+                        if preprocessor_path.exists():
+                            try:
+                                preprocessor = load_preprocessor(preprocessor_path)
+                                if isinstance(preprocessor, dict) and 'feature_names' in preprocessor:
+                                    selected_features = preprocessor['feature_names']
+                            except Exception:
+                                selected_features = None
                         
                         # 读取数据
                         # 优化：减少样本量，加快加载速度
-                        # train_df = load_csv_data(data_path, nrows=1000, low_memory=False, na_values=['NA', ''])
-                        # if 'hospital_death' in train_df.columns:
-                            # numeric_cols = train_df.select_dtypes(include=[np.number]).columns.tolist()
-                            # numeric_cols = [col for col in numeric_cols if col not in 
-                                           # ['encounter_id', 'patient_id', 'hospital_id', 'hospital_death']]
+                        train_df = load_csv_data(data_path, nrows=1000, low_memory=False, na_values=['NA', ''])
+                        if 'hospital_death' in train_df.columns:
+                            numeric_cols = train_df.select_dtypes(include=[np.number]).columns.tolist()
+                            numeric_cols = [col for col in numeric_cols if col not in 
+                                           ['encounter_id', 'patient_id', 'hospital_id', 'hospital_death']]
                             
                             # 选择特征：优先预处理器，否则按模型期望特征数
-                            # if selected_features:
-                                # features = [f for f in selected_features if f in train_df.columns]
-                                # if model_n_features and len(features) > model_n_features:
-                                    # features = features[:model_n_features]
-                            # else:
-                                # n_feats = model_n_features if model_n_features else 79
-                                # features = [col for col in numeric_cols if col in train_df.columns][:n_feats]
+                            if selected_features:
+                                features = [f for f in selected_features if f in train_df.columns]
+                                if model_n_features and len(features) > model_n_features:
+                                    features = features[:model_n_features]
+                            else:
+                                n_feats = model_n_features if model_n_features else 79
+                                features = [col for col in numeric_cols if col in train_df.columns][:n_feats]
                             
                             # 校验特征数量
-                            # if model_n_features and len(features) != model_n_features:
-                                # if len(features) < model_n_features:
-                                    # st.warning(f"可用特征数 ({len(features)}) 少于模型期望 ({model_n_features})，跳过交互式SHAP")
+                            if model_n_features and len(features) != model_n_features:
+                                if len(features) < model_n_features:
+                                    st.warning(f"可用特征数 ({len(features)}) 少于模型期望 ({model_n_features})，跳过交互式SHAP")
                                     # raise ValueError("特征数量不足，无法计算SHAP")
                                 # 多余的已截断
                             
-                            # X_shap = train_df[features].fillna(train_df[features].median())
+                            X_shap = train_df[features].fillna(train_df[features].median())
                             
                             # 创建SHAP解释器
-                            # explainer = shap.TreeExplainer(shap_model)
-                            # shap_values_all = explainer.shap_values(X_shap)
+                            explainer = shap.TreeExplainer(shap_model)
+                            shap_values_all = explainer.shap_values(X_shap)
                             
                             # LightGBM二分类：shap_values通常为[class0, class1]
-                            # if isinstance(shap_values_all, list) and len(shap_values_all) > 1:
-                                # shap_values = shap_values_all[1]
-                                # expected_value = explainer.expected_value[1] if isinstance(explainer.expected_value, (list, np.ndarray)) else explainer.expected_value
-                            # else:
-                                # shap_values = shap_values_all
-                                # expected_value = explainer.expected_value
+                            if isinstance(shap_values_all, list) and len(shap_values_all) > 1:
+                                shap_values = shap_values_all[1]
+                                expected_value = explainer.expected_value[1] if isinstance(explainer.expected_value, (list, np.ndarray)) else explainer.expected_value
+                            else:
+                                shap_values = shap_values_all
+                                expected_value = explainer.expected_value
                             
                             # 创建两列布局
-                            # col1, col2 = st.columns(2)
+                            col1, col2 = st.columns(2)
                             
-                            # with col1:
-                                # st.markdown("##### SHAP Summary Plot（类似官方shap_summary风格）")
+                            with col1:
+                                st.markdown("##### SHAP Summary Plot（类似官方shap_summary风格）")
                                 
                                 # 取Top N特征，模仿shap.summary_plot的散点/蜂群效果
-                                # top_n = 20
-                                # mean_abs = np.abs(shap_values).mean(0)
-                                # order_idx = np.argsort(mean_abs)[-top_n:]
-                                # top_features = X_shap.columns[order_idx]
+                                top_n = 20
+                                mean_abs = np.abs(shap_values).mean(0)
+                                order_idx = np.argsort(mean_abs)[-top_n:]
+                                top_features = X_shap.columns[order_idx]
                                 
                                 # 采样样本减少渲染负载
-                                # sample_n = min(500, shap_values.shape[0])
-                                # shap_subset = shap_values[:sample_n, :]
+                                sample_n = min(500, shap_values.shape[0])
+                                shap_subset = shap_values[:sample_n, :]
                                 
-                                # records = []
-                                # for feat in top_features:
-                                    # f_idx = list(X_shap.columns).index(feat)
-                                    # shap_vals_feat = shap_subset[:, f_idx]
-                                    # feat_vals = X_shap[feat].values[:sample_n]
-                                    # for sv, fv in zip(shap_vals_feat, feat_vals):
-                                        # records.append({
+                                records = []
+                                for feat in top_features:
+                                    f_idx = list(X_shap.columns).index(feat)
+                                    shap_vals_feat = shap_subset[:, f_idx]
+                                    feat_vals = X_shap[feat].values[:sample_n]
+                                    for sv, fv in zip(shap_vals_feat, feat_vals):
+                                        records.append({
                                             # "特征": feat,
                                             # "SHAP值": sv,
                                             # "特征值": fv
-                                        # })
+                                        })
                                 
-                                # shap_long_df = pd.DataFrame(records)
-                                # shap_long_df["特征"] = pd.Categorical(
+                                shap_long_df = pd.DataFrame(records)
+                                shap_long_df["特征"] = pd.Categorical(
                                     # shap_long_df["特征"],
-                                    # categories=list(top_features),
-                                    # ordered=True
-                                # )
+                                    categories=list(top_features),
+                                    ordered=True
+                                )
                                 
                                 # 使用散点图模拟蜂群效果，并保留连续色阶
-                                # fig_shap_summary = px.scatter(
-                                    # shap_long_df,
-                                    # x="SHAP值",
-                                    # y="特征",
-                                    # color="特征值",
-                                    # title="SHAP特征重要性（Top 20）",
-                                    # color_continuous_scale="RdBu",
-                                    # hover_data={"特征值": True, "SHAP值": True},
-                                # )
-                                # fig_shap_summary.update_traces(
-                                    # opacity=0.7,
-                                    # marker=dict(size=6, line=dict(width=0))
-                                # )
-                                # fig_shap_summary.update_layout(
-                                    # height=520,
-                                    # yaxis_title="特征（按平均|SHAP值|排序）",
-                                    # xaxis_title="SHAP值",
-                                    # showlegend=False,
-                                    # coloraxis_colorbar=dict(title="特征值")
-                                # )
-                                # st.plotly_chart(fig_shap_summary, use_container_width=True)
+                                fig_shap_summary = px.scatter(
+                                    shap_long_df,
+                                    x="SHAP值",
+                                    y="特征",
+                                    color="特征值",
+                                    title="SHAP特征重要性（Top 20）",
+                                    color_continuous_scale="RdBu",
+                                    hover_data={"特征值": True, "SHAP值": True},
+                                )
+                                fig_shap_summary.update_traces(
+                                    opacity=0.7,
+                                    marker=dict(size=6, line=dict(width=0))
+                                )
+                                fig_shap_summary.update_layout(
+                                    height=520,
+                                    yaxis_title="特征（按平均|SHAP值|排序）",
+                                    xaxis_title="SHAP值",
+                                    showlegend=False,
+                                    coloraxis_colorbar=dict(title="特征值")
+                                )
+                                st.plotly_chart(fig_shap_summary, use_container_width=True)
                                 
-                                # st.markdown("##### SHAP Dependence Plot（特征依赖图）")
+                                st.markdown("##### SHAP Dependence Plot（特征依赖图）")
                                 # 取最重要的特征（Top列表最后一个）并绘制依赖图
-                                # if len(top_features) > 0:
-                                    # top_feature = top_features[-1]
-                                    # if top_feature in X_shap.columns:
-                                        # feature_idx = list(X_shap.columns).index(top_feature)
-                                        # fig_shap_dep = px.scatter(
-                                            # x=X_shap[top_feature].values[:500]
-                                        # )
-                                        # fig_shap_dep.update_traces(
-                                            # y=np.array(shap_values)[:500, feature_idx],
-                                            # mode='markers',
-                                            # marker=dict(
-                                                # color=np.array(shap_values)[:500, feature_idx],
-                                                # colorscale='RdBu',
-                                                # showscale=True
-                                            # ),
-                                            # hovertemplate='特征值: %{x}<br>SHAP值: %{y}<extra></extra>'
-                                        # )
-                                        # fig_shap_dep.update_layout(
-                                            # title=f'SHAP依赖图 - {top_feature}',
-                                            # xaxis_title=f'{top_feature} 值',
-                                            # yaxis_title='SHAP值',
-                                            # height=500
-                                        # )
-                                        # st.plotly_chart(fig_shap_dep, use_container_width=True)
+                                if len(top_features) > 0:
+                                    top_feature = top_features[-1]
+                                    if top_feature in X_shap.columns:
+                                        feature_idx = list(X_shap.columns).index(top_feature)
+                                        fig_shap_dep = px.scatter(
+                                            x=X_shap[top_feature].values[:500]
+                                        )
+                                        fig_shap_dep.update_traces(
+                                            y=np.array(shap_values)[:500, feature_idx],
+                                            mode='markers',
+                                            marker=dict(
+                                                color=np.array(shap_values)[:500, feature_idx],
+                                                colorscale='RdBu',
+                                                showscale=True
+                                            ),
+                                            hovertemplate='特征值: %{x}<br>SHAP值: %{y}<extra></extra>'
+                                        )
+                                        fig_shap_dep.update_layout(
+                                            title=f'SHAP依赖图 - {top_feature}',
+                                            xaxis_title=f'{top_feature} 值',
+                                            yaxis_title='SHAP值',
+                                            height=500
+                                        )
+                                        st.plotly_chart(fig_shap_dep, use_container_width=True)
                             
-                            # with col2:
-                                # st.markdown("##### SHAP Force Plot（个体解释示例）")
+                            with col2:
+                                st.markdown("##### SHAP Force Plot（个体解释示例）")
                                 # 选择一个示例样本
-                                # example_idx = 0
-                                # example_shap_values = shap_values[example_idx]
-                                # example_features = X_shap.iloc[example_idx]
+                                example_idx = 0
+                                example_shap_values = shap_values[example_idx]
+                                example_features = X_shap.iloc[example_idx]
                                 
                                 # 创建交互式force plot（使用条形图）
-                                # force_df = pd.DataFrame({
+                                force_df = pd.DataFrame({
                                     # '特征': X_shap.columns,
                                     # 'SHAP值': example_shap_values,
                                     # '特征值': example_features.values
-                                # }).sort_values('SHAP值', key=abs, ascending=False).head(15)
+                                }).sort_values('SHAP值', key=abs, ascending=False).head(15)
                                 
-                                # colors = ['#e74c3c' if x > 0 else '#3498db' for x in force_df['SHAP值']]
-                                # fig_shap_force = go.Figure()
-                                # fig_shap_force.add_trace(go.Bar(
-                                    # x=force_df['SHAP值'],
-                                    # y=force_df['特征'],
-                                    # orientation='h',
-                                    # marker_color=colors,
-                                    # text=force_df['特征值'].apply(lambda x: f'{x:.2f}'),
-                                    # textposition='outside',
-                                    # hovertemplate='<b>%{y}</b><br>SHAP值: %{x:.4f}<br>特征值: %{text}<extra></extra>'
-                                # ))
-                                # fig_shap_force.add_vline(x=0, line_dash="dash", line_color="gray")
-                                # fig_shap_force.update_layout(
-                                    # title=f'SHAP Force Plot - 样本 {example_idx+1}<br>预测值: {expected_value + example_shap_values.sum():.4f}',
-                                    # xaxis_title='SHAP值（红色推高风险，蓝色降低风险）',
-                                    # yaxis_title='特征',
-                                    # height=500,
-                                    # showlegend=False
-                                # )
-                                # st.plotly_chart(fig_shap_force, use_container_width=True)
+                                colors = ['#e74c3c' if x > 0 else '#3498db' for x in force_df['SHAP值']]
+                                fig_shap_force = go.Figure()
+                                fig_shap_force.add_trace(go.Bar(
+                                    x=force_df['SHAP值'],
+                                    y=force_df['特征'],
+                                    orientation='h',
+                                    marker_color=colors,
+                                    text=force_df['特征值'].apply(lambda x: f'{x:.2f}'),
+                                    textposition='outside',
+                                    hovertemplate='<b>%{y}</b><br>SHAP值: %{x:.4f}<br>特征值: %{text}<extra></extra>'
+                                ))
+                                fig_shap_force.add_vline(x=0, line_dash="dash", line_color="gray")
+                                fig_shap_force.update_layout(
+                                    title=f'SHAP Force Plot - 样本 {example_idx+1}<br>预测值: {expected_value + example_shap_values.sum():.4f}',
+                                    xaxis_title='SHAP值（红色推高风险，蓝色降低风险）',
+                                    yaxis_title='特征',
+                                    height=500,
+                                    showlegend=False
+                                )
+                                st.plotly_chart(fig_shap_force, use_container_width=True)
                                 
-                                # st.markdown("##### SHAP说明")
-                                # st.markdown("""
+                                st.markdown("##### SHAP说明")
+                                st.markdown("""
                                 # **SHAP (SHapley Additive exPlanations)** 提供了模型的可解释性分析：
                                 
                                 # - **Summary Plot**: 展示各特征对模型输出的整体贡献大小及方向
@@ -2600,20 +2600,20 @@ with tab4:
                                 # - 帮助医生理解模型的决策依据
                                 # - 识别主要风险驱动因素
                                 # - 提供个体化解释，辅助临床决策
-                                # """)
+                                """)
                             
-                            # shap_interactive_success = True
-                # except Exception as e:
-                    # st.warning(f"生成交互式SHAP图表时出错: {str(e)}")
-                    # st.info("💡 请确保已安装SHAP库（`pip install shap`）并加载模型后可生成交互式图表")
-    # except ImportError:
-        # st.info("💡 SHAP库未安装，无法生成交互式SHAP图表。运行 `pip install shap` 可启用交互式SHAP图表")
-    # except Exception as e:
-        # st.info(f"💡 无法生成交互式SHAP图表: {str(e)}")
+                            shap_interactive_success = True
+                except Exception as e:
+                    st.warning(f"生成交互式SHAP图表时出错: {str(e)}")
+                    st.info("💡 请确保已安装SHAP库（`pip install shap`）并加载模型后可生成交互式图表")
+    except ImportError:
+        st.info("💡 SHAP库未安装，无法生成交互式SHAP图表。运行 `pip install shap` 可启用交互式SHAP图表")
+    except Exception as e:
+        st.info(f"💡 无法生成交互式SHAP图表: {str(e)}")
     
     # 如果无法生成交互式图表，显示提示信息
-    # if not shap_interactive_success:
-        # st.info("💡 交互式SHAP图表需要加载模型和数据。请确保模型文件和数据文件已正确放置在对应目录下。")
+    if not shap_interactive_success:
+        st.info("💡 交互式SHAP图表需要加载模型和数据。请确保模型文件和数据文件已正确放置在对应目录下。")
 
 # with tab6:
     # st.markdown("### Kaggle提交结果")
