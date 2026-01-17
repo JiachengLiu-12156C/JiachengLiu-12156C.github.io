@@ -1724,373 +1724,373 @@ with tab3:
         st.error(f"生成统计分析图表时出错: {str(e)}")
         st.info("💡 提示：请确保数据文件存在且格式正确，或运行 statistical_analysis.py 生成分析结果")
 
-# with tab4:
-    # st.markdown("### 模型训练与调优")
-    # st.markdown("**训练的模型类型：**")
-    # col1, col2, col3 = st.columns(3)
-    # with col1:
-        # st.markdown("""
-        # **传统机器学习模型**
-        # - 逻辑回归（基准模型）
-        # - 随机森林
-        # - 梯度提升树
-        # """)
-    # with col2:
-        # st.markdown("""
-        # **梯度提升模型（优化）**
-        # - XGBoost（Optuna超参数优化）
-        # - LightGBM（Optuna超参数优化，GPU加速）
-        # - LightGBM集成（5个不同随机种子）
-        # """)
-    # with col3:
-        # st.markdown("""
-        # **深度学习模型**
-        # - 标准深度神经网络
-        # - Wide & Deep 网络
-        # - 残差网络（ResNet）
-        # """)
+with tab4:
+    st.markdown("### 模型训练与调优")
+    st.markdown("**训练的模型类型：**")
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.markdown("""
+        **传统机器学习模型**
+        - 逻辑回归（基准模型）
+        - 随机森林
+        - 梯度提升树
+        """)
+    with col2:
+        st.markdown("""
+        **梯度提升模型（优化）**
+        - XGBoost（Optuna超参数优化）
+        - LightGBM（Optuna超参数优化，GPU加速）
+        - LightGBM集成（5个不同随机种子）
+        """)
+    with col3:
+        st.markdown("""
+        **深度学习模型**
+        - 标准深度神经网络
+        - Wide & Deep 网络
+        - 残差网络（ResNet）
+        """)
     
     # 1. 各算法模型在住院死亡预测任务上的性能指标对比（仅依赖本地 results 目录中的CSV）
-    # st.markdown("#### 各算法模型性能指标对比")
+    st.markdown("#### 各算法模型性能指标对比")
     
-    # try:
+    try:
         # 尝试加载实际数据（相对于应用目录）
-        # metrics_path = BASE_DIR / "results" / "model_training" / "model_metrics.csv"
-        # if metrics_path.exists():
-            # metrics_df = load_csv_data(metrics_path, index_col=0)
+        metrics_path = BASE_DIR / "results" / "model_training" / "model_metrics.csv"
+        if metrics_path.exists():
+            metrics_df = load_csv_data(metrics_path, index_col=0)
             # 添加集成模型数据
-            # ensemble_path = BASE_DIR / "results" / "model_evaluation" / "lightgbm_ensemble_metrics.csv"
-            # if ensemble_path.exists():
-                # ensemble_df = load_csv_data(ensemble_path, index_col=0)
-                # ensemble_row = ensemble_df.iloc[0]
-                # metrics_df.loc['LightGBM_Ensemble'] = ensemble_row
-        # else:
+            ensemble_path = BASE_DIR / "results" / "model_evaluation" / "lightgbm_ensemble_metrics.csv"
+            if ensemble_path.exists():
+                ensemble_df = load_csv_data(ensemble_path, index_col=0)
+                ensemble_row = ensemble_df.iloc[0]
+                metrics_df.loc['LightGBM_Ensemble'] = ensemble_row
+        else:
             # 使用默认数据
-            # metrics_df = pd.DataFrame({
-                # 'Accuracy': [0.9061, 0.9060, 0.9199, 0.9175, 0.9160, 0.9231],
-                # 'Precision': [0.4586, 0.4610, 0.5356, 0.5211, 0.5127, 0.5570],
-                # 'Recall': [0.4902, 0.5306, 0.5370, 0.5382, 0.5370, 0.5338],
-                # 'F1-Score': [0.4739, 0.4934, 0.5363, 0.5295, 0.5245, 0.5452],
-                # 'AUC-ROC': [0.8768, 0.8876, 0.8999, 0.9018, 0.9014, 0.9070],
-                # 'AP-Score': [0.4811, 0.5170, 0.5688, 0.5716, 0.5701, 0.5951]
-            # }, index=['Logistic Regression', 'Random Forest', 'Gradient Boosting', 'XGBoost', 'LightGBM', 'LightGBM_Ensemble'])
+            metrics_df = pd.DataFrame({
+                'Accuracy': [0.9061, 0.9060, 0.9199, 0.9175, 0.9160, 0.9231],
+                'Precision': [0.4586, 0.4610, 0.5356, 0.5211, 0.5127, 0.5570],
+                'Recall': [0.4902, 0.5306, 0.5370, 0.5382, 0.5370, 0.5338],
+                'F1-Score': [0.4739, 0.4934, 0.5363, 0.5295, 0.5245, 0.5452],
+                'AUC-ROC': [0.8768, 0.8876, 0.8999, 0.9018, 0.9014, 0.9070],
+                'AP-Score': [0.4811, 0.5170, 0.5688, 0.5716, 0.5701, 0.5951]
+            }, index=['Logistic Regression', 'Random Forest', 'Gradient Boosting', 'XGBoost', 'LightGBM', 'LightGBM_Ensemble'])
         
-        # metrics_df.index.name = '模型'
-        # metrics_df = metrics_df.reset_index()
-        # metrics_df['模型'] = metrics_df['模型'].map({
+        metrics_df.index.name = '模型'
+        metrics_df = metrics_df.reset_index()
+        metrics_df['模型'] = metrics_df['模型'].map({
             # 'Logistic Regression': '逻辑回归',
             # 'Random Forest': '随机森林',
             # 'Gradient Boosting': '梯度提升树',
-            # 'XGBoost': 'XGBoost',
-            # 'LightGBM': 'LightGBM',
+            'XGBoost': 'XGBoost',
+            'LightGBM': 'LightGBM',
             # 'LightGBM_Ensemble': 'LightGBM集成'
-        # })
+        })
         
         # 创建交互式多指标对比图 - 三列布局
-        # col1, col2, col3 = st.columns(3)
+        col1, col2, col3 = st.columns(3)
         
-        # with col1:
+        with col1:
             # 雷达图展示多维度性能
-            # metrics_for_radar = ['Accuracy', 'Precision', 'Recall', 'F1-Score', 'AUC-ROC', 'AP-Score']
-            # metrics_cn = {
+            metrics_for_radar = ['Accuracy', 'Precision', 'Recall', 'F1-Score', 'AUC-ROC', 'AP-Score']
+            metrics_cn = {
                 # 'Accuracy': '准确率',
                 # 'Precision': '精确率',
                 # 'Recall': '召回率',
                 # 'F1-Score': 'F1分数',
-                # 'AUC-ROC': 'AUC-ROC',
+                'AUC-ROC': 'AUC-ROC',
                 # 'AP-Score': 'AP分数'
-            # }
+            }
             
             # 定义每个指标的自定义范围
-            # metric_ranges = {
-                # 'Accuracy': [0.9, 0.95],
-                # 'Precision': [0.5, 0.6],
-                # 'Recall': [0.5, 0.55],
-                # 'F1-Score': [0.5, 0.55],
-                # 'AUC-ROC': [0.85, 0.95],
-                # 'AP-Score': [0.55, 0.6]
-            # }
+            metric_ranges = {
+                'Accuracy': [0.9, 0.95],
+                'Precision': [0.5, 0.6],
+                'Recall': [0.5, 0.55],
+                'F1-Score': [0.5, 0.55],
+                'AUC-ROC': [0.85, 0.95],
+                'AP-Score': [0.55, 0.6]
+            }
             
             # 归一化函数：将原始值映射到[0,1]范围
-            # def normalize_value(value, metric):
-                # min_val, max_val = metric_ranges[metric]
+            def normalize_value(value, metric):
+                min_val, max_val = metric_ranges[metric]
                 # 将值限制在范围内
-                # clamped_value = max(min_val, min(max_val, value))
+                clamped_value = max(min_val, min(max_val, value))
                 # 归一化到[0,1]
-                # normalized = (clamped_value - min_val) / (max_val - min_val)
-                # return normalized
+                normalized = (clamped_value - min_val) / (max_val - min_val)
+                return normalized
             
             # 选择前4个模型进行雷达图对比
             # 定义模型颜色映射和填充模式（深红色放在底层，先添加）
-            # model_configs = {
-                # 'XGBoost': {
+            model_configs = {
+                'XGBoost': {
                     # 'color': '#8B0000',  # 深红色 - 底层
-                    # 'fill': 'toself',
+                    'fill': 'toself',
                     # 'fill_opacity': 0.2,  # 很低的填充透明度
-                    # 'line_width': 3
-                # },
-                # 'LightGBM': {
+                    'line_width': 3
+                },
+                'LightGBM': {
                     # 'color': '#3498db',  # 蓝色
-                    # 'fill': 'toself',
-                    # 'fill_opacity': 0.25,
-                    # 'line_width': 3
-                # },
-                # 'LightGBM集成': {
-                    # 'color': '#2ecc71',  # 绿色
-                    # 'fill': 'toself',
-                    # 'fill_opacity': 0.25,
-                    # 'line_width': 3
-                # },
+                    'fill': 'toself',
+                    'fill_opacity': 0.25,
+                    'line_width': 3
+                },
+                'LightGBM集成': {
+                    'color': '#2ecc71',  # 绿色
+                    'fill': 'toself',
+                    'fill_opacity': 0.25,
+                    'line_width': 3
+                },
                 # '梯度提升树': {
                     # 'color': '#f39c12',  # 橙色
                     # 'fill': 'toself',
                     # 'fill_opacity': 0.25,
                     # 'line_width': 3
                 # }
-            # }
-            # top_models = ['XGBoost', 'LightGBM', 'LightGBM集成', '梯度提升树']
-            # fig_radar = go.Figure()
+            }
+            top_models = ['XGBoost', 'LightGBM', 'LightGBM集成', '梯度提升树']
+            fig_radar = go.Figure()
             
             # 将hex颜色转换为rgba以控制填充透明度
-            # def hex_to_rgba(hex_color, alpha):
-                # hex_color = hex_color.lstrip('#')
-                # r = int(hex_color[0:2], 16)
-                # g = int(hex_color[2:4], 16)
-                # b = int(hex_color[4:6], 16)
-                # return f'rgba({r}, {g}, {b}, {alpha})'
+            def hex_to_rgba(hex_color, alpha):
+                hex_color = hex_color.lstrip('#')
+                r = int(hex_color[0:2], 16)
+                g = int(hex_color[2:4], 16)
+                b = int(hex_color[4:6], 16)
+                return f'rgba({r}, {g}, {b}, {alpha})'
             
-            # for model_name in top_models:
-                # model_data = metrics_df[metrics_df['模型'] == model_name]
-                # if len(model_data) > 0:
+            for model_name in top_models:
+                model_data = metrics_df[metrics_df['模型'] == model_name]
+                if len(model_data) > 0:
                     # 对每个指标的值进行归一化，同时保存原始值
-                    # normalized_values = []
-                    # original_values = []
-                    # theta_labels = []
-                    # for metric in metrics_for_radar:
-                        # original_value = model_data[metric].values[0]
-                        # normalized_value = normalize_value(original_value, metric)
-                        # normalized_values.append(normalized_value)
-                        # original_values.append(original_value)
-                        # theta_labels.append(metrics_cn[metric])
+                    normalized_values = []
+                    original_values = []
+                    theta_labels = []
+                    for metric in metrics_for_radar:
+                        original_value = model_data[metric].values[0]
+                        normalized_value = normalize_value(original_value, metric)
+                        normalized_values.append(normalized_value)
+                        original_values.append(original_value)
+                        theta_labels.append(metrics_cn[metric])
                     
                     # 为了形成闭合的雷达图，需要在末尾添加第一个点的值
-                    # normalized_values.append(normalized_values[0])
-                    # original_values.append(original_values[0])
-                    # theta_labels.append(theta_labels[0])
+                    normalized_values.append(normalized_values[0])
+                    original_values.append(original_values[0])
+                    theta_labels.append(theta_labels[0])
                     
-                    # config = model_configs.get(model_name, {})
-                    # color = config.get('color', '#000000')
-                    # fill_opacity = config.get('fill_opacity', 0.3)
-                    # line_width = config.get('line_width', 2)
+                    config = model_configs.get(model_name, {})
+                    color = config.get('color', '#000000')
+                    fill_opacity = config.get('fill_opacity', 0.3)
+                    line_width = config.get('line_width', 2)
                     
-                    # fig_radar.add_trace(go.Scatterpolar(
-                        # r=normalized_values,  # 使用归一化后的值（已闭合）
-                        # theta=theta_labels,  # 已闭合的标签
-                        # fill='toself',
-                        # name=model_name,
-                        # line_color=color,
-                        # fillcolor=hex_to_rgba(color, fill_opacity),  # 使用rgba控制填充透明度
-                        # line=dict(width=line_width, color=color),  # 线条保持不透明，更清晰
-                        # opacity=1.0,  # trace本身不透明，只让填充透明
+                    fig_radar.add_trace(go.Scatterpolar(
+                        r=normalized_values,  # 使用归一化后的值（已闭合）
+                        theta=theta_labels,  # 已闭合的标签
+                        fill='toself',
+                        name=model_name,
+                        line_color=color,
+                        fillcolor=hex_to_rgba(color, fill_opacity),  # 使用rgba控制填充透明度
+                        line=dict(width=line_width, color=color),  # 线条保持不透明，更清晰
+                        opacity=1.0,  # trace本身不透明，只让填充透明
                         # 添加自定义数据用于悬停时显示原始值
-                        # customdata=original_values,
-                        # hovertemplate='<b>%{theta}</b><br>归一化值: %{r:.3f}<br>原始值: %{customdata:.4f}<extra></extra>'
-                    # ))
+                        customdata=original_values,
+                        hovertemplate='<b>%{theta}</b><br>归一化值: %{r:.3f}<br>原始值: %{customdata:.4f}<extra></extra>'
+                    ))
             
             # 设置radialaxis范围为[0,1]，因为数据已经归一化
-            # fig_radar.update_layout(
-                # polar=dict(
-                    # radialaxis=dict(
-                        # visible=True,
-                        # range=[0, 1]
-                    # )),
-                # showlegend=True,
-                # title="多维度性能雷达图对比（已按指标范围归一化）",
-                # height=400
-            # )
-            # st.plotly_chart(fig_radar, use_container_width=True)
+            fig_radar.update_layout(
+                polar=dict(
+                    radialaxis=dict(
+                        visible=True,
+                        range=[0, 1]
+                    )),
+                showlegend=True,
+                title="多维度性能雷达图对比（已按指标范围归一化）",
+                height=400
+            )
+            st.plotly_chart(fig_radar, use_container_width=True)
             
             # 显示各指标的范围说明
-            # st.markdown("""
-            # <div style="font-size: 0.85em; color: #666; margin-top: -25px; margin-bottom: 10px;">
+            st.markdown("""
+            <div style="font-size: 0.85em; color: #666; margin-top: -25px; margin-bottom: 10px;">
             # <b>指标范围说明：</b><br>
             # 准确率: [0.9, 0.95] | 精确率: [0.5, 0.6] | 召回率: [0.5, 0.55] | 
             # F1分数: [0.5, 0.55] | AUC-ROC: [0.85, 0.95] | AP分数: [0.55, 0.6]<br>
             # <i>注：雷达图已按各指标范围归一化显示，悬停可查看原始值</i>
-            # </div>
-            # """, unsafe_allow_html=True)
+            </div>
+            """, unsafe_allow_html=True)
         
-        # with col2:
+        with col2:
             # 多指标条形图对比
-            # selected_metrics = ['AUC-ROC', 'F1-Score', 'Precision', 'Recall']
-            # metrics_cn_map = {
-                # 'AUC-ROC': 'AUC-ROC',
+            selected_metrics = ['AUC-ROC', 'F1-Score', 'Precision', 'Recall']
+            metrics_cn_map = {
+                'AUC-ROC': 'AUC-ROC',
                 # 'F1-Score': 'F1分数',
                 # 'Precision': '精确率',
                 # 'Recall': '召回率'
-            # }
+            }
             
-            # fig_multi = go.Figure()
-            # x_pos = np.arange(len(metrics_df))
-            # width = 0.15
+            fig_multi = go.Figure()
+            x_pos = np.arange(len(metrics_df))
+            width = 0.15
             
-            # for idx, metric in enumerate(selected_metrics):
-                # fig_multi.add_trace(go.Bar(
-                    # x=metrics_df['模型'],
-                    # y=metrics_df[metric],
-                    # name=metrics_cn_map[metric],
-                    # offsetgroup=idx
-                # ))
+            for idx, metric in enumerate(selected_metrics):
+                fig_multi.add_trace(go.Bar(
+                    x=metrics_df['模型'],
+                    y=metrics_df[metric],
+                    name=metrics_cn_map[metric],
+                    offsetgroup=idx
+                ))
             
-            # fig_multi.update_layout(
-                # title='多指标性能对比',
-                # xaxis_title='模型',
-                # yaxis_title='指标值',
-                # barmode='group',
-                # height=400,
-                # xaxis_tickangle=-45
-            # )
-            # st.plotly_chart(fig_multi, use_container_width=True)
+            fig_multi.update_layout(
+                title='多指标性能对比',
+                xaxis_title='模型',
+                yaxis_title='指标值',
+                barmode='group',
+                height=400,
+                xaxis_tickangle=-45
+            )
+            st.plotly_chart(fig_multi, use_container_width=True)
         
-        # with col3:
+        with col3:
             # AUC-ROC详细对比（主要指标）
-            # st.markdown("##### AUC-ROC 性能对比")
-            # fig_auc = px.bar(
-                # metrics_df.sort_values('AUC-ROC', ascending=True),
-                # x='AUC-ROC',
-                # y='模型',
-                # orientation='h',
-                # title='各模型 AUC-ROC 性能排名',
-                # color='AUC-ROC',
-                # color_continuous_scale='RdYlGn',
-                # text='AUC-ROC'
-            # )
-            # fig_auc.update_traces(texttemplate='%{text:.4f}', textposition='outside')
-            # fig_auc.update_layout(
-                # height=400,
-                # xaxis_range=[0.85, 0.92],
-                # showlegend=False
-            # )
-            # st.plotly_chart(fig_auc, use_container_width=True)
+            st.markdown("##### AUC-ROC 性能对比")
+            fig_auc = px.bar(
+                metrics_df.sort_values('AUC-ROC', ascending=True),
+                x='AUC-ROC',
+                y='模型',
+                orientation='h',
+                title='各模型 AUC-ROC 性能排名',
+                color='AUC-ROC',
+                color_continuous_scale='RdYlGn',
+                text='AUC-ROC'
+            )
+            fig_auc.update_traces(texttemplate='%{text:.4f}', textposition='outside')
+            fig_auc.update_layout(
+                height=400,
+                xaxis_range=[0.85, 0.92],
+                showlegend=False
+            )
+            st.plotly_chart(fig_auc, use_container_width=True)
         
         # 性能指标数据表
-        # st.markdown("##### 详细性能指标表")
-        # display_metrics_df = metrics_df[['模型', 'Accuracy', 'Precision', 'Recall', 'F1-Score', 'AUC-ROC', 'AP-Score']].copy()
-        # display_metrics_df = display_metrics_df.round(4)
-        # st.dataframe(display_metrics_df, use_container_width=True, hide_index=True)
+        st.markdown("##### 详细性能指标表")
+        display_metrics_df = metrics_df[['模型', 'Accuracy', 'Precision', 'Recall', 'F1-Score', 'AUC-ROC', 'AP-Score']].copy()
+        display_metrics_df = display_metrics_df.round(4)
+        st.dataframe(display_metrics_df, use_container_width=True, hide_index=True)
         
-    # except Exception as e:
-        # st.error(f"加载模型性能数据时出错: {str(e)}")
-        # st.info("💡 提示：请运行 model_training.py 生成模型性能数据")
+    except Exception as e:
+        st.error(f"加载模型性能数据时出错: {str(e)}")
+        st.info("💡 提示：请运行 model_training.py 生成模型性能数据")
     
     # 2. LightGBM基础模型与 Optuna 优化模型性能对比
-    # st.markdown("#### LightGBM 基础模型与 Optuna 优化模型性能对比")
+    st.markdown("#### LightGBM 基础模型与 Optuna 优化模型性能对比")
     
-    # try:
-        # comparison_path = BASE_DIR / "results" / "model_evaluation" / "base_vs_optuna_comparison.csv"
-        # if comparison_path.exists():
-            # comparison_df = load_csv_data(comparison_path, index_col=0)
-        # else:
+    try:
+        comparison_path = BASE_DIR / "results" / "model_evaluation" / "base_vs_optuna_comparison.csv"
+        if comparison_path.exists():
+            comparison_df = load_csv_data(comparison_path, index_col=0)
+        else:
             # 使用默认数据
-            # comparison_df = pd.DataFrame({
-                # 'Base_Model': [0.8338, 0.3150, 0.7884, 0.4501, 0.9014, 0.5701],
-                # 'Optuna_Model': [0.8762, 0.3852, 0.7277, 0.5037, 0.9069, 0.5946],
-                # 'Difference': [0.0425, 0.0702, -0.0606, 0.0536, 0.0055, 0.0245]
-            # }, index=['Accuracy', 'Precision', 'Recall', 'F1-Score', 'AUC-ROC', 'AP-Score'])
+            comparison_df = pd.DataFrame({
+                'Base_Model': [0.8338, 0.3150, 0.7884, 0.4501, 0.9014, 0.5701],
+                'Optuna_Model': [0.8762, 0.3852, 0.7277, 0.5037, 0.9069, 0.5946],
+                'Difference': [0.0425, 0.0702, -0.0606, 0.0536, 0.0055, 0.0245]
+            }, index=['Accuracy', 'Precision', 'Recall', 'F1-Score', 'AUC-ROC', 'AP-Score'])
         
-        # comparison_df = comparison_df.reset_index()
-        # comparison_df.columns = ['指标', '基础模型', 'Optuna优化模型', '提升幅度']
+        comparison_df = comparison_df.reset_index()
+        comparison_df.columns = ['指标', '基础模型', 'Optuna优化模型', '提升幅度']
         
         # 三列布局：两个图和一个表
-        # col1, col2, col3 = st.columns(3)
+        col1, col2, col3 = st.columns(3)
         
-        # with col1:
+        with col1:
             # 性能对比条形图
-            # fig_comparison = go.Figure()
+            fig_comparison = go.Figure()
             
-            # fig_comparison.add_trace(go.Bar(
-                # x=comparison_df['指标'],
-                # y=comparison_df['基础模型'],
-                # name='基础模型',
-                # marker_color='#95a5a6',
-                # text=comparison_df['基础模型'].round(4),
-                # textposition='outside'
-            # ))
+            fig_comparison.add_trace(go.Bar(
+                x=comparison_df['指标'],
+                y=comparison_df['基础模型'],
+                name='基础模型',
+                marker_color='#95a5a6',
+                text=comparison_df['基础模型'].round(4),
+                textposition='outside'
+            ))
             
-            # fig_comparison.add_trace(go.Bar(
-                # x=comparison_df['指标'],
-                # y=comparison_df['Optuna优化模型'],
-                # name='Optuna优化模型',
-                # marker_color='#3498db',
-                # text=comparison_df['Optuna优化模型'].round(4),
-                # textposition='outside'
-            # ))
+            fig_comparison.add_trace(go.Bar(
+                x=comparison_df['指标'],
+                y=comparison_df['Optuna优化模型'],
+                name='Optuna优化模型',
+                marker_color='#3498db',
+                text=comparison_df['Optuna优化模型'].round(4),
+                textposition='outside'
+            ))
             
-            # fig_comparison.update_layout(
-                # title='基础模型 vs Optuna优化模型性能对比',
-                # xaxis_title='指标',
-                # yaxis_title='指标值',
-                # barmode='group',
-                # height=400,
-                # xaxis_tickangle=-45
-            # )
-            # st.plotly_chart(fig_comparison, use_container_width=True)
+            fig_comparison.update_layout(
+                title='基础模型 vs Optuna优化模型性能对比',
+                xaxis_title='指标',
+                yaxis_title='指标值',
+                barmode='group',
+                height=400,
+                xaxis_tickangle=-45
+            )
+            st.plotly_chart(fig_comparison, use_container_width=True)
         
-        # with col2:
+        with col2:
             # 提升幅度可视化
-            # fig_improvement = go.Figure()
+            fig_improvement = go.Figure()
             
-            # colors = ['#e74c3c' if x < 0 else '#2ecc71' for x in comparison_df['提升幅度']]
+            colors = ['#e74c3c' if x < 0 else '#2ecc71' for x in comparison_df['提升幅度']]
             
-            # fig_improvement.add_trace(go.Bar(
-                # x=comparison_df['指标'],
-                # y=comparison_df['提升幅度'],
-                # marker_color=colors,
-                # text=comparison_df['提升幅度'].apply(lambda x: f'{x:+.4f}'),
-                # textposition='outside',
-                # hovertemplate='<b>%{x}</b><br>提升幅度: %{y:.4f}<extra></extra>'
-            # ))
+            fig_improvement.add_trace(go.Bar(
+                x=comparison_df['指标'],
+                y=comparison_df['提升幅度'],
+                marker_color=colors,
+                text=comparison_df['提升幅度'].apply(lambda x: f'{x:+.4f}'),
+                textposition='outside',
+                hovertemplate='<b>%{x}</b><br>提升幅度: %{y:.4f}<extra></extra>'
+            ))
             
-            # fig_improvement.add_hline(y=0, line_dash="dash", line_color="gray")
+            fig_improvement.add_hline(y=0, line_dash="dash", line_color="gray")
             
             # 扩大y轴范围，确保顶部数字完整显示
-            # max_y = comparison_df['提升幅度'].max()
-            # min_y = comparison_df['提升幅度'].min()
-            # y_range_padding = max(abs(max_y), abs(min_y)) * 0.35  # 35%的边距（再增加10%）
+            max_y = comparison_df['提升幅度'].max()
+            min_y = comparison_df['提升幅度'].min()
+            y_range_padding = max(abs(max_y), abs(min_y)) * 0.35  # 35%的边距（再增加10%）
             
-            # fig_improvement.update_layout(
-                # title='Optuna优化带来的性能提升',
-                # xaxis_title='指标',
-                # yaxis_title='提升幅度',
-                # height=400,
-                # xaxis_tickangle=-45,
-                # showlegend=False,
-                # yaxis=dict(range=[min_y - y_range_padding, max_y + y_range_padding])
-            # )
-            # st.plotly_chart(fig_improvement, use_container_width=True)
+            fig_improvement.update_layout(
+                title='Optuna优化带来的性能提升',
+                xaxis_title='指标',
+                yaxis_title='提升幅度',
+                height=400,
+                xaxis_tickangle=-45,
+                showlegend=False,
+                yaxis=dict(range=[min_y - y_range_padding, max_y + y_range_padding])
+            )
+            st.plotly_chart(fig_improvement, use_container_width=True)
         
-        # with col3:
+        with col3:
             # 详细对比数据表
-            # st.markdown("##### 详细性能对比数据")
-            # display_comparison_df = comparison_df.copy()
-            # display_comparison_df['基础模型'] = display_comparison_df['基础模型'].round(4)
-            # display_comparison_df['Optuna优化模型'] = display_comparison_df['Optuna优化模型'].round(4)
-            # display_comparison_df['提升幅度'] = display_comparison_df['提升幅度'].apply(lambda x: f'{x:+.4f}')
-            # display_comparison_df['提升百分比'] = ((comparison_df['Optuna优化模型'] - comparison_df['基础模型']) / comparison_df['基础模型'] * 100).round(2).apply(lambda x: f'{x:+.2f}%')
-            # st.dataframe(display_comparison_df, use_container_width=True, hide_index=True, height=400)
+            st.markdown("##### 详细性能对比数据")
+            display_comparison_df = comparison_df.copy()
+            display_comparison_df['基础模型'] = display_comparison_df['基础模型'].round(4)
+            display_comparison_df['Optuna优化模型'] = display_comparison_df['Optuna优化模型'].round(4)
+            display_comparison_df['提升幅度'] = display_comparison_df['提升幅度'].apply(lambda x: f'{x:+.4f}')
+            display_comparison_df['提升百分比'] = ((comparison_df['Optuna优化模型'] - comparison_df['基础模型']) / comparison_df['基础模型'] * 100).round(2).apply(lambda x: f'{x:+.2f}%')
+            st.dataframe(display_comparison_df, use_container_width=True, hide_index=True, height=400)
         
         # 关键发现总结
-        # st.markdown("##### 💡 关键发现")
-        # st.markdown("""
+        st.markdown("##### 💡 关键发现")
+        st.markdown("""
         # - **AUC-ROC提升**: 从 0.9014 提升到 0.9069（+0.6%），概率校准能力显著改善
         # - **精确率大幅提升**: 从 0.3150 提升到 0.3852（+22.3%），显著减少误诊
         # - **准确率提升**: 从 0.8338 提升到 0.8762（+5.1%），整体分类准确性改善
         # - **F1-Score提升**: 从 0.4501 提升到 0.5037（+11.9%），平衡性能更好
-        # """)
+        """)
         
-    # except Exception as e:
-        # st.error(f"加载对比数据时出错: {str(e)}")
-        # st.info("💡 提示：请运行 evaluate_lightgbm_optuna.py 生成对比数据")
+    except Exception as e:
+        st.error(f"加载对比数据时出错: {str(e)}")
+        st.info("💡 提示：请运行 evaluate_lightgbm_optuna.py 生成对比数据")
 
 # with tab5:
     # st.markdown("### 模型评估模块")
