@@ -317,43 +317,41 @@ with col3:
     st.metric("🎯 目标变量", "hospital_death")
     st.markdown('</div>', unsafe_allow_html=True)
 
-# ========== 以下代码已注释，用于逐步排错 ==========
-# 以下为注释代码
 # 临床个体预测板块（独立板块，放在主要分析模块之前）
 # 优化：使用expander延迟加载，减少初始页面加载时间
-# prediction_expander = st.expander("🩺 临床个体风险预测（点击展开使用）", expanded=False)
+prediction_expander = st.expander("🩺 临床个体风险预测（点击展开使用）", expanded=False)
 
-# with prediction_expander:
-    # st.markdown('<div class="section-header">🩺 临床个体风险预测</div>', unsafe_allow_html=True)
-    # st.markdown("""
-    # **功能说明：**  
-    # - 支持临床医生或用户输入少量关键指标（如年龄、BMI、心率、血糖等），由 **Optuna 调优后的 LightGBM 最优模型** 预测住院死亡风险  
-    # - 未输入的其他特征自动使用训练集典型值（中位数）填充，保证与离线模型使用的特征保持一致  
-    # """)
+with prediction_expander:
+    st.markdown('<div class="section-header">🩺 临床个体风险预测</div>', unsafe_allow_html=True)
+    st.markdown("""
+    **功能说明：**  
+    - 支持临床医生或用户输入少量关键指标（如年龄、BMI、心率、血糖等），由 **Optuna 调优后的 LightGBM 最优模型** 预测住院死亡风险  
+    - 未输入的其他特征自动使用训练集典型值（中位数）填充，保证与离线模型使用的特征保持一致  
+    """)
     # 懒加载：只在需要时加载模型（使用session_state缓存）
-    # if 'prediction_model' not in st.session_state:
-        # with st.spinner("正在加载预测模型（首次加载可能需要几秒钟）..."):
-            # model, feature_list, feature_medians, preprocessor = get_prediction_model_and_features(sample_size=5000)
-            # st.session_state['prediction_model'] = model
-            # st.session_state['prediction_feature_list'] = feature_list
-            # st.session_state['prediction_feature_medians'] = feature_medians
-            # st.session_state['prediction_preprocessor'] = preprocessor
-    # else:
-        # model = st.session_state['prediction_model']
-        # feature_list = st.session_state['prediction_feature_list']
-        # feature_medians = st.session_state['prediction_feature_medians']
-        # preprocessor = st.session_state['prediction_preprocessor']
+    if 'prediction_model' not in st.session_state:
+        with st.spinner("正在加载预测模型（首次加载可能需要几秒钟）..."):
+            model, feature_list, feature_medians, preprocessor = get_prediction_model_and_features(sample_size=5000)
+            st.session_state['prediction_model'] = model
+            st.session_state['prediction_feature_list'] = feature_list
+            st.session_state['prediction_feature_medians'] = feature_medians
+            st.session_state['prediction_preprocessor'] = preprocessor
+    else:
+        model = st.session_state['prediction_model']
+        feature_list = st.session_state['prediction_feature_list']
+        feature_medians = st.session_state['prediction_feature_medians']
+        preprocessor = st.session_state['prediction_preprocessor']
 
-    # if model is None or feature_list is None or feature_medians is None:
-        # st.warning("⚠️ 未能加载在线预测所需的模型或数据，请确认 `models/LightGBM_tuned_advanced.pkl` 和 `data/training_v2.csv` 已放置在 `streamlit_app` 目录下。")
-    # else:
+    if model is None or feature_list is None or feature_medians is None:
+        st.warning("⚠️ 未能加载在线预测所需的模型或数据，请确认 `models/LightGBM_tuned_advanced.pkl` 和 `data/training_v2.csv` 已放置在 `streamlit_app` 目录下。")
+    else:
         # 关键医学特征（如存在则提供输入项）
-        #         键为数据集中列名，值为(中文名称, 合理最小值, 合理最大值)
+                # 键为数据集中列名，值为(中文名称, 合理最小值, 合理最大值)
         # 前几项为基础特征，后面补充了一批更"高危"的核心生理 / 实验室指标
-        # candidate_numeric_features = {
+        candidate_numeric_features = {
             # 基础人口学/生命体征
             # 'age': ("年龄 (岁)", 18.0, 100.0),
-            # 'bmi': ("BMI (kg/m²)", 10.0, 60.0),
+            'bmi': ("BMI (kg/m²)", 10.0, 60.0),
             # 'heart_rate_apache': ("入ICU心率 (次/分)", 30.0, 200.0),
             # 'temp_apache': ("入ICU体温 (℃)", 30.0, 43.0),
             # 'd1_sysbp_max': ("首日最高收缩压 (mmHg)", 60.0, 260.0),
@@ -380,357 +378,357 @@ with col3:
 
             # 综合风险评分
             # 'apache_4a_icu_death_prob': ("APACHE ICU 预测死亡概率", 0.0, 1.0),
-        # }
+        }
 
         # 仅保留在训练数据中实际存在的特征
-        # available_candidates = {
-            # name: meta for name, meta in candidate_numeric_features.items()
-            # if name in feature_medians.index
-        # }
+        available_candidates = {
+            name: meta for name, meta in candidate_numeric_features.items()
+            if name in feature_medians.index
+        }
 
-        # if not available_candidates:
-            # st.info("当前模型使用的特征中不包含预设的关键医学指标，暂无法提供交互式个体预测表单。")
-        # else:
-            # st.markdown("#### 请输入患者的关键信息（其余未列出的特征将使用训练集典型值填充）")
+        if not available_candidates:
+            st.info("当前模型使用的特征中不包含预设的关键医学指标，暂无法提供交互式个体预测表单。")
+        else:
+            st.markdown("#### 请输入患者的关键信息（其余未列出的特征将使用训练集典型值填充）")
 
-            # with st.form("manual_clinical_prediction"):
-                # input_cols = st.columns(3)
-                # user_values = {}
+            with st.form("manual_clinical_prediction"):
+                input_cols = st.columns(3)
+                user_values = {}
 
-                # for idx, (feat_name, (label, vmin, vmax)) in enumerate(available_candidates.items()):
-                    # col = input_cols[idx % 3]
-                    # with col:
+                for idx, (feat_name, (label, vmin, vmax)) in enumerate(available_candidates.items()):
+                    col = input_cols[idx % 3]
+                    with col:
                         # 默认值取训练集中的中位数，但要确保落在[min, max]区间内，避免越界报错
-                        # raw_default = float(feature_medians.get(feat_name, (vmin + vmax) / 2.0))
-                        # default_val = min(max(raw_default, float(vmin)), float(vmax))
+                        raw_default = float(feature_medians.get(feat_name, (vmin + vmax) / 2.0))
+                        default_val = min(max(raw_default, float(vmin)), float(vmax))
                         # 对概率类特征单独设置步长
-                        # step = 0.01 if "prob" in feat_name else 0.1
-                        # user_values[feat_name] = st.number_input(
-                            # label,
-                            # min_value=float(vmin),
-                            # max_value=float(vmax),
-                            # value=float(default_val),
-                            # step=step,
-                            # key=f"input_{feat_name}"
-                        # )
+                        step = 0.01 if "prob" in feat_name else 0.1
+                        user_values[feat_name] = st.number_input(
+                            label,
+                            min_value=float(vmin),
+                            max_value=float(vmax),
+                            value=float(default_val),
+                            step=step,
+                            key=f"input_{feat_name}"
+                        )
 
-                # st.markdown("---")
-                # threshold = st.slider(
+                st.markdown("---")
+                threshold = st.slider(
                     # "高风险判定阈值（预测死亡概率 ≥ 该值视为高风险）",
-                    # min_value=0.1,
-                    # max_value=0.9,
-                    # value=0.5,
-                    # step=0.05
-                # )
+                    min_value=0.1,
+                    max_value=0.9,
+                    value=0.5,
+                    step=0.05
+                )
 
-                # submitted = st.form_submit_button("计算死亡风险")
-            # pass
+                submitted = st.form_submit_button("计算死亡风险")
+            pass
             
             # 将if submitted移到form外面，但仍在else块内
             # 注意：在表单提交后，将所有结果存储到session_state，然后在表单外部显示
             # 这样可以避免Delta路径错误
-            # if submitted:
+            if submitted:
                 # 初始化结果存储
-                # st.session_state['prediction_result'] = None
-                # st.session_state['prediction_error'] = None
+                st.session_state['prediction_result'] = None
+                st.session_state['prediction_error'] = None
                 
-                # try:
+                try:
                     # 使用与训练时完全一致的预处理流程（参考predict_lightgbm_ensemble.py）
-                    # import sys
-                    # sys.path.insert(0, str(BASE_DIR.parent))
+                    import sys
+                    sys.path.insert(0, str(BASE_DIR.parent))
                     
                     # 1. 加载训练数据的一个样本作为基础（用于特征工程）
-                    # data_path = BASE_DIR / "data" / "training_v2.csv"
-                    # patient_df = load_csv_data(data_path, nrows=1, low_memory=False, na_values=['NA', ''])
+                    data_path = BASE_DIR / "data" / "training_v2.csv"
+                    patient_df = load_csv_data(data_path, nrows=1, low_memory=False, na_values=['NA', ''])
                     
                     # 2. 应用特征工程（如果训练时使用了）
-                    # use_feature_engineering = preprocessor.get('use_feature_engineering', False) if preprocessor and isinstance(preprocessor, dict) else False
-                    # if use_feature_engineering:
-                        # try:
-                            # import sys
-                            # sys.path.insert(0, str(BASE_DIR))
-                            # from feature_engineering import apply_feature_engineering
-                            # patient_df = apply_feature_engineering(patient_df.copy())
-                        # except Exception as e:
+                    use_feature_engineering = preprocessor.get('use_feature_engineering', False) if preprocessor and isinstance(preprocessor, dict) else False
+                    if use_feature_engineering:
+                        try:
+                            import sys
+                            sys.path.insert(0, str(BASE_DIR))
+                            from feature_engineering import apply_feature_engineering
+                            patient_df = apply_feature_engineering(patient_df.copy())
+                        except Exception as e:
                             # 存储警告信息，在表单外部显示
-                            # if 'warnings' not in st.session_state:
-                                # st.session_state['warnings'] = []
-                            # st.session_state['warnings'].append(f"应用特征工程时出错: {str(e)}")
+                            if 'warnings' not in st.session_state:
+                                st.session_state['warnings'] = []
+                            st.session_state['warnings'].append(f"应用特征工程时出错: {str(e)}")
                     
                     # 3. 使用prepare_features函数准备特征（与训练时完全一致）
-                    # try:
-                        # from model_utils import prepare_features
+                    try:
+                        from model_utils import prepare_features
                         
                         # 准备特征（保留缺失值，用于LightGBM，与训练时一致）
-                        # X_prepared, _, _, _ = prepare_features(
-                            # patient_df.copy(), fill_missing=False, standardize=False
-                        # )
+                        X_prepared, _, _, _ = prepare_features(
+                            patient_df.copy(), fill_missing=False, standardize=False
+                        )
                         
                         # 4. 用训练集的中位数填充所有特征（作为基础值）
                         # 注意：这里我们需要确保所有特征都存在
-                        # for feat in feature_list:
-                            # if feat in X_prepared.columns:
+                        for feat in feature_list:
+                            if feat in X_prepared.columns:
                                 # 用中位数填充（如果特征在medians中）
-                                # if feat in feature_medians.index:
-                                    # X_prepared[feat] = feature_medians[feat]
-                                # else:
-                                    # X_prepared[feat] = 0.0
-                            # else:
+                                if feat in feature_medians.index:
+                                    X_prepared[feat] = feature_medians[feat]
+                                else:
+                                    X_prepared[feat] = 0.0
+                            else:
                                 # 如果特征不在DataFrame中，添加它
-                                # X_prepared[feat] = feature_medians.get(feat, 0.0) if feat in feature_medians.index else 0.0
+                                X_prepared[feat] = feature_medians.get(feat, 0.0) if feat in feature_medians.index else 0.0
                         
                         # 5. 用用户输入的值覆盖对应特征
-                        # for feat_name, val in user_values.items():
-                            # if feat_name in X_prepared.columns:
-                                # X_prepared[feat_name] = float(val)
-                            # elif feat_name in feature_list:
+                        for feat_name, val in user_values.items():
+                            if feat_name in X_prepared.columns:
+                                X_prepared[feat_name] = float(val)
+                            elif feat_name in feature_list:
                                 # 如果特征在特征列表中但不在DataFrame中，添加它
-                                # X_prepared[feat_name] = float(val)
+                                X_prepared[feat_name] = float(val)
                         
                         # 6. 特征选择：按照预处理器中保存的特征顺序组织输入
                         # 这是关键步骤：确保特征顺序与训练时完全一致
-                        # X_input_selected = pd.DataFrame(index=X_prepared.index)
-                        # missing_features = []
+                        X_input_selected = pd.DataFrame(index=X_prepared.index)
+                        missing_features = []
                         
-                        # for feat in feature_list:
-                            # if feat in X_prepared.columns:
-                                # X_input_selected[feat] = X_prepared[feat]
-                            # else:
-                                # missing_features.append(feat)
-                                # X_input_selected[feat] = 0.0  # 用0填充缺失的特征
+                        for feat in feature_list:
+                            if feat in X_prepared.columns:
+                                X_input_selected[feat] = X_prepared[feat]
+                            else:
+                                missing_features.append(feat)
+                                X_input_selected[feat] = 0.0  # 用0填充缺失的特征
                         
                         # 确保特征顺序与训练时一致
-                        # X_input_selected = X_input_selected[feature_list]
+                        X_input_selected = X_input_selected[feature_list]
                         
-                        # if missing_features:
+                        if missing_features:
                             # 存储警告信息，在表单外部显示
-                            # if 'warnings' not in st.session_state:
-                                # st.session_state['warnings'] = []
-                            # st.session_state['warnings'].append(f"⚠ 警告: {len(missing_features)} 个特征在数据中不存在，已用0填充")
+                            if 'warnings' not in st.session_state:
+                                st.session_state['warnings'] = []
+                            st.session_state['warnings'].append(f"⚠ 警告: {len(missing_features)} 个特征在数据中不存在，已用0填充")
                         
                         # 7. 转换为numpy数组
-                        # X_input = X_input_selected.values
+                        X_input = X_input_selected.values
                         
                         # 8. 验证特征数量和顺序
-                        # if X_input.shape[1] != len(feature_list):
+                        if X_input.shape[1] != len(feature_list):
                             # 存储错误信息，在表单外部显示
-                            # st.session_state['prediction_error'] = f"❌ 特征数量不匹配！模型期望 {len(feature_list)} 个特征，但输入有 {X_input.shape[1]} 个"
-                            # st.session_state['prediction_result'] = None
+                            st.session_state['prediction_error'] = f"❌ 特征数量不匹配！模型期望 {len(feature_list)} 个特征，但输入有 {X_input.shape[1]} 个"
+                            st.session_state['prediction_result'] = None
                             # 不抛出异常，让代码继续执行到外部显示错误
-                            # proba = None
-                            # risk_percent = None
-                        # else:
+                            proba = None
+                            risk_percent = None
+                        else:
                             # 检查模型期望的特征数
-                            # model_n_features = None
-                            # try:
-                                # if hasattr(model, 'n_features_'):
-                                    # model_n_features = model.n_features_
-                                # elif hasattr(model, 'booster_'):
-                                    # model_n_features = model.booster_.num_feature()
-                            # except Exception:
-                                # pass
+                            model_n_features = None
+                            try:
+                                if hasattr(model, 'n_features_'):
+                                    model_n_features = model.n_features_
+                                elif hasattr(model, 'booster_'):
+                                    model_n_features = model.booster_.num_feature()
+                            except Exception:
+                                pass
                             
-                            # if model_n_features and X_input.shape[1] != model_n_features:
+                            if model_n_features and X_input.shape[1] != model_n_features:
                                 # 存储错误信息，在表单外部显示
-                                # st.session_state['prediction_error'] = f"❌ 特征数量不匹配！模型期望 {model_n_features} 个特征，但输入有 {X_input.shape[1]} 个"
-                                # st.session_state['prediction_result'] = None
+                                st.session_state['prediction_error'] = f"❌ 特征数量不匹配！模型期望 {model_n_features} 个特征，但输入有 {X_input.shape[1]} 个"
+                                st.session_state['prediction_result'] = None
                                 # 不抛出异常，让代码继续执行到外部显示错误
-                                # proba = None
-                                # risk_percent = None
-                            # else:
+                                proba = None
+                                risk_percent = None
+                            else:
                                 # 9. 进行预测（只有在验证通过时）
-                                # proba = float(model.predict_proba(X_input)[:, 1][0])
-                                # risk_percent = proba * 100.0
+                                proba = float(model.predict_proba(X_input)[:, 1][0])
+                                risk_percent = proba * 100.0
                                 
                                 # 调试信息（可选，通过session_state存储，避免在form提交后立即使用expander）
-                                # debug_info = f"""
+                                debug_info = f"""
 # **特征数量**: {len(feature_list)}
-# **模型期望特征数**: {model_n_features if model_n_features else '未知'}
+**模型期望特征数**: {model_n_features if model_n_features else '未知'}
 # **输入数据形状**: {X_input.shape}
 # **用户输入的特征**: {list(user_values.keys())}
-# """
-                                # if missing_features:
-                                    # debug_info += f"**缺失的特征（已用0填充）**: {missing_features[:10]}{'...' if len(missing_features) > 10 else ''}\n"
-                                # debug_info += f"**预测概率**: {proba:.6f}"
+"""
+                                if missing_features:
+                                    debug_info += f"**缺失的特征（已用0填充）**: {missing_features[:10]}{'...' if len(missing_features) > 10 else ''}\n"
+                                debug_info += f"**预测概率**: {proba:.6f}"
                                 
                                 # 将调试信息和预测结果存储到session_state，在表单外部显示
-                                # st.session_state['debug_info'] = debug_info
-                                # st.session_state['prediction_result'] = {
-                                    # 'proba': proba,
-                                    # 'risk_percent': risk_percent,
-                                    # 'threshold': threshold
-                                # }
+                                st.session_state['debug_info'] = debug_info
+                                st.session_state['prediction_result'] = {
+                                    'proba': proba,
+                                    'risk_percent': risk_percent,
+                                    'threshold': threshold
+                                }
                         
-                    # except ImportError:
+                    except ImportError:
                         # 如果无法导入prepare_features，使用简化版本
                         # 存储警告信息，在表单外部显示
-                        # if 'warnings' not in st.session_state:
-                            # st.session_state['warnings'] = []
-                        # st.session_state['warnings'].append("⚠ 无法导入prepare_features模块，使用简化预处理流程")
+                        if 'warnings' not in st.session_state:
+                            st.session_state['warnings'] = []
+                        st.session_state['warnings'].append("⚠ 无法导入prepare_features模块，使用简化预处理流程")
                         
                         # 简化流程：直接从训练数据样本开始
                         # 移除APACHE死亡概率特征
-                        # apache_prob_features = ['apache_4a_hospital_death_prob', 'apache_4a_icu_death_prob']
-                        # for feat in apache_prob_features:
-                            # if feat in patient_df.columns:
-                                # patient_df = patient_df.drop(columns=[feat])
+                        apache_prob_features = ['apache_4a_hospital_death_prob', 'apache_4a_icu_death_prob']
+                        for feat in apache_prob_features:
+                            if feat in patient_df.columns:
+                                patient_df = patient_df.drop(columns=[feat])
                         
                         # 移除ID列和目标变量
-                        # id_cols = ['encounter_id', 'patient_id', 'hospital_id', 'hospital_death']
-                        # for col in id_cols:
-                            # if col in patient_df.columns:
-                                # patient_df = patient_df.drop(columns=[col])
+                        id_cols = ['encounter_id', 'patient_id', 'hospital_id', 'hospital_death']
+                        for col in id_cols:
+                            if col in patient_df.columns:
+                                patient_df = patient_df.drop(columns=[col])
                         
                         # 处理分类特征（如果有预处理器）
-                        # if preprocessor and isinstance(preprocessor, dict) and 'encoders' in preprocessor:
-                            # encoders = preprocessor.get('encoders', {})
-                            # for col, encoder in encoders.items():
-                                # if col in patient_df.columns:
-                                    # patient_df[col] = patient_df[col].fillna('Missing')
-                                    # try:
-                                        # patient_df[col] = patient_df[col].astype(str)
-                                        # known_classes = set(encoder.classes_)
-                                        # patient_df[col] = patient_df[col].apply(
-                                            # lambda x: x if x in known_classes else encoder.classes_[0]
-                                        # )
-                                        # patient_df[col] = encoder.transform(patient_df[col])
-                                    # except Exception:
-                                        # patient_df[col] = 0
+                        if preprocessor and isinstance(preprocessor, dict) and 'encoders' in preprocessor:
+                            encoders = preprocessor.get('encoders', {})
+                            for col, encoder in encoders.items():
+                                if col in patient_df.columns:
+                                    patient_df[col] = patient_df[col].fillna('Missing')
+                                    try:
+                                        patient_df[col] = patient_df[col].astype(str)
+                                        known_classes = set(encoder.classes_)
+                                        patient_df[col] = patient_df[col].apply(
+                                            lambda x: x if x in known_classes else encoder.classes_[0]
+                                        )
+                                        patient_df[col] = encoder.transform(patient_df[col])
+                                    except Exception:
+                                        patient_df[col] = 0
                         
                         # 用中位数填充所有特征
-                        # for feat in feature_list:
-                            # if feat in patient_df.columns:
-                                # if feat in feature_medians.index:
-                                    # patient_df[feat] = feature_medians[feat]
-                                # else:
-                                    # patient_df[feat] = 0.0
-                            # else:
-                                # patient_df[feat] = feature_medians.get(feat, 0.0) if feat in feature_medians.index else 0.0
+                        for feat in feature_list:
+                            if feat in patient_df.columns:
+                                if feat in feature_medians.index:
+                                    patient_df[feat] = feature_medians[feat]
+                                else:
+                                    patient_df[feat] = 0.0
+                            else:
+                                patient_df[feat] = feature_medians.get(feat, 0.0) if feat in feature_medians.index else 0.0
                         
                         # 用用户输入的值覆盖
-                        # for feat_name, val in user_values.items():
-                            # if feat_name in patient_df.columns:
-                                # patient_df[feat_name] = float(val)
-                            # elif feat_name in feature_list:
-                                # patient_df[feat_name] = float(val)
+                        for feat_name, val in user_values.items():
+                            if feat_name in patient_df.columns:
+                                patient_df[feat_name] = float(val)
+                            elif feat_name in feature_list:
+                                patient_df[feat_name] = float(val)
                         
                         # 按特征顺序组织输入
-                        # X_input_values = []
-                        # for feat in feature_list:
-                            # if feat in patient_df.columns:
-                                # val = patient_df[feat].iloc[0]
-                                # if pd.isna(val):
-                                    # val = feature_medians.get(feat, 0.0) if feat in feature_medians.index else 0.0
-                                # X_input_values.append(float(val))
-                            # else:
-                                # X_input_values.append(feature_medians.get(feat, 0.0) if feat in feature_medians.index else 0.0)
+                        X_input_values = []
+                        for feat in feature_list:
+                            if feat in patient_df.columns:
+                                val = patient_df[feat].iloc[0]
+                                if pd.isna(val):
+                                    val = feature_medians.get(feat, 0.0) if feat in feature_medians.index else 0.0
+                                X_input_values.append(float(val))
+                            else:
+                                X_input_values.append(feature_medians.get(feat, 0.0) if feat in feature_medians.index else 0.0)
                         
-                        # X_input = np.array(X_input_values).reshape(1, -1)
+                        X_input = np.array(X_input_values).reshape(1, -1)
                         
                         # 验证特征数量
-                        # model_n_features = None
-                        # try:
-                            # if hasattr(model, 'n_features_'):
-                                # model_n_features = model.n_features_
-                            # elif hasattr(model, 'booster_'):
-                                # model_n_features = model.booster_.num_feature()
-                        # except Exception:
-                            # pass
+                        model_n_features = None
+                        try:
+                            if hasattr(model, 'n_features_'):
+                                model_n_features = model.n_features_
+                            elif hasattr(model, 'booster_'):
+                                model_n_features = model.booster_.num_feature()
+                        except Exception:
+                            pass
                         
-                        # if model_n_features and X_input.shape[1] != model_n_features:
+                        if model_n_features and X_input.shape[1] != model_n_features:
                             # 存储错误信息，在表单外部显示
-                            # st.session_state['prediction_error'] = f"❌ 特征数量不匹配！模型期望 {model_n_features} 个特征，但输入有 {X_input.shape[1]} 个"
-                            # st.session_state['prediction_result'] = None
+                            st.session_state['prediction_error'] = f"❌ 特征数量不匹配！模型期望 {model_n_features} 个特征，但输入有 {X_input.shape[1]} 个"
+                            st.session_state['prediction_result'] = None
                             # 不抛出异常，让代码继续执行到外部显示错误
-                            # proba = None
-                            # risk_percent = None
-                        # else:
+                            proba = None
+                            risk_percent = None
+                        else:
                             # 进行预测（只有在验证通过时）
-                            # proba = float(model.predict_proba(X_input)[:, 1][0])
-                            # risk_percent = proba * 100.0
+                            proba = float(model.predict_proba(X_input)[:, 1][0])
+                            risk_percent = proba * 100.0
                             
                             # 调试信息（存储到session_state，避免在form提交后立即使用expander）
-                            # debug_info = f"""
+                            debug_info = f"""
 # **特征数量**: {len(feature_list)}
-# **模型期望特征数**: {model_n_features if model_n_features else '未知'}
+**模型期望特征数**: {model_n_features if model_n_features else '未知'}
 # **输入数据形状**: {X_input.shape}
 # **用户输入的特征**: {list(user_values.keys())}
 # **预测概率**: {proba:.6f}
 # ⚠ 注意：使用了简化预处理流程，可能与训练时不完全一致
-# """
+"""
                             # 将调试信息和预测结果存储到session_state，在表单外部显示
-                            # st.session_state['debug_info'] = debug_info
-                            # st.session_state['prediction_result'] = {
-                                # 'proba': proba,
-                                # 'risk_percent': risk_percent,
-                                # 'threshold': threshold
-                            # }
+                            st.session_state['debug_info'] = debug_info
+                            st.session_state['prediction_result'] = {
+                                'proba': proba,
+                                'risk_percent': risk_percent,
+                                'threshold': threshold
+                            }
                         
-                # except Exception as e:
+                except Exception as e:
                     # 存储错误信息，在表单外部显示
-                    # st.session_state['prediction_error'] = str(e)
-                    # st.session_state['prediction_result'] = None
+                    st.session_state['prediction_error'] = str(e)
+                    st.session_state['prediction_result'] = None
             
             # 在表单外部显示所有结果（避免Delta路径错误）
             # 显示警告信息
-            # if 'warnings' in st.session_state and st.session_state['warnings']:
-                # for warning in st.session_state['warnings']:
-                    # st.warning(warning)
-                # del st.session_state['warnings']
+            if 'warnings' in st.session_state and st.session_state['warnings']:
+                for warning in st.session_state['warnings']:
+                    st.warning(warning)
+                del st.session_state['warnings']
             
             # 显示错误信息
-            # if 'prediction_error' in st.session_state and st.session_state['prediction_error']:
-                # st.error(f"在线预测时发生错误：{st.session_state['prediction_error']}")
-                # del st.session_state['prediction_error']
+            if 'prediction_error' in st.session_state and st.session_state['prediction_error']:
+                st.error(f"在线预测时发生错误：{st.session_state['prediction_error']}")
+                del st.session_state['prediction_error']
             
-            # if 'prediction_result' in st.session_state and st.session_state['prediction_result']:
-                # result = st.session_state['prediction_result']
-                # proba = result['proba']
-                # risk_percent = result['risk_percent']
-                # threshold = result['threshold']
+            if 'prediction_result' in st.session_state and st.session_state['prediction_result']:
+                result = st.session_state['prediction_result']
+                proba = result['proba']
+                risk_percent = result['risk_percent']
+                threshold = result['threshold']
                 
                 # 显示调试信息（在表单外部，避免Delta路径错误）
-                # if 'debug_info' in st.session_state:
-                    # with st.expander("🔍 调试信息（点击查看）"):
-                        # st.markdown(st.session_state['debug_info'])
+                if 'debug_info' in st.session_state:
+                    with st.expander("🔍 调试信息（点击查看）"):
+                        st.markdown(st.session_state['debug_info'])
                     # 清除调试信息，避免下次显示
-                    # del st.session_state['debug_info']
+                    del st.session_state['debug_info']
                 
-                # st.markdown("#### 预测结果")
-                # col_result1, col_result2 = st.columns([1, 2])
+                st.markdown("#### 预测结果")
+                col_result1, col_result2 = st.columns([1, 2])
 
-                # with col_result1:
-                    # st.metric("预测住院死亡概率", f"{risk_percent:.2f} %")
+                with col_result1:
+                    st.metric("预测住院死亡概率", f"{risk_percent:.2f} %")
 
                 # 风险分层
-                # if proba >= threshold:
-                    # risk_level = "高风险"
-                    # color_class = "warning-box"
-                # elif proba >= 0.2:
-                    # risk_level = "中等风险"
-                    # color_class = "info-box"
-                # else:
-                    # risk_level = "低风险"
-                    # color_class = "success-box"
+                if proba >= threshold:
+                    risk_level = "高风险"
+                    color_class = "warning-box"
+                elif proba >= 0.2:
+                    risk_level = "中等风险"
+                    color_class = "info-box"
+                else:
+                    risk_level = "低风险"
+                    color_class = "success-box"
 
-                # with col_result2:
-                    # st.markdown(
-                        # f"""
-                        # <div class="{color_class}">
+                with col_result2:
+                    st.markdown(
+                        f"""
+                        <div class="{color_class}">
                             # <h4>风险分层：{risk_level}</h4>
                             # <p><strong>模型输出的死亡概率：</strong>{risk_percent:.2f}%</p>
                             # <p><strong>判定阈值：</strong>{threshold * 100:.0f}%</p>
-                            # <p style="margin-top:0.5rem; font-size:0.9rem;">
+                            <p style="margin-top:0.5rem; font-size:0.9rem;">
                                 # 注：本结果基于 WiDS Datathon 2020 ICU 数据训练的机器学习模型，仅作为科研与教学参考，
                                 # 不应直接用于真实临床决策。
-                            # </p>
-                        # </div>
-                        # """,
-                        # unsafe_allow_html=True
-                    # )
+                            </p>
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
                 
                 # 清除结果，避免下次显示
-                # del st.session_state['prediction_result']
+                del st.session_state['prediction_result']
 
 # 主要分析模块
 st.markdown('<div class="section-header">🔬 主要分析模块</div>', unsafe_allow_html=True)
@@ -3698,4 +3696,3 @@ except Exception as e:
     st.error(f"渲染页面内容时出错: {str(e)}")
     import traceback
     st.text(traceback.format_exc())
-# ========== 注释结束 ==========
