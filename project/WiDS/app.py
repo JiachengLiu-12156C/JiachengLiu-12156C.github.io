@@ -1059,293 +1059,293 @@ with tab1:
         st.error(f"生成特征分类图表时出错: {str(e)}")
         st.info("💡 提示：请确保数据字典和数据文件存在且格式正确")
 
-# with tab2:
-    # st.markdown("### 数据预处理模块")
-    # st.markdown("**处理策略：**")
-    # col1, col2, col3 = st.columns(3)
-    # with col1:
-        # st.markdown("""
-        # **缺失值处理**
-        # - 高缺失率特征（>70%）: 直接剔除
-        # - 数值型特征: 中位数填充
-        # - 分类特征: 众数填充
-        # - 医学逻辑填充: 基于临床知识进行智能填充
-        # """)
-    # with col2:
-        # st.markdown("""
-        # **异常值处理**
-        # - 基于医学合理范围进行异常值检测
-        # - 使用IQR方法识别极端值
-        # """)
-    # with col3:
-        # st.markdown("""
-        # **特征工程**
-        # - 创建交互特征
-        # - 时间序列特征提取
-        # - GCS评分特征构建
-        # """)
+with tab2:
+    st.markdown("### 数据预处理模块")
+    st.markdown("**处理策略：**")
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.markdown("""
+        **缺失值处理**
+        - 高缺失率特征（>70%）: 直接剔除
+        - 数值型特征: 中位数填充
+        - 分类特征: 众数填充
+        - 医学逻辑填充: 基于临床知识进行智能填充
+        """)
+    with col2:
+        st.markdown("""
+        **异常值处理**
+        - 基于医学合理范围进行异常值检测
+        - 使用IQR方法识别极端值
+        """)
+    with col3:
+        st.markdown("""
+        **特征工程**
+        - 创建交互特征
+        - 时间序列特征提取
+        - GCS评分特征构建
+        """)
     
     # 显示预处理结果统计
-    # col1, col2, col3 = st.columns(3)
-    # with col1:
-        # st.metric("原始特征数", "186")
-        # st.metric("完全填充特征", "11")
-    # with col2:
-        # st.metric("缺失特征数", "175")
-        # st.metric("处理后特征数", "~180")
-    # with col3:
-        # st.metric("缺失值填充率", ">95%")
-        # st.metric("数据完整性", "高")
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.metric("原始特征数", "186")
+        st.metric("完全填充特征", "11")
+    with col2:
+        st.metric("缺失特征数", "175")
+        st.metric("处理后特征数", "~180")
+    with col3:
+        st.metric("缺失值填充率", ">95%")
+        st.metric("数据完整性", "高")
     
     # 数据预处理可视化
-    # st.markdown("#### 数据预处理可视化")
-    # st.markdown("""
+    st.markdown("#### 数据预处理可视化")
+    st.markdown("""
     # 以下图表展示了数据预处理的全流程，包括：
     # - 特征降维过程
     # - 被删除特征的类型分析
     # - 特征类型分布
     # - 缺失值处理策略
-    # """)
+    """)
     
-    # try:
-        # data_path = BASE_DIR / "data" / "training_v2.csv"
-        # if data_path.exists():
-            # with st.spinner("正在加载数据并计算预处理统计信息..."):
+    try:
+        data_path = BASE_DIR / "data" / "training_v2.csv"
+        if data_path.exists():
+            with st.spinner("正在加载数据并计算预处理统计信息..."):
                 # 读取数据（优化：使用更小的采样减少内存占用和加载时间）
-                # train_df = load_csv_data(data_path, nrows=10000, low_memory=False, na_values=['NA', ''])
+                train_df = load_csv_data(data_path, nrows=10000, low_memory=False, na_values=['NA', ''])
                 
                 # 计算缺失值
-                # missing_percent = (train_df.isnull().sum() / len(train_df)) * 100
-                # high_missing_cols = missing_percent[missing_percent > 70].index.tolist()
-                # train_df_cleaned = train_df.drop(columns=high_missing_cols)
+                missing_percent = (train_df.isnull().sum() / len(train_df)) * 100
+                high_missing_cols = missing_percent[missing_percent > 70].index.tolist()
+                train_df_cleaned = train_df.drop(columns=high_missing_cols)
                 
                 # 识别分类特征
-                # object_cols = train_df_cleaned.select_dtypes(include=['object']).columns.tolist()
-                # numeric_cols = train_df_cleaned.select_dtypes(include=[np.number]).columns.tolist()
-                # numeric_cols = [col for col in numeric_cols if col not in ['encounter_id', 'patient_id', 'hospital_id', 'hospital_death']]
+                object_cols = train_df_cleaned.select_dtypes(include=['object']).columns.tolist()
+                numeric_cols = train_df_cleaned.select_dtypes(include=[np.number]).columns.tolist()
+                numeric_cols = [col for col in numeric_cols if col not in ['encounter_id', 'patient_id', 'hospital_id', 'hospital_death']]
                 
                 # 计算缺失值总数
-                # total_missing = train_df.isnull().sum().sum()
-                # after_fill_missing = total_missing  # 保留缺失值，不填充
+                total_missing = train_df.isnull().sum().sum()
+                after_fill_missing = total_missing  # 保留缺失值，不填充
                 
                 # 将四个图表放在一行四列布局
-                # chart_col1, chart_col2, chart_col3, chart_col4 = st.columns(4)
+                chart_col1, chart_col2, chart_col3, chart_col4 = st.columns(4)
                 
                 # 1. 特征降维过程
-                # with chart_col1:
-                    # st.markdown("##### 特征降维过程")
-                    # stages = ['原始特征', '删除高缺失值列', '最终特征']
-                    # counts = [train_df.shape[1], len(high_missing_cols), train_df_cleaned.shape[1]]
-                    # fig1 = px.bar(
-                        # x=stages,
-                        # y=counts,
-                        # labels={'x': '处理阶段', 'y': '特征数量'},
-                        # color=stages,
-                        # color_discrete_map={
+                with chart_col1:
+                    st.markdown("##### 特征降维过程")
+                    stages = ['原始特征', '删除高缺失值列', '最终特征']
+                    counts = [train_df.shape[1], len(high_missing_cols), train_df_cleaned.shape[1]]
+                    fig1 = px.bar(
+                        x=stages,
+                        y=counts,
+                        labels={'x': '处理阶段', 'y': '特征数量'},
+                        color=stages,
+                        color_discrete_map={
                             # '原始特征': '#3498db',
                             # '删除高缺失值列': '#e74c3c',
                             # '最终特征': '#2ecc71'
-                        # }
-                    # )
-                    # fig1.update_traces(texttemplate='%{y}', textposition='outside')
+                        }
+                    )
+                    fig1.update_traces(texttemplate='%{y}', textposition='outside')
                     # 扩大y轴范围，确保顶部数字完整显示
-                    # max_y = max(counts)
-                    # fig1.update_layout(
-                        # showlegend=False, 
-                        # height=400,
-                        # yaxis=dict(range=[0, max_y * 1.15])
-                    # )
-                    # st.plotly_chart(fig1, use_container_width=True)
+                    max_y = max(counts)
+                    fig1.update_layout(
+                        showlegend=False, 
+                        height=400,
+                        yaxis=dict(range=[0, max_y * 1.15])
+                    )
+                    st.plotly_chart(fig1, use_container_width=True)
                 
                 # 2. 被删除特征的类型分析
-                # with chart_col2:
-                    # st.markdown("##### 被删除特征类型分布")
-                    # h1_count = sum(1 for col in high_missing_cols if col.startswith('h1_'))
-                    # d1_count = sum(1 for col in high_missing_cols if col.startswith('d1_'))
-                    # other_count = len(high_missing_cols) - h1_count - d1_count
+                with chart_col2:
+                    st.markdown("##### 被删除特征类型分布")
+                    h1_count = sum(1 for col in high_missing_cols if col.startswith('h1_'))
+                    d1_count = sum(1 for col in high_missing_cols if col.startswith('d1_'))
+                    other_count = len(high_missing_cols) - h1_count - d1_count
                     
-                    # deleted_types = ['h1_前缀(第一小时)', 'd1_前缀(第一天)', '其他特征']
-                    # deleted_counts = [h1_count, d1_count, other_count]
+                    deleted_types = ['h1_前缀(第一小时)', 'd1_前缀(第一天)', '其他特征']
+                    deleted_counts = [h1_count, d1_count, other_count]
                     
-                    # fig2 = px.bar(
-                        # x=deleted_types,
-                        # y=deleted_counts,
-                        # labels={'x': '特征类型', 'y': '特征数量'},
-                        # color=deleted_types,
-                        # color_discrete_map={
-                            # 'h1_前缀(第一小时)': '#e74c3c',
-                            # 'd1_前缀(第一天)': '#f39c12',
+                    fig2 = px.bar(
+                        x=deleted_types,
+                        y=deleted_counts,
+                        labels={'x': '特征类型', 'y': '特征数量'},
+                        color=deleted_types,
+                        color_discrete_map={
+                            'h1_前缀(第一小时)': '#e74c3c',
+                            'd1_前缀(第一天)': '#f39c12',
                             # '其他特征': '#95a5a6'
-                        # }
-                    # )
-                    # fig2.update_traces(texttemplate='%{y}', textposition='outside')
+                        }
+                    )
+                    fig2.update_traces(texttemplate='%{y}', textposition='outside')
                     # 扩大y轴范围，确保顶部数字完整显示
-                    # max_y = max(deleted_counts) if deleted_counts else 0
-                    # fig2.update_layout(
-                        # showlegend=False, 
-                        # height=400,
-                        # yaxis=dict(range=[0, max_y * 1.15] if max_y > 0 else None)
-                    # )
-                    # st.plotly_chart(fig2, use_container_width=True)
+                    max_y = max(deleted_counts) if deleted_counts else 0
+                    fig2.update_layout(
+                        showlegend=False, 
+                        height=400,
+                        yaxis=dict(range=[0, max_y * 1.15] if max_y > 0 else None)
+                    )
+                    st.plotly_chart(fig2, use_container_width=True)
                 
                 # 3. 特征类型分布
-                # with chart_col3:
-                    # st.markdown("##### 特征类型分布")
-                    # feature_types = ['分类特征', '数值型特征']
-                    # feature_counts = [len(object_cols), len(numeric_cols)]
+                with chart_col3:
+                    st.markdown("##### 特征类型分布")
+                    feature_types = ['分类特征', '数值型特征']
+                    feature_counts = [len(object_cols), len(numeric_cols)]
                     
-                    # fig3 = px.bar(
-                        # x=feature_types,
-                        # y=feature_counts,
-                        # labels={'x': '特征类型', 'y': '特征数量'},
-                        # color=feature_types,
-                        # color_discrete_map={
+                    fig3 = px.bar(
+                        x=feature_types,
+                        y=feature_counts,
+                        labels={'x': '特征类型', 'y': '特征数量'},
+                        color=feature_types,
+                        color_discrete_map={
                             # '分类特征': '#9b59b6',
                             # '数值型特征': '#3498db'
-                        # }
-                    # )
-                    # fig3.update_traces(texttemplate='%{y}', textposition='outside')
+                        }
+                    )
+                    fig3.update_traces(texttemplate='%{y}', textposition='outside')
                     # 扩大y轴范围，确保顶部数字完整显示
-                    # max_y = max(feature_counts) if feature_counts else 0
-                    # fig3.update_layout(
-                        # showlegend=False, 
-                        # height=400,
-                        # yaxis=dict(range=[0, max_y * 1.15] if max_y > 0 else None)
-                    # )
-                    # st.plotly_chart(fig3, use_container_width=True)
+                    max_y = max(feature_counts) if feature_counts else 0
+                    fig3.update_layout(
+                        showlegend=False, 
+                        height=400,
+                        yaxis=dict(range=[0, max_y * 1.15] if max_y > 0 else None)
+                    )
+                    st.plotly_chart(fig3, use_container_width=True)
                 
                 # 4. 缺失值处理策略
-                # with chart_col4:
-                    # st.markdown("##### 缺失值处理策略")
-                    # fill_stages = ['缺失值统计', '保留缺失值']
-                    # missing_counts = [total_missing, after_fill_missing]
+                with chart_col4:
+                    st.markdown("##### 缺失值处理策略")
+                    fill_stages = ['缺失值统计', '保留缺失值']
+                    missing_counts = [total_missing, after_fill_missing]
                     
-                    # fig4 = px.bar(
-                        # x=fill_stages,
-                        # y=missing_counts,
-                        # labels={'x': '处理阶段', 'y': '缺失值数量'},
-                        # color=fill_stages,
-                        # color_discrete_map={
+                    fig4 = px.bar(
+                        x=fill_stages,
+                        y=missing_counts,
+                        labels={'x': '处理阶段', 'y': '缺失值数量'},
+                        color=fill_stages,
+                        color_discrete_map={
                             # '缺失值统计': '#e74c3c',
                             # '保留缺失值': '#2ecc71'
-                        # }
-                    # )
-                    # fig4.update_traces(texttemplate='%{y:,}', textposition='outside')
+                        }
+                    )
+                    fig4.update_traces(texttemplate='%{y:,}', textposition='outside')
                     # 扩大y轴范围，确保顶部数字完整显示
-                    # max_y = max(missing_counts) if missing_counts else 0
-                    # fig4.update_layout(
-                        # showlegend=False, 
-                        # height=400,
-                        # yaxis=dict(range=[0, max_y * 1.15] if max_y > 0 else None)
-                    # )
-                    # st.plotly_chart(fig4, use_container_width=True)
-        # else:
-            # st.warning("⚠️ 数据文件未找到，请确保 data/training_v2.csv 存在")
-    # except Exception as e:
-        # st.error(f"生成数据预处理可视化图表时出错: {str(e)}")
+                    max_y = max(missing_counts) if missing_counts else 0
+                    fig4.update_layout(
+                        showlegend=False, 
+                        height=400,
+                        yaxis=dict(range=[0, max_y * 1.15] if max_y > 0 else None)
+                    )
+                    st.plotly_chart(fig4, use_container_width=True)
+        else:
+            st.warning("⚠️ 数据文件未找到，请确保 data/training_v2.csv 存在")
+    except Exception as e:
+        st.error(f"生成数据预处理可视化图表时出错: {str(e)}")
     
     # 医学特征分析可视化
-    # st.markdown("#### 医学特征分析可视化")
-    # st.markdown("""
+    st.markdown("#### 医学特征分析可视化")
+    st.markdown("""
     # 以下图表展示了关键医学特征的分析结果，包括：
     # - 生命体征特征分布
     # - 实验室指标特征分析
     # - APACHE评分特征
     # - 特征与目标变量的关系
-    # """)
+    """)
     
-    # try:
-        # data_path = BASE_DIR / "data" / "training_v2.csv"
-        # if data_path.exists():
-            # with st.spinner("正在加载数据并分析医学特征..."):
+    try:
+        data_path = BASE_DIR / "data" / "training_v2.csv"
+        if data_path.exists():
+            with st.spinner("正在加载数据并分析医学特征..."):
                 # 优化：使用更小的采样减少内存占用和加载时间
-                # train_df = load_csv_data(data_path, nrows=10000, low_memory=False, na_values=['NA', ''])
+                train_df = load_csv_data(data_path, nrows=10000, low_memory=False, na_values=['NA', ''])
                 
                 # 选择关键医学特征
-                # key_features = ['age', 'bmi', 'heart_rate_apache', 'temp_apache', 
-                               # 'd1_glucose_max', 'd1_glucose_min', 'apache_4a_icu_death_prob']
-                # available_features = [f for f in key_features if f in train_df.columns]
+                key_features = ['age', 'bmi', 'heart_rate_apache', 'temp_apache', 
+                               'd1_glucose_max', 'd1_glucose_min', 'apache_4a_icu_death_prob']
+                available_features = [f for f in key_features if f in train_df.columns]
                 
-                # if len(available_features) > 0:
+                if len(available_features) > 0:
                     # 创建一行三列布局
-                    # med_col1, med_col2, med_col3 = st.columns(3)
+                    med_col1, med_col2, med_col3 = st.columns(3)
                     
                     # 1. 关键特征与目标变量的相关性
-                    # with med_col1:
-                        # st.markdown("##### 关键特征与目标变量相关性")
-                        # correlations = {}
-                        # for feature in available_features:
-                            # valid_mask = train_df[[feature, 'hospital_death']].notna().all(axis=1)
-                            # if valid_mask.sum() > 0:
-                                # corr = train_df.loc[valid_mask, feature].corr(
-                                    # train_df.loc[valid_mask, 'hospital_death']
-                                # )
-                                # if pd.notna(corr):
-                                    # correlations[feature] = corr
+                    with med_col1:
+                        st.markdown("##### 关键特征与目标变量相关性")
+                        correlations = {}
+                        for feature in available_features:
+                            valid_mask = train_df[[feature, 'hospital_death']].notna().all(axis=1)
+                            if valid_mask.sum() > 0:
+                                corr = train_df.loc[valid_mask, feature].corr(
+                                    train_df.loc[valid_mask, 'hospital_death']
+                                )
+                                if pd.notna(corr):
+                                    correlations[feature] = corr
                         
-                        # if correlations:
-                            # corr_df = pd.DataFrame({
-                                # '特征': list(correlations.keys()),
-                                # '相关系数': list(correlations.values())
-                            # }).sort_values('相关系数', key=abs, ascending=False)
+                        if correlations:
+                            corr_df = pd.DataFrame({
+                                '特征': list(correlations.keys()),
+                                '相关系数': list(correlations.values())
+                            }).sort_values('相关系数', key=abs, ascending=False)
                             
-                            # fig_corr = px.bar(
-                                # corr_df,
-                                # x='特征',
-                                # y='相关系数',
-                                # labels={'特征': '特征名称', '相关系数': '相关系数'},
-                                # color='相关系数',
-                                # color_continuous_scale='RdBu',
-                                # color_continuous_midpoint=0
-                            # )
-                            # fig_corr.update_layout(height=400, xaxis_tickangle=-45)
-                            # st.plotly_chart(fig_corr, use_container_width=True)
+                            fig_corr = px.bar(
+                                corr_df,
+                                x='特征',
+                                y='相关系数',
+                                labels={'特征': '特征名称', '相关系数': '相关系数'},
+                                color='相关系数',
+                                color_continuous_scale='RdBu',
+                                color_continuous_midpoint=0
+                            )
+                            fig_corr.update_layout(height=400, xaxis_tickangle=-45)
+                            st.plotly_chart(fig_corr, use_container_width=True)
                     
                     # 2. 关键特征的分布（按目标变量分组）
-                    # with med_col2:
-                        # st.markdown("##### 关键特征分布（按目标变量分组）")
+                    with med_col2:
+                        st.markdown("##### 关键特征分布（按目标变量分组）")
                         # 选择第一个可用特征进行展示
-                        # if available_features:
-                            # feature = available_features[0]
-                            # valid_data = train_df[[feature, 'hospital_death']].dropna()
+                        if available_features:
+                            feature = available_features[0]
+                            valid_data = train_df[[feature, 'hospital_death']].dropna()
                             
-                            # if len(valid_data) > 0:
-                                # fig_dist = px.histogram(
-                                    # valid_data,
-                                    # x=feature,
-                                    # color='hospital_death',
-                                    # nbins=30,
-                                    # labels={'hospital_death': '住院死亡', feature: feature},
-                                    # color_discrete_map={0: '#2ecc71', 1: '#e74c3c'}
-                                # )
-                                # fig_dist.update_layout(height=400)
-                                # st.plotly_chart(fig_dist, use_container_width=True)
+                            if len(valid_data) > 0:
+                                fig_dist = px.histogram(
+                                    valid_data,
+                                    x=feature,
+                                    color='hospital_death',
+                                    nbins=30,
+                                    labels={'hospital_death': '住院死亡', feature: feature},
+                                    color_discrete_map={0: '#2ecc71', 1: '#e74c3c'}
+                                )
+                                fig_dist.update_layout(height=400)
+                                st.plotly_chart(fig_dist, use_container_width=True)
                     
                     # 3. 关键特征统计摘要表格
-                    # with med_col3:
-                        # st.markdown("##### 关键特征统计摘要")
-                        # summary_data = []
-                        # for feature in available_features[:10]:  # 限制前10个特征
-                            # valid_data = train_df[feature].dropna()
-                            # if len(valid_data) > 0:
-                                # summary_data.append({
+                    with med_col3:
+                        st.markdown("##### 关键特征统计摘要")
+                        summary_data = []
+                        for feature in available_features[:10]:  # 限制前10个特征
+                            valid_data = train_df[feature].dropna()
+                            if len(valid_data) > 0:
+                                summary_data.append({
                                     # '特征': feature,
-                                    # '均值': valid_data.mean(),
-                                    # '中位数': valid_data.median(),
-                                    # '标准差': valid_data.std(),
-                                    # '最小值': valid_data.min(),
-                                    # '最大值': valid_data.max()
-                                # })
+                                    '均值': valid_data.mean(),
+                                    '中位数': valid_data.median(),
+                                    '标准差': valid_data.std(),
+                                    '最小值': valid_data.min(),
+                                    '最大值': valid_data.max()
+                                })
                         
-                        # if summary_data:
-                            # summary_df = pd.DataFrame(summary_data)
-                            # st.dataframe(summary_df, use_container_width=True, hide_index=True, height=400)
-                # else:
-                    # st.info("💡 未找到可用的关键医学特征进行可视化")
-        # else:
-            # st.warning("⚠️ 数据文件未找到，请确保 data/training_v2.csv 存在")
-    # except Exception as e:
-        # st.error(f"生成医学特征分析图表时出错: {str(e)}")
+                        if summary_data:
+                            summary_df = pd.DataFrame(summary_data)
+                            st.dataframe(summary_df, use_container_width=True, hide_index=True, height=400)
+                else:
+                    st.info("💡 未找到可用的关键医学特征进行可视化")
+        else:
+            st.warning("⚠️ 数据文件未找到，请确保 data/training_v2.csv 存在")
+    except Exception as e:
+        st.error(f"生成医学特征分析图表时出错: {str(e)}")
 
 # with tab3:
     # st.markdown("### 统计分析模块")
