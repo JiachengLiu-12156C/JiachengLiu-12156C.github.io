@@ -519,8 +519,7 @@ with prediction_expander:
                         proba = float(model.predict_proba(X_input)[:, 1][0])
                         risk_percent = proba * 100.0
                         
-                        # 调试信息（可选，通过expander显示）
-                        # 优化：避免在form提交后立即使用expander，可能导致JavaScript错误
+                        # 调试信息（可选，通过session_state存储，避免在form提交后立即使用expander）
                         debug_info = f"""
 **特征数量**: {len(feature_list)}
 **模型期望特征数**: {model_n_features if model_n_features else '未知'}
@@ -531,8 +530,8 @@ with prediction_expander:
                             debug_info += f"**缺失的特征（已用0填充）**: {missing_features[:10]}{'...' if len(missing_features) > 10 else ''}\n"
                         debug_info += f"**预测概率**: {proba:.6f}"
                         
-                        with st.expander("🔍 调试信息（点击查看）"):
-                            st.markdown(debug_info)
+                        # 将调试信息存储到session_state，在表单外部显示
+                        st.session_state['debug_info'] = debug_info
                         
                     except ImportError:
                         # 如果无法导入prepare_features，使用简化版本
@@ -615,8 +614,7 @@ with prediction_expander:
                         proba = float(model.predict_proba(X_input)[:, 1][0])
                         risk_percent = proba * 100.0
                         
-                        # 调试信息
-                        # 优化：避免在form提交后立即使用expander，可能导致JavaScript错误
+                        # 调试信息（存储到session_state，避免在form提交后立即使用expander）
                         debug_info = f"""
 **特征数量**: {len(feature_list)}
 **模型期望特征数**: {model_n_features if model_n_features else '未知'}
@@ -625,9 +623,16 @@ with prediction_expander:
 **预测概率**: {proba:.6f}
 ⚠ 注意：使用了简化预处理流程，可能与训练时不完全一致
 """
-                        with st.expander("🔍 调试信息（点击查看）"):
-                            st.markdown(debug_info)
+                        # 将调试信息存储到session_state，在表单外部显示
+                        st.session_state['debug_info'] = debug_info
 
+                    # 显示调试信息（在表单外部，避免Delta路径错误）
+                    if 'debug_info' in st.session_state:
+                        with st.expander("🔍 调试信息（点击查看）"):
+                            st.markdown(st.session_state['debug_info'])
+                        # 清除调试信息，避免下次显示
+                        del st.session_state['debug_info']
+                    
                     st.markdown("#### 预测结果")
                     col_result1, col_result2 = st.columns([1, 2])
 
