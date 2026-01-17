@@ -1347,382 +1347,382 @@ with tab2:
     except Exception as e:
         st.error(f"生成医学特征分析图表时出错: {str(e)}")
 
-# with tab3:
-    # st.markdown("### 统计分析模块")
-    # st.markdown("**分析内容：**")
-    # col1, col2, col3, col4 = st.columns(4)
-    # with col1:
-        # st.markdown("""
-        # **描述性统计分析**
-        # - 总体统计、分组统计（存活组 vs 死亡组）
-        # - 中心趋势、离散程度、分布特征
-        # """)
-    # with col2:
-        # st.markdown("""
-        # **特征分布分析**
-        # - 正态性检验（D'Agostino's K² 检验）
-        # - 分布可视化
-        # """)
-    # with col3:
-        # st.markdown("""
-        # **相关性分析**
-        # - 与目标变量的相关性
-        # - 特征间相关性矩阵
-        # """)
-    # with col4:
-        # st.markdown("""
-        # **特征重要性评估**
-        # - 综合多个统计指标
-        # - 为模型建立提供依据
-        # """)
+with tab3:
+    st.markdown("### 统计分析模块")
+    st.markdown("**分析内容：**")
+    col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        st.markdown("""
+        **描述性统计分析**
+        - 总体统计、分组统计（存活组 vs 死亡组）
+        - 中心趋势、离散程度、分布特征
+        """)
+    with col2:
+        st.markdown("""
+        **特征分布分析**
+        - 正态性检验（D'Agostino's K² 检验）
+        - 分布可视化
+        """)
+    with col3:
+        st.markdown("""
+        **相关性分析**
+        - 与目标变量的相关性
+        - 特征间相关性矩阵
+        """)
+    with col4:
+        st.markdown("""
+        **特征重要性评估**
+        - 综合多个统计指标
+        - 为模型建立提供依据
+        """)
     
     # 统计分析可视化
-    # try:
-        # data_path = BASE_DIR / "data" / "training_v2.csv"
-        # if data_path.exists():
-            # with st.spinner("正在加载数据并生成统计分析图表..."):
+    try:
+        data_path = BASE_DIR / "data" / "training_v2.csv"
+        if data_path.exists():
+            with st.spinner("正在加载数据并生成统计分析图表..."):
                 # 优化：使用更小的采样减少内存占用和加载时间
-                # train_df = load_csv_data(data_path, nrows=10000, low_memory=False, na_values=['NA', ''])
+                train_df = load_csv_data(data_path, nrows=10000, low_memory=False, na_values=['NA', ''])
                 
                 # 常见临床特征列表（12个）
-                # common_features = [
-                    # 'age', 'bmi', 'weight', 'height', 'heart_rate_apache', 
-                    # 'temp_apache', 'resprate_apache', 'map_apache', 
-                    # 'creatinine_apache', 'bun_apache', 'sodium_apache', 
-                    # 'glucose_apache', 'wbc_apache'
-                # ]
-                # available_features = [f for f in common_features if f in train_df.columns][:12]
+                common_features = [
+                    'age', 'bmi', 'weight', 'height', 'heart_rate_apache', 
+                    'temp_apache', 'resprate_apache', 'map_apache', 
+                    'creatinine_apache', 'bun_apache', 'sodium_apache', 
+                    'glucose_apache', 'wbc_apache'
+                ]
+                available_features = [f for f in common_features if f in train_df.columns][:12]
                 
                 # 特征中文名称
-                # feature_names_cn = {
+                feature_names_cn = {
                     # 'age': '年龄', 'bmi': 'BMI', 'weight': '体重', 'height': '身高',
                     # 'heart_rate_apache': '心率', 'temp_apache': '体温', 
                     # 'resprate_apache': '呼吸频率', 'map_apache': '平均动脉压',
                     # 'creatinine_apache': '肌酐', 'bun_apache': '血尿素氮',
                     # 'sodium_apache': '血钠', 'glucose_apache': '血糖', 
                     # 'wbc_apache': '白细胞计数'
-                # }
+                }
                 
                 # 1. 12个常见临床特征箱线图分布对比
-                # st.markdown("#### 常见临床特征箱线图分布对比")
-                # st.markdown("**12个常见临床特征在存活组（绿色）与死亡组（红色）间的箱线图分布对比**")
+                st.markdown("#### 常见临床特征箱线图分布对比")
+                st.markdown("**12个常见临床特征在存活组（绿色）与死亡组（红色）间的箱线图分布对比**")
                 
-                # if len(available_features) > 0:
+                if len(available_features) > 0:
                     # 创建6列布局，两行显示（12个特征 = 2行 × 6列）
-                    # n_cols = 6
-                    # n_features = min(len(available_features), 12)
+                    n_cols = 6
+                    n_features = min(len(available_features), 12)
                     
                     # 按行显示
-                    # for row in range((n_features + n_cols - 1) // n_cols):
-                        # cols = st.columns(n_cols)
-                        # for col_idx in range(n_cols):
-                            # feature_idx = row * n_cols + col_idx
-                            # if feature_idx < n_features:
-                                # with cols[col_idx]:
-                                    # feature = available_features[feature_idx]
-                                    # feature_name = feature_names_cn.get(feature, feature)
+                    for row in range((n_features + n_cols - 1) // n_cols):
+                        cols = st.columns(n_cols)
+                        for col_idx in range(n_cols):
+                            feature_idx = row * n_cols + col_idx
+                            if feature_idx < n_features:
+                                with cols[col_idx]:
+                                    feature = available_features[feature_idx]
+                                    feature_name = feature_names_cn.get(feature, feature)
                                     
                                     # 准备数据
-                                    # data = train_df[[feature, 'hospital_death']].dropna()
-                                    # if len(data) > 0:
+                                    data = train_df[[feature, 'hospital_death']].dropna()
+                                    if len(data) > 0:
                                         # 创建分组标签
-                                        # data['组别'] = data['hospital_death'].map({0: '存活组', 1: '死亡组'})
+                                        data['组别'] = data['hospital_death'].map({0: '存活组', 1: '死亡组'})
                                         
                                         # 使用plotly express创建箱线图
-                                        # fig = px.box(
-                                            # data,
-                                            # x='组别',
-                                            # y=feature,
-                                            # color='组别',
-                                            # color_discrete_map={'存活组': '#2ecc71', '死亡组': '#e74c3c'},
-                                            # title=feature_name
-                                        # )
+                                        fig = px.box(
+                                            data,
+                                            x='组别',
+                                            y=feature,
+                                            color='组别',
+                                            color_discrete_map={'存活组': '#2ecc71', '死亡组': '#e74c3c'},
+                                            title=feature_name
+                                        )
                                         
-                                        # fig.update_layout(
-                                            # title=dict(
-                                                # text=feature_name,
-                                                # font=dict(size=12)
-                                            # ),
-                                            # yaxis_title='特征值',
-                                            # xaxis_title='',
-                                            # height=300,
-                                            # showlegend=False,
-                                            # margin=dict(l=30, r=20, t=50, b=40)
-                                        # )
-                                        # st.plotly_chart(fig, use_container_width=True)
+                                        fig.update_layout(
+                                            title=dict(
+                                                text=feature_name,
+                                                font=dict(size=12)
+                                            ),
+                                            yaxis_title='特征值',
+                                            xaxis_title='',
+                                            height=300,
+                                            showlegend=False,
+                                            margin=dict(l=30, r=20, t=50, b=40)
+                                        )
+                                        st.plotly_chart(fig, use_container_width=True)
                 
                 # 2. 关键特征均值与中位数归一化对比和数值型特征分布类型统计（一行四列）
-                # st.markdown("#### 关键特征均值与中位数归一化对比和数值型特征分布类型统计")
+                st.markdown("#### 关键特征均值与中位数归一化对比和数值型特征分布类型统计")
                 
-                # if len(available_features) > 0:
+                if len(available_features) > 0:
                     # 计算均值和中位数
-                    # mean_data = []
-                    # median_data = []
+                    mean_data = []
+                    median_data = []
                     
-                    # for feature in available_features[:10]:  # 前10个特征
-                        # data = train_df[[feature, 'hospital_death']].dropna()
-                        # if len(data) > 0:
-                            # alive_mean = data[data['hospital_death'] == 0][feature].mean()
-                            # death_mean = data[data['hospital_death'] == 1][feature].mean()
-                            # alive_median = data[data['hospital_death'] == 0][feature].median()
-                            # death_median = data[data['hospital_death'] == 1][feature].median()
+                    for feature in available_features[:10]:  # 前10个特征
+                        data = train_df[[feature, 'hospital_death']].dropna()
+                        if len(data) > 0:
+                            alive_mean = data[data['hospital_death'] == 0][feature].mean()
+                            death_mean = data[data['hospital_death'] == 1][feature].mean()
+                            alive_median = data[data['hospital_death'] == 0][feature].median()
+                            death_median = data[data['hospital_death'] == 1][feature].median()
                             
                             # 归一化（相对于总体均值）
-                            # overall_mean = data[feature].mean()
-                            # overall_median = data[feature].median()
+                            overall_mean = data[feature].mean()
+                            overall_median = data[feature].median()
                             
-                            # mean_data.append({
+                            mean_data.append({
                                 # '特征': feature_names_cn.get(feature, feature),
-                                # '存活组': (alive_mean - overall_mean) / overall_mean if overall_mean != 0 else 0,
-                                # '死亡组': (death_mean - overall_mean) / overall_mean if overall_mean != 0 else 0
-                            # })
+                                '存活组': (alive_mean - overall_mean) / overall_mean if overall_mean != 0 else 0,
+                                '死亡组': (death_mean - overall_mean) / overall_mean if overall_mean != 0 else 0
+                            })
                             
-                            # median_data.append({
+                            median_data.append({
                                 # '特征': feature_names_cn.get(feature, feature),
-                                # '存活组': (alive_median - overall_median) / overall_median if overall_median != 0 else 0,
-                                # '死亡组': (death_median - overall_median) / overall_median if overall_median != 0 else 0
-                            # })
+                                '存活组': (alive_median - overall_median) / overall_median if overall_median != 0 else 0,
+                                '死亡组': (death_median - overall_median) / overall_median if overall_median != 0 else 0
+                            })
                     
                     # 获取数值型特征并计算偏度和峰度
-                    # numeric_cols = train_df.select_dtypes(include=[np.number]).columns.tolist()
-                    # numeric_cols = [col for col in numeric_cols if col not in 
-                                   # ['encounter_id', 'patient_id', 'hospital_id', 'hospital_death']]
+                    numeric_cols = train_df.select_dtypes(include=[np.number]).columns.tolist()
+                    numeric_cols = [col for col in numeric_cols if col not in 
+                                   ['encounter_id', 'patient_id', 'hospital_id', 'hospital_death']]
                     
-                    # skewness_list = []
-                    # kurtosis_list = []
-                    # feature_list = []
+                    skewness_list = []
+                    kurtosis_list = []
+                    feature_list = []
                     
-                    # for col in numeric_cols[:50]:  # 限制前50个特征
-                        # data = train_df[col].dropna()
-                        # if len(data) > 100:  # 至少100个样本
-                            # from scipy.stats import skew, kurtosis
-                            # sk = skew(data)
-                            # kt = kurtosis(data)
-                            # skewness_list.append(sk)
-                            # kurtosis_list.append(kt)
-                            # feature_list.append(col)
+                    for col in numeric_cols[:50]:  # 限制前50个特征
+                        data = train_df[col].dropna()
+                        if len(data) > 100:  # 至少100个样本
+                            from scipy.stats import skew, kurtosis
+                            sk = skew(data)
+                            kt = kurtosis(data)
+                            skewness_list.append(sk)
+                            kurtosis_list.append(kt)
+                            feature_list.append(col)
                     
                     # 创建四列布局
-                    # col1, col2, col3, col4 = st.columns(4)
+                    col1, col2, col3, col4 = st.columns(4)
                     
-                    # with col1:
-                        # st.markdown("##### (a) 均值归一化对比")
-                        # if mean_data:
-                            # mean_df = pd.DataFrame(mean_data)
-                            # fig_mean = go.Figure()
-                            # fig_mean.add_trace(go.Bar(
-                                # x=mean_df['特征'],
-                                # y=mean_df['存活组'],
-                                # name='存活组',
-                                # marker_color='#2ecc71'
-                            # ))
-                            # fig_mean.add_trace(go.Bar(
-                                # x=mean_df['特征'],
-                                # y=mean_df['死亡组'],
-                                # name='死亡组',
-                                # marker_color='#e74c3c'
-                            # ))
-                            # fig_mean.update_layout(
-                                # barmode='group',
-                                # height=400,
-                                # xaxis_tickangle=-45,
-                                # showlegend=True
-                            # )
-                            # st.plotly_chart(fig_mean, use_container_width=True)
+                    with col1:
+                        st.markdown("##### (a) 均值归一化对比")
+                        if mean_data:
+                            mean_df = pd.DataFrame(mean_data)
+                            fig_mean = go.Figure()
+                            fig_mean.add_trace(go.Bar(
+                                x=mean_df['特征'],
+                                y=mean_df['存活组'],
+                                name='存活组',
+                                marker_color='#2ecc71'
+                            ))
+                            fig_mean.add_trace(go.Bar(
+                                x=mean_df['特征'],
+                                y=mean_df['死亡组'],
+                                name='死亡组',
+                                marker_color='#e74c3c'
+                            ))
+                            fig_mean.update_layout(
+                                barmode='group',
+                                height=400,
+                                xaxis_tickangle=-45,
+                                showlegend=True
+                            )
+                            st.plotly_chart(fig_mean, use_container_width=True)
                     
-                    # with col2:
-                        # st.markdown("##### (b) 中位数归一化对比")
-                        # if median_data:
-                            # median_df = pd.DataFrame(median_data)
-                            # fig_median = go.Figure()
-                            # fig_median.add_trace(go.Bar(
-                                # x=median_df['特征'],
-                                # y=median_df['存活组'],
-                                # name='存活组',
-                                # marker_color='#2ecc71'
-                            # ))
-                            # fig_median.add_trace(go.Bar(
-                                # x=median_df['特征'],
-                                # y=median_df['死亡组'],
-                                # name='死亡组',
-                                # marker_color='#e74c3c'
-                            # ))
-                            # fig_median.update_layout(
-                                # barmode='group',
-                                # height=400,
-                                # xaxis_tickangle=-45,
-                                # showlegend=True
-                            # )
-                            # st.plotly_chart(fig_median, use_container_width=True)
+                    with col2:
+                        st.markdown("##### (b) 中位数归一化对比")
+                        if median_data:
+                            median_df = pd.DataFrame(median_data)
+                            fig_median = go.Figure()
+                            fig_median.add_trace(go.Bar(
+                                x=median_df['特征'],
+                                y=median_df['存活组'],
+                                name='存活组',
+                                marker_color='#2ecc71'
+                            ))
+                            fig_median.add_trace(go.Bar(
+                                x=median_df['特征'],
+                                y=median_df['死亡组'],
+                                name='死亡组',
+                                marker_color='#e74c3c'
+                            ))
+                            fig_median.update_layout(
+                                barmode='group',
+                                height=400,
+                                xaxis_tickangle=-45,
+                                showlegend=True
+                            )
+                            st.plotly_chart(fig_median, use_container_width=True)
                     
-                    # with col3:
-                        # st.markdown("##### (c) 分布类型统计")
-                        # if len(skewness_list) > 0:
+                    with col3:
+                        st.markdown("##### (c) 分布类型统计")
+                        if len(skewness_list) > 0:
                             # 分类分布类型
-                            # normal_count = sum(1 for s, k in zip(skewness_list, kurtosis_list) 
-                                             # if abs(s) < 0.5 and abs(k) < 0.5)
-                            # skewed_count = sum(1 for s in skewness_list if abs(s) >= 0.5)
-                            # heavy_tail_count = sum(1 for k in kurtosis_list if abs(k) >= 0.5)
-                            # other_count = len(skewness_list) - normal_count - skewed_count - heavy_tail_count
+                            normal_count = sum(1 for s, k in zip(skewness_list, kurtosis_list) 
+                                             if abs(s) < 0.5 and abs(k) < 0.5)
+                            skewed_count = sum(1 for s in skewness_list if abs(s) >= 0.5)
+                            heavy_tail_count = sum(1 for k in kurtosis_list if abs(k) >= 0.5)
+                            other_count = len(skewness_list) - normal_count - skewed_count - heavy_tail_count
                             
-                            # dist_types = ['正态分布', '偏态分布', '重尾分布', '其他']
-                            # dist_counts = [normal_count, skewed_count, heavy_tail_count, other_count]
+                            dist_types = ['正态分布', '偏态分布', '重尾分布', '其他']
+                            dist_counts = [normal_count, skewed_count, heavy_tail_count, other_count]
                             
-                            # fig_dist = px.pie(
-                                # values=dist_counts,
-                                # names=dist_types,
-                                # hole=0.4
-                            # )
-                            # fig_dist.update_layout(height=400)
-                            # st.plotly_chart(fig_dist, use_container_width=True)
+                            fig_dist = px.pie(
+                                values=dist_counts,
+                                names=dist_types,
+                                hole=0.4
+                            )
+                            fig_dist.update_layout(height=400)
+                            st.plotly_chart(fig_dist, use_container_width=True)
                     
-                    # with col4:
-                        # st.markdown("##### (d) 偏度-峰度关联散点图")
-                        # if len(skewness_list) > 0:
-                            # fig_scatter = px.scatter(
-                                # x=skewness_list,
-                                # y=kurtosis_list,
-                                # labels={'x': '偏度', 'y': '峰度'},
-                                # hover_name=feature_list[:len(skewness_list)]
-                            # )
+                    with col4:
+                        st.markdown("##### (d) 偏度-峰度关联散点图")
+                        if len(skewness_list) > 0:
+                            fig_scatter = px.scatter(
+                                x=skewness_list,
+                                y=kurtosis_list,
+                                labels={'x': '偏度', 'y': '峰度'},
+                                hover_name=feature_list[:len(skewness_list)]
+                            )
                             # 添加参考线
-                            # fig_scatter.add_hline(y=0, line_dash="dash", line_color="gray")
-                            # fig_scatter.add_vline(x=0, line_dash="dash", line_color="gray")
-                            # fig_scatter.update_layout(height=400)
-                            # st.plotly_chart(fig_scatter, use_container_width=True)
+                            fig_scatter.add_hline(y=0, line_dash="dash", line_color="gray")
+                            fig_scatter.add_vline(x=0, line_dash="dash", line_color="gray")
+                            fig_scatter.update_layout(height=400)
+                            st.plotly_chart(fig_scatter, use_container_width=True)
                 
                 # 3. 特征相关性分析、矩阵热力图和初步特征重要性综合评分（一行三列）
-                # st.markdown("#### 特征相关性分析、矩阵热力图和初步特征重要性综合评分")
+                st.markdown("#### 特征相关性分析、矩阵热力图和初步特征重要性综合评分")
                 
                 # 尝试加载相关性结果文件（相对于应用目录）
-                # corr_path = BASE_DIR / "results" / "statistical_analysis" / "correlation_with_target.csv"
-                # corr_matrix_path = BASE_DIR / "results" / "statistical_analysis" / "feature_correlation_matrix.csv"
-                # importance_path = BASE_DIR / "results" / "statistical_analysis" / "feature_importance_preliminary.csv"
+                corr_path = BASE_DIR / "results" / "statistical_analysis" / "correlation_with_target.csv"
+                corr_matrix_path = BASE_DIR / "results" / "statistical_analysis" / "feature_correlation_matrix.csv"
+                importance_path = BASE_DIR / "results" / "statistical_analysis" / "feature_importance_preliminary.csv"
                 
-                # col1, col2, col3 = st.columns(3)
+                col1, col2, col3 = st.columns(3)
                 
-                # with col1:
-                    # st.markdown("##### (a) 与目标变量相关性 Top 20")
-                    # if corr_path.exists():
-                        # corr_df = load_csv_data(corr_path)
-                        # top_corr = corr_df.head(20)
+                with col1:
+                    st.markdown("##### (a) 与目标变量相关性 Top 20")
+                    if corr_path.exists():
+                        corr_df = load_csv_data(corr_path)
+                        top_corr = corr_df.head(20)
                         
-                        # fig_corr_bar = px.bar(
-                            # top_corr,
-                            # x='相关系数',
-                            # y='特征名',
-                            # orientation='h',
-                            # color='相关系数',
-                            # color_continuous_scale='RdBu',
-                            # color_continuous_midpoint=0,
-                            # labels={'相关系数': '相关系数', '特征名': '特征名称'}
-                        # )
-                        # fig_corr_bar.update_layout(
-                            # yaxis={'categoryorder': 'total ascending'},
-                            # height=500,
-                            # showlegend=False
-                        # )
-                        # st.plotly_chart(fig_corr_bar, use_container_width=True)
-                    # else:
-                        # st.info("💡 运行 statistical_analysis.py 生成相关性分析结果")
+                        fig_corr_bar = px.bar(
+                            top_corr,
+                            x='相关系数',
+                            y='特征名',
+                            orientation='h',
+                            color='相关系数',
+                            color_continuous_scale='RdBu',
+                            color_continuous_midpoint=0,
+                            labels={'相关系数': '相关系数', '特征名': '特征名称'}
+                        )
+                        fig_corr_bar.update_layout(
+                            yaxis={'categoryorder': 'total ascending'},
+                            height=500,
+                            showlegend=False
+                        )
+                        st.plotly_chart(fig_corr_bar, use_container_width=True)
+                    else:
+                        st.info("💡 运行 statistical_analysis.py 生成相关性分析结果")
                 
-                # with col2:
-                    # st.markdown("##### (b) 特征间相关性矩阵热力图")
-                    # if corr_matrix_path.exists() and corr_path.exists():
-                        # corr_matrix = load_csv_data(corr_matrix_path, index_col=0)
-                        # corr_df = load_csv_data(corr_path)
+                with col2:
+                    st.markdown("##### (b) 特征间相关性矩阵热力图")
+                    if corr_matrix_path.exists() and corr_path.exists():
+                        corr_matrix = load_csv_data(corr_matrix_path, index_col=0)
+                        corr_df = load_csv_data(corr_path)
                         
                         # 选择Top 30特征（基于与目标变量的相关性）
-                        # top_features = corr_df.head(30)['特征名'].tolist()
-                        # available_top = [f for f in top_features if f in corr_matrix.index and f in corr_matrix.columns]
+                        top_features = corr_df.head(30)['特征名'].tolist()
+                        available_top = [f for f in top_features if f in corr_matrix.index and f in corr_matrix.columns]
                         
-                        # if len(available_top) > 1:
-                            # corr_subset = corr_matrix.loc[available_top, available_top]
+                        if len(available_top) > 1:
+                            corr_subset = corr_matrix.loc[available_top, available_top]
                             
-                            # fig_heatmap = px.imshow(
-                                # corr_subset,
-                                # color_continuous_scale='RdBu',
-                                # color_continuous_midpoint=0,
-                                # aspect='auto',
-                                # labels=dict(color="相关系数")
-                            # )
-                            # fig_heatmap.update_layout(height=500)
-                            # st.plotly_chart(fig_heatmap, use_container_width=True)
-                        # else:
-                            # st.info("💡 无法生成相关性矩阵热力图")
-                    # else:
-                        # st.info("💡 运行 statistical_analysis.py 生成特征间相关性矩阵")
+                            fig_heatmap = px.imshow(
+                                corr_subset,
+                                color_continuous_scale='RdBu',
+                                color_continuous_midpoint=0,
+                                aspect='auto',
+                                labels=dict(color="相关系数")
+                            )
+                            fig_heatmap.update_layout(height=500)
+                            st.plotly_chart(fig_heatmap, use_container_width=True)
+                        else:
+                            st.info("💡 无法生成相关性矩阵热力图")
+                    else:
+                        st.info("💡 运行 statistical_analysis.py 生成特征间相关性矩阵")
                 
-                # with col3:
-                    # st.markdown("##### (c) 初步特征重要性综合评分 Top 30")
-                    # if importance_path.exists():
-                        # importance_df = load_csv_data(importance_path)
-                        # top_importance = importance_df.head(30).sort_values('重要性得分', ascending=True)
+                with col3:
+                    st.markdown("##### (c) 初步特征重要性综合评分 Top 30")
+                    if importance_path.exists():
+                        importance_df = load_csv_data(importance_path)
+                        top_importance = importance_df.head(30).sort_values('重要性得分', ascending=True)
                         
-                        # fig_importance = px.bar(
-                            # top_importance,
-                            # x='重要性得分',
-                            # y='特征名',
-                            # orientation='h',
-                            # color='重要性得分',
-                            # color_continuous_scale='Viridis',
-                            # labels={'重要性得分': '重要性得分', '特征名': '特征名称'}
-                        # )
-                        # fig_importance.update_layout(
-                            # height=500,
-                            # showlegend=False
-                        # )
-                        # st.plotly_chart(fig_importance, use_container_width=True)
-                    # else:
-                        # st.info("💡 运行 statistical_analysis.py 生成特征重要性评估结果")
+                        fig_importance = px.bar(
+                            top_importance,
+                            x='重要性得分',
+                            y='特征名',
+                            orientation='h',
+                            color='重要性得分',
+                            color_continuous_scale='Viridis',
+                            labels={'重要性得分': '重要性得分', '特征名': '特征名称'}
+                        )
+                        fig_importance.update_layout(
+                            height=500,
+                            showlegend=False
+                        )
+                        st.plotly_chart(fig_importance, use_container_width=True)
+                    else:
+                        st.info("💡 运行 statistical_analysis.py 生成特征重要性评估结果")
                 
                 # 5. 重要性评分 Top 10 关键特征的频率分布对比（一行五列）
-                # st.markdown("#### 重要性评分 Top 10 关键特征分布对比")
-                # st.markdown("**存活组 vs 死亡组的频率分布对比**")
+                st.markdown("#### 重要性评分 Top 10 关键特征分布对比")
+                st.markdown("**存活组 vs 死亡组的频率分布对比**")
                 
-                # importance_path = BASE_DIR / "results" / "statistical_analysis" / "feature_importance_preliminary.csv"
-                # if importance_path.exists():
-                    # importance_df = pd.read_csv(importance_path)
-                    # top10_features = importance_df.head(10)['特征名'].tolist()
-                    # available_top10 = [f for f in top10_features if f in train_df.columns]
+                importance_path = BASE_DIR / "results" / "statistical_analysis" / "feature_importance_preliminary.csv"
+                if importance_path.exists():
+                    importance_df = pd.read_csv(importance_path)
+                    top10_features = importance_df.head(10)['特征名'].tolist()
+                    available_top10 = [f for f in top10_features if f in train_df.columns]
                     
-                    # if len(available_top10) > 0:
+                    if len(available_top10) > 0:
                         # 创建一行五列布局
-                        # n_cols = 5
-                        # n_features = min(len(available_top10), 10)
+                        n_cols = 5
+                        n_features = min(len(available_top10), 10)
                         
-                        # for row in range((n_features + n_cols - 1) // n_cols):
-                            # cols = st.columns(n_cols)
-                            # for col_idx in range(n_cols):
-                                # feature_idx = row * n_cols + col_idx
-                                # if feature_idx < n_features:
-                                    # with cols[col_idx]:
-                                        # feature = available_top10[feature_idx]
-                                        # feature_name = feature_names_cn.get(feature, feature)
+                        for row in range((n_features + n_cols - 1) // n_cols):
+                            cols = st.columns(n_cols)
+                            for col_idx in range(n_cols):
+                                feature_idx = row * n_cols + col_idx
+                                if feature_idx < n_features:
+                                    with cols[col_idx]:
+                                        feature = available_top10[feature_idx]
+                                        feature_name = feature_names_cn.get(feature, feature)
                                         
-                                        # data = train_df[[feature, 'hospital_death']].dropna()
-                                        # if len(data) > 0:
-                                            # fig_dist = px.histogram(
-                                                # data,
-                                                # x=feature,
-                                                # color='hospital_death',
-                                                # nbins=20,
-                                                # labels={'hospital_death': '住院死亡', feature: feature_name},
-                                                # color_discrete_map={0: '#2ecc71', 1: '#e74c3c'},
-                                                # barmode='overlay',
-                                                # opacity=0.7
-                                            # )
-                                            # fig_dist.update_layout(
-                                                # height=300, 
-                                                # showlegend=False,
-                                                # margin=dict(l=10, r=10, t=30, b=10)
-                                            # )
-                                            # st.plotly_chart(fig_dist, use_container_width=True)
-        # else:
-            # st.warning("⚠️ 数据文件未找到，请确保 data/training_v2.csv 存在")
-    # except Exception as e:
-        # st.error(f"生成统计分析图表时出错: {str(e)}")
-        # st.info("💡 提示：请确保数据文件存在且格式正确，或运行 statistical_analysis.py 生成分析结果")
+                                        data = train_df[[feature, 'hospital_death']].dropna()
+                                        if len(data) > 0:
+                                            fig_dist = px.histogram(
+                                                data,
+                                                x=feature,
+                                                color='hospital_death',
+                                                nbins=20,
+                                                labels={'hospital_death': '住院死亡', feature: feature_name},
+                                                color_discrete_map={0: '#2ecc71', 1: '#e74c3c'},
+                                                barmode='overlay',
+                                                opacity=0.7
+                                            )
+                                            fig_dist.update_layout(
+                                                height=300, 
+                                                showlegend=False,
+                                                margin=dict(l=10, r=10, t=30, b=10)
+                                            )
+                                            st.plotly_chart(fig_dist, use_container_width=True)
+        else:
+            st.warning("⚠️ 数据文件未找到，请确保 data/training_v2.csv 存在")
+    except Exception as e:
+        st.error(f"生成统计分析图表时出错: {str(e)}")
+        st.info("💡 提示：请确保数据文件存在且格式正确，或运行 statistical_analysis.py 生成分析结果")
 
 # with tab4:
     # st.markdown("### 模型训练与调优")
