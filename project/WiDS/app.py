@@ -414,7 +414,7 @@ with prediction_expander:
 
                 st.markdown("---")
                 threshold = st.slider(
-                    # "高风险判定阈值（预测死亡概率 ≥ 该值视为高风险）",
+                    "高风险判定阈值（预测死亡概率 ≥ 该值视为高风险）",
                     min_value=0.1,
                     max_value=0.9,
                     value=0.5,
