@@ -41,12 +41,12 @@ def load_preprocessor(preprocessor_path):
         preprocessor = pickle.load(f)
     return preprocessor
 
-# 缓存函数：计算缺失值统计（优化：使用采样减少计算时间）
+# 缓存函数：计算缺失值统计（优化：使用更小的采样减少计算时间）
 @st.cache_data
-def compute_missing_stats(data_path, chunk_size=10000, max_rows=50000):
+def compute_missing_stats(data_path, chunk_size=10000, max_rows=20000):
     """
     缓存缺失值统计计算
-    优化：限制最大读取行数，减少计算时间
+    优化：限制最大读取行数为20000，大幅减少计算时间
     """
     columns = load_csv_data(data_path, nrows=0).columns.tolist()
     total_rows = 0
@@ -214,13 +214,16 @@ def get_prediction_model_and_features(sample_size=10000):
         st.text(traceback.format_exc())
         return None, None, None, None
 
-# 页面配置
+# 页面配置（优化：减少初始渲染）
 st.set_page_config(
     page_title="WiDS Datathon 2020 - ICU死亡风险预测",
     page_icon="🏥",
     layout="wide",
     initial_sidebar_state="expanded"
 )
+
+# Streamlit 性能优化配置
+# 注意：Streamlit 的缓存机制已经通过 @st.cache_data 和 @st.cache_resource 实现
 
 # 初始化session_state（用于缓存已加载的数据）
 if 'data_loaded' not in st.session_state:
@@ -315,30 +318,33 @@ with col3:
     st.markdown('</div>', unsafe_allow_html=True)
 
 # 临床个体预测板块（独立板块，放在主要分析模块之前）
-st.markdown('<div class="section-header">🩺 临床个体风险预测</div>', unsafe_allow_html=True)
-st.markdown("""
-**功能说明：**  
-- 支持临床医生或用户输入少量关键指标（如年龄、BMI、心率、血糖等），由 **Optuna 调优后的 LightGBM 最优模型** 预测住院死亡风险  
-- 未输入的其他特征自动使用训练集典型值（中位数）填充，保证与离线模型使用的特征保持一致  
-""")
+# 优化：使用expander延迟加载，减少初始页面加载时间
+prediction_expander = st.expander("🩺 临床个体风险预测（点击展开使用）", expanded=False)
 
-# 懒加载：只在需要时加载模型（使用session_state缓存）
-if 'prediction_model' not in st.session_state:
-    with st.spinner("正在加载预测模型（首次加载可能需要几秒钟）..."):
-        model, feature_list, feature_medians, preprocessor = get_prediction_model_and_features(sample_size=10000)
-        st.session_state['prediction_model'] = model
-        st.session_state['prediction_feature_list'] = feature_list
-        st.session_state['prediction_feature_medians'] = feature_medians
-        st.session_state['prediction_preprocessor'] = preprocessor
-else:
-    model = st.session_state['prediction_model']
-    feature_list = st.session_state['prediction_feature_list']
-    feature_medians = st.session_state['prediction_feature_medians']
-    preprocessor = st.session_state['prediction_preprocessor']
+with prediction_expander:
+    st.markdown('<div class="section-header">🩺 临床个体风险预测</div>', unsafe_allow_html=True)
+    st.markdown("""
+    **功能说明：**  
+    - 支持临床医生或用户输入少量关键指标（如年龄、BMI、心率、血糖等），由 **Optuna 调优后的 LightGBM 最优模型** 预测住院死亡风险  
+    - 未输入的其他特征自动使用训练集典型值（中位数）填充，保证与离线模型使用的特征保持一致  
+    """)
+    # 懒加载：只在需要时加载模型（使用session_state缓存）
+    if 'prediction_model' not in st.session_state:
+        with st.spinner("正在加载预测模型（首次加载可能需要几秒钟）..."):
+            model, feature_list, feature_medians, preprocessor = get_prediction_model_and_features(sample_size=5000)
+            st.session_state['prediction_model'] = model
+            st.session_state['prediction_feature_list'] = feature_list
+            st.session_state['prediction_feature_medians'] = feature_medians
+            st.session_state['prediction_preprocessor'] = preprocessor
+    else:
+        model = st.session_state['prediction_model']
+        feature_list = st.session_state['prediction_feature_list']
+        feature_medians = st.session_state['prediction_feature_medians']
+        preprocessor = st.session_state['prediction_preprocessor']
 
-if model is None or feature_list is None or feature_medians is None:
-    st.warning("⚠️ 未能加载在线预测所需的模型或数据，请确认 `models/LightGBM_tuned_advanced.pkl` 和 `data/training_v2.csv` 已放置在 `streamlit_app` 目录下。")
-else:
+    if model is None or feature_list is None or feature_medians is None:
+        st.warning("⚠️ 未能加载在线预测所需的模型或数据，请确认 `models/LightGBM_tuned_advanced.pkl` 和 `data/training_v2.csv` 已放置在 `streamlit_app` 目录下。")
+    else:
     # 关键医学特征（如存在则提供输入项）
     # 键为数据集中列名，值为(中文名称, 合理最小值, 合理最大值)
     # 前几项为基础特征，后面补充了一批更“高危”的核心生理 / 实验室指标
@@ -1019,8 +1025,8 @@ with tab2:
         data_path = BASE_DIR / "data" / "training_v2.csv"
         if data_path.exists():
             with st.spinner("正在加载数据并计算预处理统计信息..."):
-                # 读取数据（优化：使用采样减少内存占用）
-                train_df = load_csv_data(data_path, nrows=20000, low_memory=False, na_values=['NA', ''])
+                # 读取数据（优化：使用更小的采样减少内存占用和加载时间）
+                train_df = load_csv_data(data_path, nrows=10000, low_memory=False, na_values=['NA', ''])
                 
                 # 计算缺失值
                 missing_percent = (train_df.isnull().sum() / len(train_df)) * 100
@@ -1166,8 +1172,8 @@ with tab2:
         data_path = BASE_DIR / "data" / "training_v2.csv"
         if data_path.exists():
             with st.spinner("正在加载数据并分析医学特征..."):
-                # 优化：使用采样减少内存占用
-                train_df = load_csv_data(data_path, nrows=20000, low_memory=False, na_values=['NA', ''])
+                # 优化：使用更小的采样减少内存占用和加载时间
+                train_df = load_csv_data(data_path, nrows=10000, low_memory=False, na_values=['NA', ''])
                 
                 # 选择关键医学特征
                 key_features = ['age', 'bmi', 'heart_rate_apache', 'temp_apache', 
@@ -1289,8 +1295,8 @@ with tab3:
         data_path = BASE_DIR / "data" / "training_v2.csv"
         if data_path.exists():
             with st.spinner("正在加载数据并生成统计分析图表..."):
-                # 优化：使用采样减少内存占用
-                train_df = load_csv_data(data_path, nrows=20000, low_memory=False, na_values=['NA', ''])
+                # 优化：使用更小的采样减少内存占用和加载时间
+                train_df = load_csv_data(data_path, nrows=10000, low_memory=False, na_values=['NA', ''])
                 
                 # 常见临床特征列表（12个）
                 common_features = [
