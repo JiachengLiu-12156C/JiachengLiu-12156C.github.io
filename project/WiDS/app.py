@@ -1156,7 +1156,7 @@ with tab2:
                 )
                 st.plotly_chart(fig1, use_container_width=True)
             
-                # 2. 被删除特征的类型分析
+            # 2. 被删除特征的类型分析
             with chart_col2:
                 st.markdown("##### 被删除特征类型分布")
                 h1_count = sum(1 for col in high_missing_cols if col.startswith('h1_'))
@@ -1213,7 +1213,7 @@ with tab2:
                 )
                 st.plotly_chart(fig3, use_container_width=True)
             
-                # 4. 缺失值处理策略
+            # 4. 缺失值处理策略
             with chart_col4:
                 st.markdown("##### 缺失值处理策略")
                 fill_stages = ['缺失值统计', '保留缺失值']
@@ -1238,8 +1238,8 @@ with tab2:
                     yaxis=dict(range=[0, max_y * 1.15] if max_y > 0 else None)
                 )
                 st.plotly_chart(fig4, use_container_width=True)
-            else:
-                st.warning("⚠️ 数据文件未找到，请确保 data/training_v2.csv 存在")
+        else:
+            st.warning("⚠️ 数据文件未找到，请确保 data/training_v2.csv 存在")
     except Exception as e:
         st.error(f"生成数据预处理可视化图表时出错: {str(e)}")
     
