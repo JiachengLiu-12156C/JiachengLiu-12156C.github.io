@@ -1394,12 +1394,12 @@ with tab3:
                 
                 # 特征中文名称
                 feature_names_cn = {
-                    # 'age': '年龄', 'bmi': 'BMI', 'weight': '体重', 'height': '身高',
-                    # 'heart_rate_apache': '心率', 'temp_apache': '体温', 
-                    # 'resprate_apache': '呼吸频率', 'map_apache': '平均动脉压',
-                    # 'creatinine_apache': '肌酐', 'bun_apache': '血尿素氮',
-                    # 'sodium_apache': '血钠', 'glucose_apache': '血糖', 
-                    # 'wbc_apache': '白细胞计数'
+                    'age': '年龄', 'bmi': 'BMI', 'weight': '体重', 'height': '身高',
+                    'heart_rate_apache': '心率', 'temp_apache': '体温', 
+                    'resprate_apache': '呼吸频率', 'map_apache': '平均动脉压',
+                    'creatinine_apache': '肌酐', 'bun_apache': '血尿素氮',
+                    'sodium_apache': '血钠', 'glucose_apache': '血糖', 
+                    'wbc_apache': '白细胞计数'
                 }
                 
                 # 1. 12个常见临床特征箱线图分布对比
@@ -1471,13 +1471,13 @@ with tab3:
                             overall_median = data[feature].median()
                             
                             mean_data.append({
-                                # '特征': feature_names_cn.get(feature, feature),
+                                '特征': feature_names_cn.get(feature, feature),
                                 '存活组': (alive_mean - overall_mean) / overall_mean if overall_mean != 0 else 0,
                                 '死亡组': (death_mean - overall_mean) / overall_mean if overall_mean != 0 else 0
                             })
                             
                             median_data.append({
-                                # '特征': feature_names_cn.get(feature, feature),
+                                '特征': feature_names_cn.get(feature, feature),
                                 '存活组': (alive_median - overall_median) / overall_median if overall_median != 0 else 0,
                                 '死亡组': (death_median - overall_median) / overall_median if overall_median != 0 else 0
                             })
