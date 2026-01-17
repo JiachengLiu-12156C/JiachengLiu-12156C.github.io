@@ -950,11 +950,11 @@ with tab1:
                 
                 # 计算每个类别在实际数据中的特征数量
                 category_names_cn = {
-                    # 'demographic': '人口统计学指标',
-                    # 'vitals': '实时生命体征',
-                    # 'labs': '常规实验室化验指标',
-                    # 'APACHE covariate': 'APACHE评分协变量',
-                    # 'labs blood gas': '血气分析指标'
+                    'demographic': '人口统计学指标',
+                    'vitals': '实时生命体征',
+                    'labs': '常规实验室化验指标',
+                    'APACHE covariate': 'APACHE评分协变量',
+                    'labs blood gas': '血气分析指标'
                 }
                 
                 main_categories = ['demographic', 'vitals', 'labs', 'APACHE covariate', 'labs blood gas']
@@ -1036,8 +1036,8 @@ with tab1:
                 with chart_col3:
                     st.markdown("**详细数据统计表**")
                     category_stats = pd.DataFrame({
-                        # '类别': category_counts.index,
-                        # '特征数量': category_counts.values,
+                        '类别': category_counts.index,
+                        '特征数量': category_counts.values,
                         '占比(%)': (category_counts.values / total_features * 100).round(2)
                     }).sort_values('特征数量', ascending=False)
                     st.dataframe(
