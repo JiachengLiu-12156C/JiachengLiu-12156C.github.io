@@ -2224,11 +2224,9 @@ with tab5:
                                             "特征值": fv
                                         })
                                 shap_long_df = pd.DataFrame(records)
-                                shap_long_df["特征"] = pd.Categorical(
-                                    shap_long_df["特征"],
-                                    categories=list(top_features),
-                                    ordered=True
-                                )
+                                # 将特征列转换为分类类型，并设置类别顺序
+                                shap_long_df["特征"] = shap_long_df["特征"].astype('category')
+                                shap_long_df["特征"] = shap_long_df["特征"].cat.set_categories(list(top_features), ordered=True)
                                 # 使用散点图模拟蜂群效果，并保留连续色阶
                                 fig_shap_summary = px.scatter(
                                     shap_long_df,
