@@ -1125,120 +1125,121 @@ with tab2:
                 # 计算缺失值总数
                 total_missing = train_df.isnull().sum().sum()
                 after_fill_missing = total_missing  # 保留缺失值，不填充
-                
-                # 将四个图表放在一行四列布局
-                chart_col1, chart_col2, chart_col3, chart_col4 = st.columns(4)
-                
-                # 1. 特征降维过程
-                with chart_col1:
-                    st.markdown("##### 特征降维过程")
-                    stages = ['原始特征', '删除高缺失值列', '最终特征']
-                    counts = [train_df.shape[1], len(high_missing_cols), train_df_cleaned.shape[1]]
-                    fig1 = px.bar(
-                        x=stages,
-                        y=counts,
-                        labels={'x': '处理阶段', 'y': '特征数量'},
-                        color=stages,
-                        color_discrete_map={
-                            '原始特征': '#3498db',
-                            '删除高缺失值列': '#e74c3c',
-                            '最终特征': '#2ecc71'
-                        }
-                    )
-                    fig1.update_traces(texttemplate='%{y}', textposition='outside')
-                    # 扩大y轴范围，确保顶部数字完整显示
-                    max_y = max(counts)
-                    fig1.update_layout(
-                        showlegend=False, 
-                        height=400,
-                        yaxis=dict(range=[0, max_y * 1.15])
-                    )
-                    st.plotly_chart(fig1, use_container_width=True)
-                
+            
+            # 图表渲染在spinner外
+            # 将四个图表放在一行四列布局
+            chart_col1, chart_col2, chart_col3, chart_col4 = st.columns(4)
+            
+            # 1. 特征降维过程
+            with chart_col1:
+                st.markdown("##### 特征降维过程")
+                stages = ['原始特征', '删除高缺失值列', '最终特征']
+                counts = [train_df.shape[1], len(high_missing_cols), train_df_cleaned.shape[1]]
+                fig1 = px.bar(
+                    x=stages,
+                    y=counts,
+                    labels={'x': '处理阶段', 'y': '特征数量'},
+                    color=stages,
+                    color_discrete_map={
+                        '原始特征': '#3498db',
+                        '删除高缺失值列': '#e74c3c',
+                        '最终特征': '#2ecc71'
+                    }
+                )
+                fig1.update_traces(texttemplate='%{y}', textposition='outside')
+                # 扩大y轴范围，确保顶部数字完整显示
+                max_y = max(counts)
+                fig1.update_layout(
+                    showlegend=False, 
+                    height=400,
+                    yaxis=dict(range=[0, max_y * 1.15])
+                )
+                st.plotly_chart(fig1, use_container_width=True)
+            
                 # 2. 被删除特征的类型分析
-                with chart_col2:
-                    st.markdown("##### 被删除特征类型分布")
-                    h1_count = sum(1 for col in high_missing_cols if col.startswith('h1_'))
-                    d1_count = sum(1 for col in high_missing_cols if col.startswith('d1_'))
-                    other_count = len(high_missing_cols) - h1_count - d1_count
-                    
-                    deleted_types = ['h1_前缀(第一小时)', 'd1_前缀(第一天)', '其他特征']
-                    deleted_counts = [h1_count, d1_count, other_count]
-                    
-                    fig2 = px.bar(
-                        x=deleted_types,
-                        y=deleted_counts,
-                        labels={'x': '特征类型', 'y': '特征数量'},
-                        color=deleted_types,
-                        color_discrete_map={
-                            'h1_前缀(第一小时)': '#e74c3c',
-                            'd1_前缀(第一天)': '#f39c12',
-                            '其他特征': '#95a5a6'
-                        }
-                    )
-                    fig2.update_traces(texttemplate='%{y}', textposition='outside')
-                    # 扩大y轴范围，确保顶部数字完整显示
-                    max_y = max(deleted_counts) if deleted_counts else 0
-                    fig2.update_layout(
-                        showlegend=False, 
-                        height=400,
-                        yaxis=dict(range=[0, max_y * 1.15] if max_y > 0 else None)
-                    )
-                    st.plotly_chart(fig2, use_container_width=True)
+            with chart_col2:
+                st.markdown("##### 被删除特征类型分布")
+                h1_count = sum(1 for col in high_missing_cols if col.startswith('h1_'))
+                d1_count = sum(1 for col in high_missing_cols if col.startswith('d1_'))
+                other_count = len(high_missing_cols) - h1_count - d1_count
                 
+                deleted_types = ['h1_前缀(第一小时)', 'd1_前缀(第一天)', '其他特征']
+                deleted_counts = [h1_count, d1_count, other_count]
+                
+                fig2 = px.bar(
+                    x=deleted_types,
+                    y=deleted_counts,
+                    labels={'x': '特征类型', 'y': '特征数量'},
+                    color=deleted_types,
+                    color_discrete_map={
+                    'h1_前缀(第一小时)': '#e74c3c',
+                    'd1_前缀(第一天)': '#f39c12',
+                    '其他特征': '#95a5a6'
+                }
+                )
+                fig2.update_traces(texttemplate='%{y}', textposition='outside')
+                # 扩大y轴范围，确保顶部数字完整显示
+                max_y = max(deleted_counts) if deleted_counts else 0
+                fig2.update_layout(
+                    showlegend=False, 
+                    height=400,
+                    yaxis=dict(range=[0, max_y * 1.15] if max_y > 0 else None)
+                )
+                st.plotly_chart(fig2, use_container_width=True)
+            
                 # 3. 特征类型分布
-                with chart_col3:
-                    st.markdown("##### 特征类型分布")
-                    feature_types = ['分类特征', '数值型特征']
-                    feature_counts = [len(object_cols), len(numeric_cols)]
-                    
-                    fig3 = px.bar(
-                        x=feature_types,
-                        y=feature_counts,
-                        labels={'x': '特征类型', 'y': '特征数量'},
-                        color=feature_types,
-                        color_discrete_map={
-                            '分类特征': '#9b59b6',
-                            '数值型特征': '#3498db'
-                        }
-                    )
-                    fig3.update_traces(texttemplate='%{y}', textposition='outside')
-                    # 扩大y轴范围，确保顶部数字完整显示
-                    max_y = max(feature_counts) if feature_counts else 0
-                    fig3.update_layout(
-                        showlegend=False, 
-                        height=400,
-                        yaxis=dict(range=[0, max_y * 1.15] if max_y > 0 else None)
-                    )
-                    st.plotly_chart(fig3, use_container_width=True)
+            with chart_col3:
+                st.markdown("##### 特征类型分布")
+                feature_types = ['分类特征', '数值型特征']
+                feature_counts = [len(object_cols), len(numeric_cols)]
                 
+                fig3 = px.bar(
+                    x=feature_types,
+                    y=feature_counts,
+                    labels={'x': '特征类型', 'y': '特征数量'},
+                    color=feature_types,
+                    color_discrete_map={
+                    '分类特征': '#9b59b6',
+                    '数值型特征': '#3498db'
+                }
+                )
+                fig3.update_traces(texttemplate='%{y}', textposition='outside')
+                # 扩大y轴范围，确保顶部数字完整显示
+                max_y = max(feature_counts) if feature_counts else 0
+                fig3.update_layout(
+                    showlegend=False, 
+                    height=400,
+                    yaxis=dict(range=[0, max_y * 1.15] if max_y > 0 else None)
+                )
+                st.plotly_chart(fig3, use_container_width=True)
+            
                 # 4. 缺失值处理策略
-                with chart_col4:
-                    st.markdown("##### 缺失值处理策略")
-                    fill_stages = ['缺失值统计', '保留缺失值']
-                    missing_counts = [total_missing, after_fill_missing]
-                    
-                    fig4 = px.bar(
-                        x=fill_stages,
-                        y=missing_counts,
-                        labels={'x': '处理阶段', 'y': '缺失值数量'},
-                        color=fill_stages,
-                        color_discrete_map={
-                            '缺失值统计': '#e74c3c',
-                            '保留缺失值': '#2ecc71'
-                        }
-                    )
-                    fig4.update_traces(texttemplate='%{y:,}', textposition='outside')
-                    # 扩大y轴范围，确保顶部数字完整显示
-                    max_y = max(missing_counts) if missing_counts else 0
-                    fig4.update_layout(
-                        showlegend=False, 
-                        height=400,
-                        yaxis=dict(range=[0, max_y * 1.15] if max_y > 0 else None)
-                    )
-                    st.plotly_chart(fig4, use_container_width=True)
-        else:
-            st.warning("⚠️ 数据文件未找到，请确保 data/training_v2.csv 存在")
+            with chart_col4:
+                st.markdown("##### 缺失值处理策略")
+                fill_stages = ['缺失值统计', '保留缺失值']
+                missing_counts = [total_missing, after_fill_missing]
+                
+                fig4 = px.bar(
+                    x=fill_stages,
+                    y=missing_counts,
+                    labels={'x': '处理阶段', 'y': '缺失值数量'},
+                    color=fill_stages,
+                    color_discrete_map={
+                        '缺失值统计': '#e74c3c',
+                        '保留缺失值': '#2ecc71'
+                    }
+                )
+                fig4.update_traces(texttemplate='%{y:,}', textposition='outside')
+                # 扩大y轴范围，确保顶部数字完整显示
+                max_y = max(missing_counts) if missing_counts else 0
+                fig4.update_layout(
+                    showlegend=False, 
+                    height=400,
+                    yaxis=dict(range=[0, max_y * 1.15] if max_y > 0 else None)
+                )
+                st.plotly_chart(fig4, use_container_width=True)
+            else:
+                st.warning("⚠️ 数据文件未找到，请确保 data/training_v2.csv 存在")
     except Exception as e:
         st.error(f"生成数据预处理可视化图表时出错: {str(e)}")
     
