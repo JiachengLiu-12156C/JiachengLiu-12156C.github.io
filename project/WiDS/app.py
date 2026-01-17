@@ -3098,332 +3098,332 @@ with tab6:
         st.text(traceback.format_exc())
 
 # 核心实现代码板块（使用 try-except 确保即使出错也能继续渲染）
-# try:
-    # st.markdown('<div class="section-header">💻 核心实现代码</div>', unsafe_allow_html=True)
+try:
+    st.markdown('<div class="section-header">💻 核心实现代码</div>', unsafe_allow_html=True)
 
-    # st.markdown("""
-    # <div class="info-box">
-        # <p>本板块展示项目中的核心实现代码，包括数据加载、预处理、特征工程、模型训练等关键部分。</p>
-    # </div>
-    # """, unsafe_allow_html=True)
+    st.markdown("""
+    <div class="info-box">
+        <p>本板块展示项目中的核心实现代码，包括数据加载、预处理、特征工程、模型训练等关键部分。</p>
+    </div>
+    """, unsafe_allow_html=True)
 
     # 创建子标签页用于不同模块的代码展示
-    # code_tab1, code_tab2, code_tab3, code_tab4, code_tab5 = st.tabs([
-    # "📥 数据加载", 
-    # "🔧 数据预处理", 
-    # "⚙️ 特征工程", 
-    # "🤖 模型训练", 
-    # "🎯 模型集成"
-    # ])
+    code_tab1, code_tab2, code_tab3, code_tab4, code_tab5 = st.tabs([
+    "📥 数据加载", 
+    "🔧 数据预处理", 
+    "⚙️ 特征工程", 
+    "🤖 模型训练", 
+    "🎯 模型集成"
+    ])
 
-    # with code_tab1:
-        # st.markdown("#### 数据加载核心代码")
-        # st.markdown("**功能：** 加载训练数据和数据字典，进行初步检查和目标变量分析")
+    with code_tab1:
+        st.markdown("#### 数据加载核心代码")
+        st.markdown("**功能：** 加载训练数据和数据字典，进行初步检查和目标变量分析")
         
-        # data_loading_code = '''def load_data():
-    # """
+        data_loading_code = '''def load_data():
+    """
     # 加载数据文件
     
-    # Returns:
+    Returns:
         # train_df: 训练数据DataFrame
         # dict_df: 数据字典DataFrame
-    # """
+    """
     # print("【步骤 1】加载数据...")
-    # print("-" * 80)
+    print("-" * 80)
     
     # 加载训练数据（将 "NA" 字符串识别为缺失值）
-    # train_df = pd.read_csv('data/training_v2.csv', 
-                          # low_memory=False, 
-                          # na_values=['NA', ''])
+    train_df = pd.read_csv('data/training_v2.csv', 
+                          low_memory=False, 
+                          na_values=['NA', ''])
     # print(f"✓ 训练数据已加载: {train_df.shape[0]:,} 行 × {train_df.shape[1]} 列")
     
     # 加载数据字典
-    # dict_df = pd.read_csv('data/WiDS Datathon 2020 Dictionary.csv')
+    dict_df = pd.read_csv('data/WiDS Datathon 2020 Dictionary.csv')
     # print(f"✓ 数据字典已加载: {dict_df.shape[0]:,} 行 × {dict_df.shape[1]} 列")
     
-    # return train_df, dict_df
+    return train_df, dict_df
 
-# def analyze_target_variable(train_df):
-    # """
+def analyze_target_variable(train_df):
+    """
     # 分析目标变量
     
-    # Args:
+    Args:
         # train_df: 训练数据DataFrame
     
-    # Returns:
+    Returns:
         # target_counts: 目标变量计数
         # target_percent: 目标变量百分比
-    # """
+    """
     # print("【步骤 3】目标变量 (hospital_death) 分析")
-    # print("-" * 80)
+    print("-" * 80)
     
     # 统计分布
-    # target_counts = train_df['hospital_death'].value_counts()
-    # target_percent = train_df['hospital_death'].value_counts(normalize=True) * 100
+    target_counts = train_df['hospital_death'].value_counts()
+    target_percent = train_df['hospital_death'].value_counts(normalize=True) * 100
     
     # print("目标变量分布:")
     # print(f"  - 存活 (0): {target_counts[0]:,} 例 ({target_percent[0]:.2f}%)")
     # print(f"  - 死亡 (1): {target_counts[1]:,} 例 ({target_percent[1]:.2f}%)")
     
-    # return target_counts, target_percent'''
+    return target_counts, target_percent'''
         
-        # st.code(data_loading_code, language='python')
+        st.code(data_loading_code, language='python')
         
-        # st.markdown("**关键特性：**")
-        # st.markdown("""
-        # - 使用 `low_memory=False` 确保完整加载数据
+        st.markdown("**关键特性：**")
+        st.markdown("""
+        - 使用 `low_memory=False` 确保完整加载数据
         # - 标准化缺失值处理（将 'NA' 和空字符串映射为 NaN）
         # - 自动统计目标变量分布，识别类别不平衡问题
-        # """)
+        """)
     
-    # with code_tab2:
-        # st.markdown("#### 数据预处理核心代码")
-        # st.markdown("**功能：** 特征分类、缺失值处理、异常值检测")
+    with code_tab2:
+        st.markdown("#### 数据预处理核心代码")
+        st.markdown("**功能：** 特征分类、缺失值处理、异常值检测")
         
-        # preprocessing_code = '''def classify_features(train_df, dict_df):
-    # """
+        preprocessing_code = '''def classify_features(train_df, dict_df):
+    """
     # 基于数据字典进行特征分类
     
-    # Args:
+    Args:
         # train_df: 训练数据DataFrame
         # dict_df: 数据字典DataFrame
     
-    # Returns:
+    Returns:
         # feature_categories: 特征分类字典
-    # """
+    """
     # print("【步骤 4】特征分类（基于数据字典）")
-    # print("-" * 80)
+    print("-" * 80)
     
     # 创建特征分类字典
-    # feature_categories = {}
-    # for _, row in dict_df.iterrows():
-        # category = row['Category']
-        # var_name = row['Variable Name']
-        # if category not in feature_categories:
-            # feature_categories[category] = []
-        # feature_categories[category].append(var_name)
+    feature_categories = {}
+    for _, row in dict_df.iterrows():
+        category = row['Category']
+        var_name = row['Variable Name']
+        if category not in feature_categories:
+            feature_categories[category] = []
+        feature_categories[category].append(var_name)
     
     # 打印每个类别的特征数量
     # print("特征分类统计:")
-    # for category in sorted(feature_categories.keys()):
-        # features = feature_categories[category]
-        # existing_features = [f for f in features if f in train_df.columns]
+    for category in sorted(feature_categories.keys()):
+        features = feature_categories[category]
+        existing_features = [f for f in features if f in train_df.columns]
         # print(f"  - {category:30s}: {len(existing_features):3d} 个特征")
     
-    # return feature_categories
+    return feature_categories
 
-# def basic_preprocessing(train_df, missing_df):
-    # """
+def basic_preprocessing(train_df, missing_df):
+    """
     # 执行基础数据预处理
     
-    # Args:
+    Args:
         # train_df: 训练数据DataFrame
         # missing_df: 缺失值分析DataFrame
     
-    # Returns:
+    Returns:
         # train_df_cleaned: 清洗后的数据（删除高缺失值列）
         # high_missing_cols: 被删除的高缺失值列
-    # """
+    """
     # print("【步骤 5】基础预处理")
-    # print("-" * 80)
+    print("-" * 80)
     
     # 剔除缺失值比例超过 70% 的列
-    # high_missing_cols = missing_df[missing_df['缺失比例(%)'] > 70].index.tolist()
-    # train_df_cleaned = train_df.drop(columns=high_missing_cols)
+    high_missing_cols = missing_df[missing_df['缺失比例(%)'] > 70].index.tolist()
+    train_df_cleaned = train_df.drop(columns=high_missing_cols)
     
     # print(f"✓ 删除了 {len(high_missing_cols)} 个高缺失值列（缺失率 > 70%）")
     # print(f"✓ 剩余特征数: {train_df_cleaned.shape[1]}")
     
-    # return train_df_cleaned, high_missing_cols'''
+    return train_df_cleaned, high_missing_cols'''
         
-        # st.code(preprocessing_code, language='python')
+        st.code(preprocessing_code, language='python')
         
-        # st.markdown("**处理策略：**")
-        # st.markdown("""
+        st.markdown("**处理策略：**")
+        st.markdown("""
         # - **高缺失率特征（>70%）**: 直接剔除，避免引入噪声
         # - **数值型特征**: 使用中位数填充，对异常值更稳健
         # - **分类特征**: 使用众数填充
         # - **医学逻辑填充**: 基于临床知识进行智能填充
-        # """)
+        """)
     
-    # with code_tab3:
-        # st.markdown("#### 特征工程核心代码")
-        # st.markdown("**功能：** 创建GCS评分、生命体征、实验室指标等新特征")
+    with code_tab3:
+        st.markdown("#### 特征工程核心代码")
+        st.markdown("**功能：** 创建GCS评分、生命体征、实验室指标等新特征")
         
-        # feature_engineering_code = '''def create_gcs_features(df):
-    # """
+        feature_engineering_code = '''def create_gcs_features(df):
+    """
     # 创建GCS（格拉斯哥昏迷评分）相关特征
     
-    # Args:
+    Args:
         # df: 数据DataFrame
     
-    # Returns:
+    Returns:
         # df: 添加了GCS特征的DataFrame
-    # """
+    """
     # print("创建GCS特征...")
     
-    # GCS总分 = 眼睛 + 运动 + 语言
-    # if all(col in df.columns for col in ['gcs_eyes_apache', 
-                                         # 'gcs_motor_apache', 
-                                         # 'gcs_verbal_apache']):
-        # gcs_total = df['gcs_eyes_apache'] + df['gcs_motor_apache'] + df['gcs_verbal_apache']
-        # 如果gcs_unable_apache=1，表示无法评估，设为缺失
-        # if 'gcs_unable_apache' in df.columns:
-            # gcs_total[df['gcs_unable_apache'] == 1] = np.nan
-        # df['gcs_total'] = gcs_total
+    GCS总分 = 眼睛 + 运动 + 语言
+    if all(col in df.columns for col in ['gcs_eyes_apache', 
+                                         'gcs_motor_apache', 
+                                         'gcs_verbal_apache']):
+        gcs_total = df['gcs_eyes_apache'] + df['gcs_motor_apache'] + df['gcs_verbal_apache']
+        如果gcs_unable_apache=1，表示无法评估，设为缺失
+        if 'gcs_unable_apache' in df.columns:
+            gcs_total[df['gcs_unable_apache'] == 1] = np.nan
+        df['gcs_total'] = gcs_total
         # print(f"  ✓ 创建 gcs_total: 范围 [{df['gcs_total'].min():.1f}, {df['gcs_total'].max():.1f}]")
     
-    # return df
+    return df
 
-# def create_vital_signs_features(df):
-    # """
+def create_vital_signs_features(df):
+    """
     # 创建生命体征相关特征
     
-    # Args:
+    Args:
         # df: 数据DataFrame
     
-    # Returns:
+    Returns:
         # df: 添加了生命体征特征的DataFrame
-    # """
+    """
     # print("创建生命体征特征...")
     
     # 1. 血压相关特征 - 收缩压范围（最大值-最小值）
-    # if all(col in df.columns for col in ['d1_sysbp_max', 'd1_sysbp_min']):
-        # df['d1_sysbp_range'] = df['d1_sysbp_max'] - df['d1_sysbp_min']
+    if all(col in df.columns for col in ['d1_sysbp_max', 'd1_sysbp_min']):
+        df['d1_sysbp_range'] = df['d1_sysbp_max'] - df['d1_sysbp_min']
         # print(f"  ✓ 创建 d1_sysbp_range")
     
     # 2. 心率相关特征
-    # if all(col in df.columns for col in ['d1_heartrate_max', 'd1_heartrate_min']):
-        # df['d1_heartrate_range'] = df['d1_heartrate_max'] - df['d1_heartrate_min']
-        # df['d1_heartrate_mean'] = (df['d1_heartrate_max'] + df['d1_heartrate_min']) / 2
+    if all(col in df.columns for col in ['d1_heartrate_max', 'd1_heartrate_min']):
+        df['d1_heartrate_range'] = df['d1_heartrate_max'] - df['d1_heartrate_min']
+        df['d1_heartrate_mean'] = (df['d1_heartrate_max'] + df['d1_heartrate_min']) / 2
         # print(f"  ✓ 创建 d1_heartrate_range 和 d1_heartrate_mean")
     
-    # return df'''
+    return df'''
         
-        # st.code(feature_engineering_code, language='python')
+        st.code(feature_engineering_code, language='python')
         
-        # st.markdown("**特征类型：**")
-        # st.markdown("""
+        st.markdown("**特征类型：**")
+        st.markdown("""
         # - **GCS评分特征**: 格拉斯哥昏迷评分总分和组件
         # - **生命体征特征**: 血压、心率、血氧、体温、呼吸频率的范围和均值
         # - **实验室指标特征**: 血常规、生化指标、血气分析等
         # - **交互特征**: 特征间的乘积、比值等
-        # """)
+        """)
     
-    # with code_tab4:
-        # st.markdown("#### 模型训练核心代码")
-        # st.markdown("**功能：** 训练多种机器学习模型，包括传统ML和梯度提升模型")
+    with code_tab4:
+        st.markdown("#### 模型训练核心代码")
+        st.markdown("**功能：** 训练多种机器学习模型，包括传统ML和梯度提升模型")
         
-        # model_training_code = '''def train_models(X_train_filled, y_train, X_val_filled, y_val, 
-                 # use_class_weight=True):
-    # """
+        model_training_code = '''def train_models(X_train_filled, y_train, X_val_filled, y_val, 
+                 use_class_weight=True):
+    """
     # 训练多个预测模型
     
-    # Args:
+    Args:
         # X_train_filled: 训练特征（填充缺失值版本）
         # y_train: 训练目标
         # X_val_filled: 验证特征（填充缺失值版本）
         # y_val: 验证目标
         # use_class_weight: 是否使用类别权重平衡
     
-    # Returns:
+    Returns:
         # models: 训练好的模型字典
         # predictions: 预测结果字典
         # metrics: 评估指标字典
-    # """
+    """
     # print("【步骤 3】模型训练")
-    # print("-" * 80)
+    print("-" * 80)
     
-    # models = {}
-    # predictions = {}
-    # metrics = {}
+    models = {}
+    predictions = {}
+    metrics = {}
     
     # 计算类别权重（用于处理类别不平衡）
-    # if use_class_weight:
-        # from sklearn.utils.class_weight import compute_class_weight
-        # class_weights = compute_class_weight('balanced', 
-                                           # classes=np.unique(y_train), 
-                                           # y=y_train)
-        # class_weight_dict = {0: class_weights[0], 1: class_weights[1]}
-        # print(f"类别权重: 存活={class_weight_dict[0]:.4f}, 死亡={class_weight_dict[1]:.4f}")
+    if use_class_weight:
+        from sklearn.utils.class_weight import compute_class_weight
+        class_weights = compute_class_weight('balanced', 
+                                           classes=np.unique(y_train), 
+                                           y=y_train)
+        class_weight_dict = {0: class_weights[0], 1: class_weights[1]}
+        print(f"类别权重: 存活={class_weight_dict[0]:.4f}, 死亡={class_weight_dict[1]:.4f}")
     
     # 3.1 逻辑回归
     # print("3.1 训练逻辑回归模型...")
-    # lr_model = LogisticRegression(
-        # class_weight=class_weight_dict,
-        # max_iter=1000,
-        # random_state=42,
-        # solver='lbfgs'
-    # )
-    # lr_model.fit(X_train_filled, y_train)
-    # models['Logistic Regression'] = lr_model
-    # predictions['Logistic Regression'] = {
-        # 'proba': lr_model.predict_proba(X_val_filled)[:, 1],
-        # 'pred': lr_model.predict(X_val_filled)
-    # }
+    lr_model = LogisticRegression(
+        class_weight=class_weight_dict,
+        max_iter=1000,
+        random_state=42,
+        solver='lbfgs'
+    )
+    lr_model.fit(X_train_filled, y_train)
+    models['Logistic Regression'] = lr_model
+    predictions['Logistic Regression'] = {
+        'proba': lr_model.predict_proba(X_val_filled)[:, 1],
+        'pred': lr_model.predict(X_val_filled)
+    }
     # print("  ✓ 完成")
     
     # 3.4 XGBoost（支持缺失值）
     # print("3.4 训练XGBoost模型（保留缺失值，让模型学习处理）...")
-    # xgb_model = xgb.XGBClassifier(
-        # n_estimators=200,
-        # max_depth=6,
-        # learning_rate=0.1,
-        # scale_pos_weight=class_weight_dict[1] / class_weight_dict[0],
-        # random_state=42,
-        # n_jobs=-1,
-        # tree_method='hist'
-    # )
-    # xgb_model.fit(X_train_filled, y_train)
-    # models['XGBoost'] = xgb_model
-    # predictions['XGBoost'] = {
-        # 'proba': xgb_model.predict_proba(X_val_filled)[:, 1],
-        # 'pred': xgb_model.predict(X_val_filled)
-    # }
+    xgb_model = xgb.XGBClassifier(
+        n_estimators=200,
+        max_depth=6,
+        learning_rate=0.1,
+        scale_pos_weight=class_weight_dict[1] / class_weight_dict[0],
+        random_state=42,
+        n_jobs=-1,
+        tree_method='hist'
+    )
+    xgb_model.fit(X_train_filled, y_train)
+    models['XGBoost'] = xgb_model
+    predictions['XGBoost'] = {
+        'proba': xgb_model.predict_proba(X_val_filled)[:, 1],
+        'pred': xgb_model.predict(X_val_filled)
+    }
     # print("  ✓ 完成")
     
     # 3.5 LightGBM（支持缺失值，GPU加速）
     # print("3.5 训练LightGBM模型（保留缺失值，GPU加速）...")
-    # lgb_model = lgb.LGBMClassifier(
-        # n_estimators=200,
-        # max_depth=6,
-        # learning_rate=0.1,
-        # class_weight=class_weight_dict,
-        # random_state=42,
-        # n_jobs=-1,
-        # device='gpu'  # GPU加速
-    # )
-    # lgb_model.fit(X_train_filled, y_train)
-    # models['LightGBM'] = lgb_model
-    # predictions['LightGBM'] = {
-        # 'proba': lgb_model.predict_proba(X_val_filled)[:, 1],
-        # 'pred': lgb_model.predict(X_val_filled)
-    # }
+    lgb_model = lgb.LGBMClassifier(
+        n_estimators=200,
+        max_depth=6,
+        learning_rate=0.1,
+        class_weight=class_weight_dict,
+        random_state=42,
+        n_jobs=-1,
+        device='gpu'  # GPU加速
+    )
+    lgb_model.fit(X_train_filled, y_train)
+    models['LightGBM'] = lgb_model
+    predictions['LightGBM'] = {
+        'proba': lgb_model.predict_proba(X_val_filled)[:, 1],
+        'pred': lgb_model.predict(X_val_filled)
+    }
     # print("  ✓ 完成")
     
-    # return models, predictions, metrics'''
+    return models, predictions, metrics'''
         
-        # st.code(model_training_code, language='python')
+        st.code(model_training_code, language='python')
         
-        # st.markdown("**模型类型：**")
-        # st.markdown("""
+        st.markdown("**模型类型：**")
+        st.markdown("""
         # - **逻辑回归**: 基准模型，线性分类器
         # - **随机森林**: 集成树模型，处理非线性关系
         # - **XGBoost**: 梯度提升树，支持缺失值
         # - **LightGBM**: 快速梯度提升，支持GPU加速
         # - **深度学习**: 深度神经网络，Wide & Deep架构
-        # """)
+        """)
     
-    # with code_tab5:
-        # st.markdown("#### 模型集成核心代码")
-        # st.markdown("**功能：** 训练多个LightGBM模型并集成，提升预测性能")
+    with code_tab5:
+        st.markdown("#### 模型集成核心代码")
+        st.markdown("**功能：** 训练多个LightGBM模型并集成，提升预测性能")
         
-        # ensemble_code = '''def train_ensemble_models(X_train, y_train, X_val, y_val, 
-                          # base_params, n_models=5, use_gpu=False):
-    # """
+        ensemble_code = '''def train_ensemble_models(X_train, y_train, X_val, y_val, 
+                          base_params, n_models=5, use_gpu=False):
+    """
     # 训练多个LightGBM模型（不同随机种子）
     
-    # Args:
+    Args:
         # X_train: 训练特征
         # y_train: 训练目标
         # X_val: 验证特征
@@ -3432,214 +3432,214 @@ with tab6:
         # n_models: 模型数量
         # use_gpu: 是否使用GPU
     
-    # Returns:
+    Returns:
         # models: 模型列表
         # predictions: 每个模型的预测结果
-    # """
+    """
     # print(f"训练 {n_models} 个LightGBM模型（不同随机种子）...")
-    # print()
+    print()
     
-    # models = []
-    # predictions = []
+    models = []
+    predictions = []
     
-    # for i in range(n_models):
+    for i in range(n_models):
         # print(f"训练模型 {i+1}/{n_models}...")
         
         # 复制基础参数，修改随机种子
-        # params = base_params.copy()
-        # params['random_state'] = 42 + i * 100  # 不同的随机种子
+        params = base_params.copy()
+        params['random_state'] = 42 + i * 100  # 不同的随机种子
         
         # 创建模型
-        # model = lgb.LGBMClassifier(**params)
+        model = lgb.LGBMClassifier(**params)
         
         # 训练模型（使用早停）
-        # model.fit(
-            # X_train, y_train,
-            # eval_set=[(X_val, y_val)],
-            # eval_metric='auc',
-            # callbacks=[
-                # lgb.early_stopping(stopping_rounds=50, verbose=False),
-                # lgb.log_evaluation(period=0)
-            # ]
-        # )
+        model.fit(
+            X_train, y_train,
+            eval_set=[(X_val, y_val)],
+            eval_metric='auc',
+            callbacks=[
+                lgb.early_stopping(stopping_rounds=50, verbose=False),
+                lgb.log_evaluation(period=0)
+            ]
+        )
         
         # 预测
-        # val_pred = model.predict_proba(X_val)[:, 1]
+        val_pred = model.predict_proba(X_val)[:, 1]
         
-        # models.append(model)
-        # predictions.append(val_pred)
+        models.append(model)
+        predictions.append(val_pred)
         
         # 计算AUC
-        # from sklearn.metrics import roc_auc_score
-        # auc = roc_auc_score(y_val, val_pred)
+        from sklearn.metrics import roc_auc_score
+        auc = roc_auc_score(y_val, val_pred)
         # print(f"  模型 {i+1} AUC-ROC: {auc:.5f}")
-        # print()
+        print()
     
-    # return models, predictions
+    return models, predictions
 
-# def ensemble_predict(models, X_test):
-    # """
+def ensemble_predict(models, X_test):
+    """
     # 集成多个模型的预测结果
     
-    # Args:
+    Args:
         # models: 模型列表
         # X_test: 测试特征
     
-    # Returns:
+    Returns:
         # ensemble_pred: 集成预测结果（加权平均）
-    # """
-    # predictions = []
-    # for model in models:
-        # pred = model.predict_proba(X_test)[:, 1]
-        # predictions.append(pred)
+    """
+    predictions = []
+    for model in models:
+        pred = model.predict_proba(X_test)[:, 1]
+        predictions.append(pred)
     
     # 简单平均（也可以使用加权平均）
-    # ensemble_pred = np.mean(predictions, axis=0)
+    ensemble_pred = np.mean(predictions, axis=0)
     
-    # return ensemble_pred'''
+    return ensemble_pred'''
         
-        # st.code(ensemble_code, language='python')
+        st.code(ensemble_code, language='python')
         
-        # st.markdown("**集成策略：**")
-        # st.markdown("""
+        st.markdown("**集成策略：**")
+        st.markdown("""
         # - **多模型训练**: 使用5个不同随机种子的LightGBM模型
         # - **早停机制**: 防止过拟合，自动选择最佳迭代次数
         # - **预测融合**: 对多个模型的预测概率进行加权平均
         # - **性能提升**: 集成模型相比单模型AUC-ROC提升约0.002-0.005
-        # """)
+        """)
         
-        # st.markdown("**超参数优化代码（Optuna）：**")
+        st.markdown("**超参数优化代码（Optuna）：**")
         
-        # optuna_code = '''import optuna
+        optuna_code = '''import optuna
 
-# def objective(trial):
+def objective(trial):
     # """Optuna优化目标函数"""
-    # params = {
-        # 'n_estimators': trial.suggest_int('n_estimators', 200, 1000),
-        # 'max_depth': trial.suggest_int('max_depth', 3, 10),
-        # 'learning_rate': trial.suggest_float('learning_rate', 0.01, 0.3),
-        # 'min_child_samples': trial.suggest_int('min_child_samples', 5, 100),
-        # 'subsample': trial.suggest_float('subsample', 0.6, 1.0),
-        # 'colsample_bytree': trial.suggest_float('colsample_bytree', 0.6, 1.0),
-        # 'reg_alpha': trial.suggest_float('reg_alpha', 0.0, 10.0),
-        # 'reg_lambda': trial.suggest_float('reg_lambda', 0.0, 10.0),
-    # }
+    params = {
+        'n_estimators': trial.suggest_int('n_estimators', 200, 1000),
+        'max_depth': trial.suggest_int('max_depth', 3, 10),
+        'learning_rate': trial.suggest_float('learning_rate', 0.01, 0.3),
+        'min_child_samples': trial.suggest_int('min_child_samples', 5, 100),
+        'subsample': trial.suggest_float('subsample', 0.6, 1.0),
+        'colsample_bytree': trial.suggest_float('colsample_bytree', 0.6, 1.0),
+        'reg_alpha': trial.suggest_float('reg_alpha', 0.0, 10.0),
+        'reg_lambda': trial.suggest_float('reg_lambda', 0.0, 10.0),
+    }
     
-    # model = lgb.LGBMClassifier(**params, random_state=42)
-    # model.fit(X_train, y_train, 
-              # eval_set=[(X_val, y_val)],
-              # callbacks=[lgb.early_stopping(50, verbose=False)])
+    model = lgb.LGBMClassifier(**params, random_state=42)
+    model.fit(X_train, y_train, 
+              eval_set=[(X_val, y_val)],
+              callbacks=[lgb.early_stopping(50, verbose=False)])
     
-    # y_pred = model.predict_proba(X_val)[:, 1]
-    # auc = roc_auc_score(y_val, y_pred)
+    y_pred = model.predict_proba(X_val)[:, 1]
+    auc = roc_auc_score(y_val, y_pred)
     
-    # return auc
+    return auc
 
 # 创建Optuna研究并优化
-# study = optuna.create_study(direction='maximize')
-# study.optimize(objective, n_trials=100)
+study = optuna.create_study(direction='maximize')
+study.optimize(objective, n_trials=100)
 
 # 获取最佳参数
-# best_params = study.best_params
+best_params = study.best_params
 # print(f"最佳AUC-ROC: {study.best_value:.5f}")
 # print(f"最佳参数: {best_params}")'''
         
-        # st.code(optuna_code, language='python')
+        st.code(optuna_code, language='python')
         
-        # st.markdown("**优化效果：**")
-        # st.markdown("""
+        st.markdown("**优化效果：**")
+        st.markdown("""
         # - 使用Optuna贝叶斯优化自动搜索最佳超参数
         # - 相比手动调参，AUC-ROC提升约0.003-0.005
         # - 排名从约700名提升至280名左右，提升约420名
-        # """)
+        """)
 
     # 与最优模型差距分析
-    # st.markdown('<div class="section-header">📊 与最优模型差距分析</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-header">📊 与最优模型差距分析</div>', unsafe_allow_html=True)
 
-    # col1, col2 = st.columns(2)
+    col1, col2 = st.columns(2)
 
-    # with col1:
-        # st.markdown("""
-        # <div class="warning-box">
+    with col1:
+        st.markdown("""
+        <div class="warning-box">
             # <h4>🔍 主要差距识别</h4>
-            # <p><strong>当前性能</strong>: AUC-ROC = 0.9069（相比Baseline提升4.5%）</p>
+            <p><strong>当前性能</strong>: AUC-ROC = 0.9069（相比Baseline提升4.5%）</p>
             # <p><strong>与最优模型差距</strong>: 0.0081（约0.81%）</p>
-            # <ol>
+            <ol>
                 # <li><strong>测试时增强（TTA）缺失</strong>
-                    # <ul>
+                    <ul>
                         # <li>论文方案：通过改变性别、种族、年龄生成增强样本</li>
                         # <li>性能提升：约0.004 AUC</li>
-                    # </ul>
-                # </li>
+                    </ul>
+                </li>
                 # <li><strong>模型集成规模不足</strong>
-                    # <ul>
+                    <ul>
                         # <li>当前：5个LightGBM模型</li>
                         # <li>论文方案：42个不同类型模型</li>
-                    # </ul>
-                # </li>
+                    </ul>
+                </li>
                 # <li><strong>缺少StackNet元学习架构</strong>
-                    # <ul>
+                    <ul>
                         # <li>当前：简单加权平均</li>
                         # <li>论文方案：三层堆叠架构</li>
-                    # </ul>
-                # </li>
-            # </ol>
-        # </div>
-        # """, unsafe_allow_html=True)
+                    </ul>
+                </li>
+            </ol>
+        </div>
+        """, unsafe_allow_html=True)
 
-    # with col2:
+    with col2:
         # 性能对比
-        # comparison_data = pd.DataFrame({
+        comparison_data = pd.DataFrame({
             # '方案': ['我们的模型', '最优模型', 'Baseline'],
-            # 'AUC-ROC': [0.9069, 0.915, 0.868],
+            'AUC-ROC': [0.9069, 0.915, 0.868],
             # '差距': [0.0081, 0, 0.047]
-        # })
+        })
         
-        # fig = px.bar(
-            # comparison_data,
-            # x='方案',
-            # y='AUC-ROC',
-            # title='性能对比：我们的模型 vs 最优模型 vs Baseline',
-            # color='AUC-ROC',
-            # color_continuous_scale='RdYlGn'
-        # )
-        # fig.add_hline(y=0.915, line_dash="dash", line_color="red", 
-                      # annotation_text="最优模型目标 (0.915)")
-        # fig.add_hline(y=0.9069, line_dash="dash", line_color="blue", 
-                      # annotation_text="我们的模型 (0.9069)")
-        # fig.add_hline(y=0.868, line_dash="dash", line_color="gray", 
-                      # annotation_text="Baseline (0.868)")
+        fig = px.bar(
+            comparison_data,
+            x='方案',
+            y='AUC-ROC',
+            title='性能对比：我们的模型 vs 最优模型 vs Baseline',
+            color='AUC-ROC',
+            color_continuous_scale='RdYlGn'
+        )
+        fig.add_hline(y=0.915, line_dash="dash", line_color="red", 
+                      annotation_text="最优模型目标 (0.915)")
+        fig.add_hline(y=0.9069, line_dash="dash", line_color="blue", 
+                      annotation_text="我们的模型 (0.9069)")
+        fig.add_hline(y=0.868, line_dash="dash", line_color="gray", 
+                      annotation_text="Baseline (0.868)")
         # 调整 y 轴范围，使差距更直观
-        # fig.update_layout(yaxis=dict(range=[0.8, 1.0]))
-        # st.plotly_chart(fig, use_container_width=True)
+        fig.update_layout(yaxis=dict(range=[0.8, 1.0]))
+        st.plotly_chart(fig, use_container_width=True)
 
     # 技术栈和工具
-    # st.markdown('<div class="section-header">🛠️ 技术栈</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-header">🛠️ 技术栈</div>', unsafe_allow_html=True)
 
-    # tech_cols = st.columns(4)
-    # tech_stack = [
+    tech_cols = st.columns(4)
+    tech_stack = [
     # 当前运行环境 Python 版本为 3.13.5（经 py --version 检测）
-    # ("Python 3.13.5", "🐍"),
-    # ("pandas & numpy", "📊"),
-    # ("scikit-learn", "🤖"),
-    # ("LightGBM/XGBoost", "🌲"),
-    # ("TensorFlow/Keras", "🧠"),
-    # ("Optuna", "⚙️"),
-    # ("matplotlib/seaborn", "📈"),
-    # ("Streamlit", "🚀")
-    # ]
+    ("Python 3.13.5", "🐍"),
+    ("pandas & numpy", "📊"),
+    ("scikit-learn", "🤖"),
+    ("LightGBM/XGBoost", "🌲"),
+    ("TensorFlow/Keras", "🧠"),
+    ("Optuna", "⚙️"),
+    ("matplotlib/seaborn", "📈"),
+    ("Streamlit", "🚀")
+    ]
 
-    # for i, (tech, icon) in enumerate(tech_stack):
-        # with tech_cols[i % 4]:
-            # st.markdown(f"### {icon}")
-            # st.markdown(f"**{tech}**")
+    for i, (tech, icon) in enumerate(tech_stack):
+        with tech_cols[i % 4]:
+            st.markdown(f"### {icon}")
+            st.markdown(f"**{tech}**")
 
     # 项目文件结构
-    # st.markdown('<div class="section-header">📁 项目结构</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-header">📁 项目结构</div>', unsafe_allow_html=True)
 
-    # st.markdown("""
-# ```
-# streamlit_app/
+    st.markdown("""
+```
+streamlit_app/
 # ├── app.py                   # Streamlit 主应用
 # ├── data/                    # 应用使用的所有原始数据
 # │   ├── training_v2.csv      # 训练数据（从 WiDS 官方数据复制到此处）
@@ -3651,51 +3651,51 @@ with tab6:
 # │   ├── model_training/      # 模型训练结果
 # │   └── model_evaluation/    # 模型评估结果
 # └── README.md                # 使用说明
-    # ```
-    # """)
+    ```
+    """)
 
     # 代码文件
-    # st.markdown('<div class="section-header">📝 代码文件</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-header">📝 代码文件</div>', unsafe_allow_html=True)
 
-    # nav_cols = st.columns(3)
+    nav_cols = st.columns(3)
 
-    # with nav_cols[0]:
-        # st.markdown("""
+    with nav_cols[0]:
+        st.markdown("""
         # **数据分析脚本：**
         # - `data_loading.py` - 数据读取
         # - `data_preprocessing.py` - 数据预处理
         # - `statistical_analysis.py` - 统计分析
         # - `feature_engineering.py` - 特征工程
-        # """)
+        """)
 
-    # with nav_cols[1]:
-        # st.markdown("""
+    with nav_cols[1]:
+        st.markdown("""
         # **模型训练脚本：**
         # - `model_training.py` - 传统ML模型
         # - `deep_learning_training.py` - 深度学习模型
         # - `hyperparameter_tuning.py` - 超参数优化
         # - `ensemble_lightgbm.py` - 集成模型
-        # """)
+        """)
 
-    # with nav_cols[2]:
-        # st.markdown("""
+    with nav_cols[2]:
+        st.markdown("""
         # **评估与预测：**
         # - `evaluate_lightgbm_ensemble.py` - 模型评估
         # - `predict_lightgbm_ensemble.py` - 预测生成
         # - `plot_kaggle_rankings.py` - 排名可视化
-        # """)
+        """)
 
     # 页脚
-    # st.markdown("---")
-    # st.markdown("""
-    # <div style="text-align: center; color: #7f8c8d; padding: 2rem 0;">
+    st.markdown("---")
+    st.markdown("""
+    <div style="text-align: center; color: #7f8c8d; padding: 2rem 0;">
         # <p><strong>WiDS Datathon 2020 - ICU死亡风险预测分析系统</strong></p>
         # <p>基于多中心临床数据的机器学习预测模型 | 作者：刘佳城</p>
         # <p>数据来源：MIT GOSSIS Initiative | 最后更新：2026年1月</p>
-    # </div>
-    # """, unsafe_allow_html=True)
-# except Exception as e:
-    # st.error(f"渲染页面内容时出错: {str(e)}")
-    # import traceback
-    # st.text(traceback.format_exc())
+    </div>
+    """, unsafe_allow_html=True)
+except Exception as e:
+    st.error(f"渲染页面内容时出错: {str(e)}")
+    import traceback
+    st.text(traceback.format_exc())
 # ========== 注释结束 ==========
