@@ -782,7 +782,7 @@ with tab1:
             
             # 提供选项：显示前N行或全部
             display_option = st.radio(
-                # "显示选项：",
+                "显示选项：",
                 ["前10行（预览）", "前50行", "全部数据"],
                 horizontal=True,
                 index=0
